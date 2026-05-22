@@ -1,5 +1,7 @@
 # Concepts Documentation — "Why"
 
+Status: Current
+
 > Documents in this folder explain **design philosophy, core beliefs, and architectural rationale** — the reasoning behind decisions, not just the decisions themselves.
 
 ---

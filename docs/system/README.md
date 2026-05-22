@@ -1,5 +1,7 @@
 # System Documentation — "How"
 
+Status: Current
+
 > Documents in this folder define **the system's architecture, components, configuration, deployment, and operations** — how the pieces fit together to form a working whole.
 
 ---
@@ -69,6 +71,43 @@ System docs implement the concepts and process the data. Every component should 
 - **Configuration cross-referenced** — every config key links to its validation rules and default value
 - **Error states documented** — every interface doc includes error responses and recovery steps
 - **Runbook is testable** — a fresh operator should be able to follow the runbook without asking questions
+- **Status labels mandatory** — every doc starts with `Status: Current`, `Status: Planning`, or `Status: Historical`
+- **Operator-first for operators** — RUNBOOK.md and README.md start with "what to do" before "why it works"
+- **Copy-paste ready** — every command and code example is complete, tested, uses full paths (not abbreviations)
+
+---
+
+## Operator-First Language Guide
+
+For operator-focused docs (RUNBOOK.md, README.md "Running" section):
+
+1. **Start with workflow** — describe the exact steps before explaining architecture
+2. **Real-money warnings upfront** — if this is production/real-money code, say it in the first line
+3. **Three clear modes** — distinguish between "signal-only", "demo/paper", and "live" modes
+4. **Preflight validation required** — operators should verify dependencies before running
+5. **Troubleshooting guide** — include common issues and exact fix steps
+6. **Copy-paste ready commands** — use `.venv/bin/python`, not bare `python`; include all flags
+7. **Numbered steps** — 1, 2, 3... numbered sequences are easier to follow than bullet points
+
+Example structure:
+```
+# RUNBOOK: Operating [Project]
+
+## Core Rules (what's immutable)
+
+## Daily Workflow
+1. Step 1
+   ```bash
+   exact command here
+   ```
+2. Step 2
+   ...
+
+## Troubleshooting
+### Issue: [Problem]
+- Diagnosis: [how to check]
+- Solution: [exact steps]
+```
 
 ---
 

@@ -11,6 +11,51 @@
 - Create feedback loop for bug reports, feature requests, and metrics
 - Establish iteration cadence for ongoing development
 - Write post-launch retrospective
+- Verify operational readiness (documentation, runbook, status labels)
+
+---
+
+## Operational Readiness Checklist
+
+Before deploying to production, verify these operational requirements. This ensures operators can run the system without confusion or breakdowns.
+
+### Documentation Status
+- [ ] All docs in `docs/system/` marked `Status: Current` (or explicitly `Status: Historical` if superseded)
+- [ ] All docs in `docs/planning/` marked `Status: Current` or `Status: Historical`
+- [ ] AGENTS.md section 7b "Removed Features" populated with any deprecated items
+- [ ] AGENTS.md "Change Log" updated with final changes before launch
+- [ ] `docs/index.md` verified to list all current documentation
+
+### RUNBOOK.md Complete and Tested
+- [ ] RUNBOOK.md exists at project root
+- [ ] Daily workflow section has numbered steps with copy-paste ready commands
+- [ ] All bash/CLI commands tested and verified to work (with exact syntax)
+- [ ] Troubleshooting section covers 5+ common issues with root cause and solution
+- [ ] Weekly tasks documented
+- [ ] One operator (preferably new to the project) has tested RUNBOOK.md end-to-end
+
+### Command Documentation
+- [ ] Every command in RUNBOOK.md uses full paths (e.g., `.venv/bin/python`, not `python`)
+- [ ] Every command includes all required flags and options
+- [ ] Every command has been tested before committing docs
+- [ ] No abbreviations or assumed environment setup
+
+### Multi-Audience Documentation
+- [ ] docs/index.md created and reviewed (file finder for all docs)
+- [ ] README.md updated with links to RUNBOOK.md and docs/index.md
+- [ ] Operators can find what they need in RUNBOOK.md without reading AGENTS.md
+- [ ] Developers can find implementation guidance in AGENTS.md without reading RUNBOOK.md
+
+### Historical Context Captured
+- [ ] docs/research/ folder created (or confirmed empty if no removals)
+- [ ] Removed features documented in docs/research/ (if any)
+- [ ] AGENTS.md "Removed Features" section points to research/ docs (if applicable)
+
+### Deployment & Operations Docs
+- [ ] RUNBOOK.md covers daily operations
+- [ ] `docs/system/05_DEPLOYMENT.md` (or equivalent) covers deployment topology
+- [ ] `docs/system/06_RUNBOOK.md` (or equivalent) covers operational procedures
+- [ ] Health check procedures documented and tested
 
 ---
 

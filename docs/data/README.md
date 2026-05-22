@@ -1,5 +1,7 @@
 # Data Documentation — "What"
 
+Status: Current
+
 > Documents in this folder specify **data structures, fields, calculation formulas, pipeline stages, and validation rules** — the precise definition of what data flows through the system and how it transforms at each stage.
 
 ---
