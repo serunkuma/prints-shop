@@ -1,37 +1,38 @@
-# Sources
+# Sources — Input Documents
 
 Status: Historical
 
-> Raw input documents that informed this project's scaffolding. Frozen by design — do not edit.
+This directory contains the frozen source documents that were used to scaffold the Kumachi Prints project documentation. These are the raw inputs: requirements, decisions, context, and domain knowledge as captured at the start of the project.
 
-## What lives here
+## Do Not Edit These Files
 
-| File pattern | What it is |
-|--------------|------------|
-| `INTERVIEW_TRANSCRIPT.md` | Auto-generated record of the Batch 1–5 Q&A from `prompt.md` interactive scaffolding. Captures decisions at scaffolding time. |
-| `REQUIREMENTS.md` | (Optional) The original requirements document the user attached when scaffolding. |
-| `DOMAIN_NOTES.md` | (Optional) Domain knowledge, glossary fragments, or research notes the user provided. |
-| `*.md` | Any other raw source documents the user attached at scaffolding time. |
+Files in `sources/` are historical inputs. They preserve the original knowledge base that informed the generated `docs/` tree, `AGENTS.md`, and `RUNBOOK.md`.
 
-Files are named descriptively. There is no numbering scheme — these are inputs, not a curriculum.
+If knowledge needs updating, update the relevant file in `docs/` or `AGENTS.md` — not here.
 
-## Rules
+## File Index
 
-1. **Do not edit anything in here.** These are frozen inputs. To update project knowledge, edit the relevant `docs/concepts/`, `docs/data/`, or `docs/system/` file instead.
-2. **Commit everything to git.** Traceability matters more than repo size for `.md` files. Future agents need to see *why* decisions were made.
-3. **Status: Historical, always.** Every file here is historical the moment scaffolding finishes. Do not relabel.
-4. **No status label needed inside individual files.** This README declares the entire folder Historical; individual source docs can have their own structure (they're inputs from outside the convention).
-5. **If a source doc gets superseded,** leave it here untouched and add a note to the relevant `docs/` file explaining what changed and when.
+| File | Contents |
+|---|---|
+| `01_project_vision.md` | Business goals, revenue model, audience, launch strategy |
+| `02_stack_decisions.md` | Why Hydrogen, Sanity, Printful, Oxygen — and what was rejected |
+| `03_shopify_configuration.md` | Store setup, Storefront API scopes, product structure, metafields, domain setup, env vars |
+| `04_sanity_schemas.md` | All Sanity document types, object types, and GROQ query patterns |
+| `05_hydrogen_routes.md` | Route map, data loading patterns, cart architecture, SEO, image handling |
+| `06_printful_integration.md` | Printful ↔ Shopify integration architecture, file requirements, variant naming |
+| `07_deployment.md` | Oxygen hosting setup, GitHub Actions CI/CD, local dev, domain migration |
+| `08_analytics_seo.md` | Umami setup, GA4 deferral rationale, Search Console, sitemap, robots.txt |
+| `09_roadmap.md` | 5-phase project roadmap with task checklists and acceptance criteria |
+| `10_empire_context.md` | Kumachi Empire overview, cross-property principles, God Dashboard context |
+| `11_component_conventions.md` | Component directory structure, naming, server/client split, accessibility |
+| `12_agent_rules.md` | Immutable principles for AI agents and developers |
+| `13_scaffold_setup.md` | Greenfield setup from frontvibe/fluid, repo structure, .env.example |
+| `14_operations.md` | Daily workflow, adding products, publishing drops, rotating secrets, troubleshooting |
+| `protoype/` | Vite prototype (full interactive design theme from prints-headless-shop-theme) |
+| `README-sources.md` | Original README for the sources directory |
 
-## Why this folder exists
+## Usage
 
-Without preserved inputs, six months from now no one (human or agent) can answer "why did we make this decision?" The `docs/` tree captures current state; `sources/` captures the inputs that produced it. Together they tell the full story.
+These sources were consumed by the batch scaffold prompt to generate the populated `docs/` tree. They are kept here for traceability. If a `docs/` document seems to contradict a source, the `docs/` document is authoritative (it reflects current decisions, not initial inputs).
 
-## Cross-references
-
-- See [AGENTS.md](../AGENTS.md) § 7 (Known Decisions & Rationale) for the curated decision log.
-- See [docs/research/README.md](../docs/research/README.md) for the difference between `sources/` (inputs) and `docs/research/` (post-decision notes, removed features, incidents).
-
----
-
-*Last updated: 2026-05-22*
+*Last updated: 2026-06*

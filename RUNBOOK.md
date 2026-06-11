@@ -1,232 +1,195 @@
-# RUNBOOK: Operating [Project Name]
+# RUNBOOK: Operating Kumachi Prints
+
+> **Written for Ernest.** If you are not Ernest, read AGENTS.md first.
 
 ## Core Operational Rules
 
-These rules are immutable and apply to all operational procedures:
+These 5 rules keep the store running. Do not skip them.
 
-1. **Documentation is Authority** — AGENTS.md is the single source of truth. Verify any questions against AGENTS.md before proceeding.
-2. **Pre-flight Validation Required** — Never run production workflows without verifying all prerequisites in the preflight checklist.
-3. **Status Labels Matter** — Always check doc status labels. Only follow docs marked "Status: Current".
-4. **Copy-Paste Safely** — All commands in this runbook are tested and complete. Use them as-is; don't abbreviate or simplify.
-5. **Keep This Updated** — Update this runbook when procedures change. Stale runbooks cause failures.
-
----
-
-## Daily Operational Workflow
-
-Follow this sequence every day before operational tasks:
-
-1. **Read Today's Status**
-   - Confirm AGENTS.md is current (check "Last Updated" footer)
-   - Review any "Status: Historical" docs to avoid deprecated workflows
-   - Identify any active incidents in AGENTS.md
-
-2. **Preflight Checklist**
-   - [ ] Environment variables loaded: `source .env` (or equivalent)
-   - [ ] All dependencies installed: `./scripts/preflight_check.sh` (or language equivalent)
-   - [ ] Service connectivity verified: `./scripts/health_check.sh`
-   - [ ] Documentation status verified: all system docs marked "Status: Current"
-
-3. **Run Daily Tasks** (numbered in order)
-   - Task 1: Review yesterday's logs
-     ```bash
-     cat logs/daily_$(date -d yesterday +%Y-%m-%d).log
-     ```
-   - Task 2: Start services
-     ```bash
-     ./scripts/start_services.sh
-     ```
-   - Task 3: Run data pipeline
-     ```bash
-     .venv/bin/python -m src.pipeline.daily_run --timestamp $(date +%Y-%m-%d)
-     ```
-   - Task 4: Verify pipeline completed
-     ```bash
-     tail -50 logs/pipeline_$(date +%Y-%m-%d).log | grep -E "SUCCESS|ERROR"
-     ```
-
-4. **Monitor Throughout Day**
-   - Check logs every hour: `tail -f logs/production.log`
-   - Alert on errors: `grep ERROR logs/production.log`
-   - Verify performance baseline: `./scripts/performance_check.sh`
-
-5. **End of Day**
-   - Archive logs: `./scripts/archive_logs.sh`
-   - Generate summary report: `.venv/bin/python -m src.reporting.daily_summary`
-   - Update RUNBOOK.md if any procedures changed
+1. **Never deploy to production without verifying on an Oxygen preview URL first**
+2. **Never commit `.env`** — all secrets stay out of the repository
+3. **Sanity Studio must be redeployed after every schema change:** `cd studio && npx sanity deploy`
+4. **After any Printful product change (new file, new size), verify the Shopify sync completed before announcing publicly**
+5. **Check Umami weekly** — a traffic spike usually means something landed on social
 
 ---
 
-## Weekly Operational Tasks
-
-Run weekly (every Monday morning, 9 AM):
-
-- [ ] **Verify All Docs Current**
-  ```bash
-  rg "Status: Historical|Status: Planning" docs/ --type md | wc -l
-  # Should be < 5 (only docs explicitly marked as non-current)
-  ```
-
-- [ ] **Backup Configuration**
-  ```bash
-  tar -czf backups/config_$(date +%Y-%m-%d).tar.gz AGENTS.md settings.json
-  ```
-
-- [ ] **Test Recovery Procedures**
-  ```bash
-  ./scripts/test_recovery.sh
-  ```
-
-- [ ] **Review Removed Features Log**
-  - Open AGENTS.md, section "Removed Features (Won't Be Reimplemented)"
-  - Confirm no requests came in for removed features
-  - Update removal log if new features were deprecated
-
-- [ ] **Sync Documentation**
-  - Check if any system changes happened, update docs/system/ accordingly
-  - Verify all code references in docs still point to correct files/line numbers
-  - Update AGENTS.md "Last Updated" timestamp
-
----
-
-## Troubleshooting Common Issues
-
-### Issue: Pipeline Failed with "Connection Timeout"
-
-**Diagnosis:**
-```bash
-tail -100 logs/pipeline.log | grep -A 5 "timeout"
-```
-
-**Solution:**
-1. Verify service is running: `./scripts/health_check.sh`
-2. Check network: `ping api.example.com`
-3. Restart service: `./scripts/restart_service.sh connection`
-4. Re-run pipeline: `.venv/bin/python -m src.pipeline.daily_run --retry 3`
-
-**If still failing:** Check AGENTS.md "Known Limitations" section and docs/research/ for historical context.
-
----
-
-### Issue: Documentation Mismatch (Docs Say X, Code Does Y)
-
-**Root Cause:** Docs are stale or code wasn't updated when docs changed.
-
-**Resolution:**
-1. Check status label: Is doc marked "Status: Current"?
-2. If marked Current but code differs: Code needs update (doc is authority)
-3. If doc is Historical: Find current docs in docs/system/
-4. Update AGENTS.md decision log to explain the change
-5. Re-test to confirm code matches docs
-
-**Prevention:** Always update AGENTS.md when implementing code changes.
-
----
-
-### Issue: Can't Reproduce Issue from Documentation
-
-**Diagnosis:** Run command from docs with `-v` flag:
-```bash
-<command from docs> -v
-```
-
-**Checklist:**
-- [ ] Using exact command from docs (no abbreviations)
-- [ ] All flags and parameters included
-- [ ] Environment variables set (check `env | grep -i <VAR>`)
-- [ ] Dependencies version-matched (`.venv/bin/python --version`)
-
-**If Still Stuck:** Open docs/research/ and search for similar issues tagged "[REMOVED: ...]" or "[DEBUGGING: ...]".
-
----
-
-## Maintenance Procedures
-
-### Monthly Full Validation
-
-Run on the 1st of each month:
+## Daily Development Workflow
 
 ```bash
-# 1. Validate all documentation
-./scripts/validate_docs.sh
+# Step 1: Get latest code
+git pull origin main
 
-# 2. Test all commands in docs
-./scripts/test_all_doc_commands.sh
+# Step 2: Start the dev server
+npm run dev
+# Opens at http://localhost:3000
 
-# 3. Check for stale language in docs
-rg "legacy|deprecated|old system|TODO|FIXME" docs/ --type md | head -20
+# Step 3: Make your changes
+# Edit files in app/ or studio/
 
-# 4. Update AGENTS.md changelog
-# Open AGENTS.md "Change Log" section and add entry:
-# - 2025-05-22: Monthly validation passed, no issues found (Your Name)
+# Step 4: Check for errors
+npm run typecheck
+npm run build
+
+# Step 5: Commit and push
+git add .
+git commit -m "Description of what you changed"
+git push origin main
+# GitHub Actions auto-deploys to Oxygen
+
+# Step 6: Verify on the live site
+# Visit https://prints.kumachigallery.com (or your domain)
 ```
 
-### Quarterly Dependency Update
+---
 
-Every 3 months, update dependencies:
+## Adding a New Print Product (10 Steps)
+
+1. **Check the art file** — Must be at least 150 DPI at the largest print size (e.g. 50×70cm = 2953×4134px minimum)
+
+2. **Upload to Printful** → Products → Create product → Upload file → Configure sizes and frame options → Set base prices → Sync to Shopify
+
+3. **Set retail prices in Shopify** → Products → find the new product → Variants → set price (≈ Printful base cost × 2.5–4×)
+
+4. **Add to collections** → Products → [product] → Collections → tick All Prints, New Arrivals, plus style/artist/series collections
+
+5. **Create product supplement in Sanity Studio** → productSupplement → New → set `shopifyHandle` to match the Shopify handle exactly → fill in story, technique, inspiration → add artist and series references → Publish
+
+6. **Verify the product page** at `localhost:3000/products/[handle]` — images load, variants work, editorial content shows up
+
+7. **Test add-to-cart** on the PDP
+
+8. **Test checkout** — add to cart, go to checkout, verify it reaches the Shopify hosted checkout
+
+9. **Verify on Oxygen preview** — push to a branch, check the preview URL
+
+10. **Announce** — Share the product page URL on social
+
+---
+
+## Publishing a New Drop (8 Steps)
+
+1. **Upload all products** — follow the 10-step "Adding a New Print Product" procedure for every print in the drop
+2. **Create Shopify collection** → Collections → Create → handle: `drop-[series-slug]` → Add all drop products
+3. **Create series in Sanity** → series → New → fill title, slug, heroImage, description, shopifyCollectionHandle → set `status: "draft"` → Save
+4. **Preview the drop page** at `localhost:3000/drops/[slug]?sanity-preview=true&sanity-preview-secret=[SECRET]`
+5. **Publish the series** — change `status` to `"live"` in Sanity and publish
+6. **Verify the drops listing** — `/drops` shows the new drop
+7. **Share the drop URL** on social channels
+8. **Monitor Umami** — check for traffic spike from the announcement
+
+---
+
+## Deploying to Production
 
 ```bash
-# 1. Check for updates
-pip list --outdated
-
-# 2. Update critical security packages
-pip install --upgrade <package1> <package2> ...
-
-# 3. Run full test suite
-.venv/bin/pytest tests/
-
-# 4. Update AGENTS.md with new versions
+# Step 1: Push your feature branch and open a PR on GitHub
+# Step 2: Wait for the Oxygen preview deployment (~3 minutes)
+# Step 3: Open the preview URL and verify everything works
+# Step 4: Merge the PR to main
+# Step 5: GitHub Actions auto-deploys to production (~3 minutes)
+# Step 6: Visit the live URL and verify
 ```
 
-### Annual Documentation Audit
+---
 
-Once per year, validate against pocket-auto-3 patterns:
+## Updating Announcement Bar / Site Settings
 
-1. Check if docs still follow three-pillar structure (Concepts/Data/System)
-2. Verify AGENTS.md has Removed Features section
-3. Confirm docs/research/ captures historical decisions
-4. Review Phase 4 operational readiness checklist
-5. Update AGENTS.md with audit results
+No code changes needed:
+
+1. Go to Sanity Studio → Documents → Settings (singleton)
+2. Edit the announcement bar: toggle `enabled`, update text, set link
+3. Or update footer navigation, social links, etc.
+4. Click Publish
+5. Changes appear on the live site immediately
 
 ---
 
-## How to Report Changes in AGENTS.md
+## Weekly Operational Checks
 
-Whenever you complete an operational task that required docs updates:
-
-1. Edit AGENTS.md "Change Log" section at bottom
-2. Add entry in format:
-   ```
-   - 2025-05-22 14:30 UTC: [Description of change]. Reason: [why]. Impact: [what changed]. (Your Name)
-   ```
-3. Update "Last Updated" footer
-4. Example:
-   ```
-   - 2025-05-22: Increased daily rate limit from 1000 to 5000 RPS. 
-     Reason: Performance testing showed no impact. 
-     Impact: Faster data pipeline by ~40%. (Alice)
-   ```
+- [ ] Review Umami dashboard for the past week: sessions, top pages, referral sources
+- [ ] Check Google Search Console for indexing errors or manual actions
+- [ ] Check Printful dashboard → Orders → filter by status → verify no orders are stuck
+- [ ] Check for Shopify app update notifications (especially Printful)
+- [ ] Review GitHub issues and PRs
 
 ---
 
-## Quick Reference: Core Commands
+## Rotating API Tokens
 
-| Task | Command | Notes |
-|------|---------|-------|
-| Start services | `./scripts/start_services.sh` | Verify with health_check.sh after |
-| Stop services | `./scripts/stop_services.sh` | Graceful shutdown, ~30s |
-| View logs | `tail -f logs/production.log` | Real-time, Ctrl+C to exit |
-| Run pipeline | `.venv/bin/python -m src.pipeline.daily_run` | Single run, no arguments |
-| Check health | `./scripts/health_check.sh` | Returns 0 (all good) or 1 (problem) |
-| Backup config | `tar -czf backups/config_$(date +%Y-%m-%d).tar.gz *.json` | Include all .json files |
-| View AGENTS.md | `less AGENTS.md` or `cat AGENTS.md` | Single source of truth |
+When you need to rotate a Shopify or Sanity token:
+
+1. **Generate new token** — Shopify: Apps → Develop apps → Kumachi Prints Storefront → regenerate; Sanity: manage.sanity.io → API → Tokens → add
+2. **Update in Oxygen** — Shopify admin → Hydrogen → prints-shop → Production → Environment Variables → edit the variable → Save
+3. **Confirm redeployment** when prompted
+4. **Verify the site works** at the production URL
+5. **Revoke the old token** in Shopify/Sanity admin
 
 ---
 
-## Last Updated
+## Domain Migration Procedure
 
-**2025-05-22** by Universal Scaffold Template
+### Phase 1: Prints subdomain on kumachigallery.com
 
-When you generate this document for a real project, update the date and author.
+```bash
+# Registrar DNS settings:
+# Type: CNAME
+# Name: prints
+# Value: shops.myshopify.com
+# TTL: 3600
 
-See AGENTS.md for full change history.
+# Shopify admin:
+# Settings → Domains → Add existing domain → prints.kumachigallery.com
+```
+
+### Phase 4: kumachiprints.com (when domain renews)
+
+```bash
+# Step 1: Add domain to Shopify
+# Settings → Domains → Add existing domain → kumachiprints.com
+
+# Step 2: Registrar DNS:
+# A record: @ → 23.227.38.65
+# CNAME: www → shops.myshopify.com
+
+# Step 3: Wait 15min–24hr for DNS to propagate
+
+# Step 4: Set as primary in Oxygen
+# Hydrogen → prints-shop → Production → Domains → set kumachiprints.com as primary
+
+# Step 5: Set 301 redirect from old subdomain
+# Settings → Domains → prints.kumachigallery.com → redirect to kumachiprints.com
+```
+
+---
+
+## Common Issues and Fixes
+
+| Problem | Likely Cause | Fix It |
+|---------|-------------|--------|
+| Products not showing on the site | Product is not published to the Online Store channel | Shopify → Products → check "Active" and "Online Store" are both on |
+| Products missing after Printful sync | Sync is in progress or failed | Printful → Stores → sync status → Retry sync |
+| Sanity content not updating on live site | Oxygen cache is stale | Shopify → Hydrogen → prints-shop → ... → Redeploy |
+| Sanity Studio can't load | Sanity read token is invalid | Check SANITY_API_READ_TOKEN in Oxygen env → update → redeploy |
+| Cart empties when you refresh the page | Session secret was changed | SESSION_SECRET rotation invalidates sessions — only rotate this on purpose |
+| Checkout doesn't work | Payment gateway not set up | Shopify → Settings → Payments → set up Shopify Payments or Stripe |
+| The store shows a password page | Store is in password protection mode | Shopify → Settings → Online Store → uncheck "Password protect" |
+| A Printful order is on hold | The art file may be below minimum quality | Printful → Orders → check for quality warnings |
+| `npm run dev` fails on startup | Missing environment variables | Check `.env` has all the required keys filled in |
+| Build fails with TypeScript errors | Code has type issues | Run `npm run typecheck` and fix the errors one by one |
+
+---
+
+## Quick Reference
+
+| Task | Command |
+|------|---------|
+| Start dev server | `npm run dev` |
+| Build for production | `npm run build` |
+| Preview production build locally | `npm run preview` |
+| TypeScript type check | `npm run typecheck` |
+| Deploy Sanity Studio | `cd studio && npx sanity deploy` |
+| Link Shopify store (first time) | `npx shopify hydrogen link` |
+| Roll back Oxygen deployment | Shopify admin → Hydrogen → prints-shop → Production → View deployments → Make last good deployment current |
+
+*Last updated: 2026-06*

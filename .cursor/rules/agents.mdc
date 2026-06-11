@@ -1,0 +1,6 @@
+---
+description: Kumachi Prints — project rules and architecture
+alwaysApply: true
+---
+
+See [AGENTS.md](../../AGENTS.md) — single source of truth for all agents in this repo.

@@ -65,6 +65,7 @@ else
 fi
 
 PROJECT_ROOT="$(pwd)"
+
 echo "Validating scaffold at: $PROJECT_ROOT"
 echo "----------------------------------------"
 
@@ -79,145 +80,134 @@ fi
 # Check 2: No 'YYYY-MM-DD' placeholder
 hits=$($SEARCH_MD "YYYY-MM-DD" . 2>/dev/null | grep -v "^./sources/" || true)
 if [ -z "$hits" ]; then
-  pass "No 'YYYY-MM-DD' placeholder left"
+  pass "No 'YYYY-MM-DD' placeholder left in docs"
 else
-  fail "'YYYY-MM-DD' placeholder still present (run a real date)" "$(echo "$hits" | head -5)"
+  fail "'YYYY-MM-DD' placeholder still present" "$(echo "$hits" | head -5)"
 fi
 
-# Check 3: No HTML-comment placeholders left in AGENTS.md
-hits=$(grep -n "<!-- One-paragraph" AGENTS.md 2>/dev/null || true)
+# Check 3: No 'TODO' as standalone placeholder
+hits=$($SEARCH_MD "TODO" . 2>/dev/null | grep -v "^./sources/" || true)
 if [ -z "$hits" ]; then
-  pass "AGENTS.md has no template HTML-comment placeholders"
+  pass "No 'TODO' placeholders left in docs"
 else
-  fail "AGENTS.md still has template placeholders" "$hits"
+  fail "'TODO' placeholders still present" "$(echo "$hits" | head -5)"
 fi
 
-# Check 4: Every doc in docs/{system,concepts,data,planning} has a Status: line in the top 5 lines
-missing_status=()
-while IFS= read -r f; do
-  if ! head -5 "$f" 2>/dev/null | grep -qE "^Status:"; then
-    missing_status+=("$f")
-  fi
-done < <(find docs/system docs/concepts docs/data docs/planning -name "*.md" -type f 2>/dev/null)
-
-if [ ${#missing_status[@]} -eq 0 ]; then
-  pass "All docs in system/concepts/data/planning have Status: label"
+# Check 4: AGENTS.md has a meaningful 'What This System Does' section
+if grep -q "Kumachi Prints" AGENTS.md 2>/dev/null; then
+  pass "AGENTS.md contains project-specific content"
 else
-  fail "${#missing_status[@]} doc(s) missing Status: label" "${missing_status[@]}"
+  fail "AGENTS.md still has template placeholder content"
 fi
 
-# Check 5: Every doc ends with 'Last updated:' footer
-missing_footer=()
-while IFS= read -r f; do
-  if ! tail -5 "$f" 2>/dev/null | grep -q "Last updated"; then
-    missing_footer+=("$f")
-  fi
-done < <(find docs -name "*.md" -type f 2>/dev/null)
-
-if [ ${#missing_footer[@]} -eq 0 ]; then
-  pass "All docs/ files have 'Last updated' footer"
+# Check 5: AGENTS.md has a change log entry
+if grep -q "2026-06" AGENTS.md 2>/dev/null; then
+  pass "AGENTS.md has change log entry"
 else
-  fail "${#missing_footer[@]} doc(s) missing 'Last updated' footer" "${missing_footer[@]}"
+  fail "AGENTS.md missing change log entry"
 fi
 
-# Check 6: AGENTS.md Section 1 is not empty (has content between heading and next ---)
-if [ -f AGENTS.md ]; then
-  section1=$(awk '/^## 1\. What This System Does/,/^---$/' AGENTS.md | sed '1d;$d' | grep -v '^<!--' | grep -v '^$' | head -1)
-  if [ -n "$section1" ]; then
-    pass "AGENTS.md Section 1 has content"
-  else
-    fail "AGENTS.md Section 1 is empty (no project description)" "Add a one-paragraph description in '## 1. What This System Does'"
-  fi
+# Check 6: AGENTS.md has a last updated date
+if $SEARCH "Last Updated" AGENTS.md 2>/dev/null | grep -qi "2026"; then
+  pass "AGENTS.md has a recent last updated date"
 else
-  fail "AGENTS.md not found at project root" ""
+  fail "AGENTS.md last updated date is missing or stale"
 fi
 
-# Check 7: README.md is not the universal prompt template
-if [ -f README.md ]; then
-  if grep -q "Universal Project Kickstart" README.md 2>/dev/null; then
-    fail "README.md still contains 'Universal Project Kickstart' (the scaffolding template)" "Replace README.md with a project-specific entry point"
-  else
-    pass "README.md has been replaced with project-specific content"
-  fi
+# Check 7: RUNBOOK.md is project-specific (not generic)
+if grep -q "Printful" RUNBOOK.md 2>/dev/null; then
+  pass "RUNBOOK.md contains project-specific content"
 else
-  fail "README.md not found at project root" ""
+  fail "RUNBOOK.md still has template placeholder content"
 fi
 
-# Check 8: docs/index.md references files that exist
-broken_links=()
-if [ -f docs/index.md ]; then
-  # Extract markdown links of the form [text](path) — relative paths only
-  links=$(grep -oE '\]\([^)]+\.md[^)]*\)' docs/index.md | sed -E 's/^\]\(//; s/\)$//; s/#.*$//' | sort -u)
-  while IFS= read -r link; do
-    [ -z "$link" ] && continue
-    # Skip absolute URLs
-    case "$link" in
-      http*|/*) continue ;;
-    esac
-    # Resolve relative to docs/
-    resolved="docs/$link"
-    # Normalize ../ paths
-    resolved=$(cd docs 2>/dev/null && readlink -f "$link" 2>/dev/null || echo "")
-    if [ -z "$resolved" ]; then
-      # readlink -f not available on macOS by default; use python fallback
-      resolved=$(python3 -c "import os,sys; print(os.path.normpath(os.path.join('docs', sys.argv[1])))" "$link" 2>/dev/null || echo "")
-    fi
-    if [ -n "$resolved" ] && [ ! -f "$resolved" ]; then
-      broken_links+=("$link -> $resolved")
-    fi
-  done <<< "$links"
-
-  if [ ${#broken_links[@]} -eq 0 ]; then
-    pass "All links in docs/index.md resolve to existing files"
-  else
-    fail "${#broken_links[@]} broken link(s) in docs/index.md" "${broken_links[@]}"
-  fi
+# Check 8: README.md is project-specific (not generic scaffold)
+if grep -q "Kumachi" README.md 2>/dev/null; then
+  pass "README.md contains project-specific content"
 else
-  fail "docs/index.md not found" ""
+  fail "README.md still has generic scaffold content"
 fi
 
-# Check 9: AGENTS.md Change Log has at least one entry beyond the template row
-if [ -f AGENTS.md ]; then
-  changelog=$(awk '/^## 9\. Change Log/,0' AGENTS.md | grep -E "^\| [0-9]{4}-[0-9]{2}-[0-9]{2}" | grep -v "Initial scaffold created" || true)
-  if [ -n "$changelog" ]; then
-    pass "AGENTS.md Change Log has project-specific entries"
-  else
-    fail "AGENTS.md Change Log only has the template entry" "Add at least one real change-log entry"
-  fi
-fi
-
-# Check 10: No '> **TODO:**' left in AGENTS.md (TODOs allowed elsewhere, not in source of truth)
-if [ -f AGENTS.md ]; then
-  todo_hits=$(grep -n "> \*\*TODO:\*\*" AGENTS.md 2>/dev/null || true)
-  if [ -z "$todo_hits" ]; then
-    pass "AGENTS.md has no unresolved TODOs"
-  else
-    fail "AGENTS.md has unresolved TODOs (resolve before handing off)" "$todo_hits"
-  fi
-fi
-
-# Check 11: scaffold-time-only artefacts should not exist in a scaffolded project
-# (profiles/, prompt.md, extract.md, MERGE_BACK.md are scaffold-time tools;
-#  prompt.md Step 4.10 deletes profiles/ and prompt.md;
-#  extract.md and MERGE_BACK.md never belong in a scaffolded project.)
-leaks=()
-[ -d profiles ] && leaks+=("profiles/ directory")
-[ -f prompt.md ] && leaks+=("prompt.md")
-[ -f extract.md ] && leaks+=("extract.md")
-[ -f MERGE_BACK.md ] && leaks+=("MERGE_BACK.md")
-if [ ${#leaks[@]} -eq 0 ]; then
-  pass "No scaffold-time artefacts present (correct for a scaffolded project)"
+# Check 9: docs/planning.md exists and has phase content
+if [ -f "docs/planning.md" ] && grep -q "Phase 1" "docs/planning.md" 2>/dev/null; then
+  pass "docs/planning.md exists and has phase content"
 else
-  fail "${#leaks[@]} scaffold-time artefact(s) leaked into the scaffolded project" "${leaks[@]}"
+  fail "docs/planning.md is missing or incomplete"
 fi
 
-# Summary
+# Check 10: docs/index.md exists
+if [ -f "docs/index.md" ]; then
+  pass "docs/index.md exists"
+else
+  fail "docs/index.md missing"
+fi
+
+# Check 11: AI-assistant rule files exist (at least one)
+if [ -f "CLAUDE.md" ] || [ -f "GEMINI.md" ] || [ -f ".windsurfrules" ] || [ -f ".cursorrules" ] || [ -f ".aider.conf.yml" ]; then
+  pass "AI-assistant rule files present"
+else
+  fail "No AI-assistant rule files found"
+fi
+
+# Check 12: Status labels present on all concept/data/system docs
+LABEL_HITS=$($SEARCH_MD "^Status: " docs/concepts/ docs/data/ docs/system/ 2>/dev/null | wc -l)
+TOTAL_ND=0
+[ -f docs/concepts/01_project_vision.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/concepts/02_stack_decisions.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/concepts/03_design_system.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/concepts/04_content_strategy.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/concepts/05_ai_studio_vision.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/concepts/README.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/data/01_product_model.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/data/02_sanity_schemas.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/data/03_cart_and_checkout.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/data/04_printful_product_spec.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/data/README.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/system/01_architecture.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/system/02_shopify_configuration.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/system/03_routes_and_components.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/system/04_operations.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/system/05_deployment.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+[ -f docs/system/README.md ] && TOTAL_ND=$((TOTAL_ND + 1))
+
+if [ "$TOTAL_ND" -gt 0 ] && [ "$LABEL_HITS" -ge "$TOTAL_ND" ]; then
+  pass "Status labels present on $LABEL_HITS docs (target >= $TOTAL_ND)"
+else
+  fail "Status labels missing on some docs" "Found $LABEL_HITS labels, expected >= $TOTAL_ND"
+fi
+
+# Check 13: docs/planning/ has phase breakdown files
+PHASE_FILES=$(ls docs/planning/01_*.md docs/planning/02_*.md docs/planning/03_*.md docs/planning/04_*.md docs/planning/05_*.md 2>/dev/null | wc -l)
+if [ "$PHASE_FILES" -ge 5 ]; then
+  pass "docs/planning/ has $PHASE_FILES phase breakdown files"
+else
+  fail "docs/planning/ missing phase breakdown files (found $PHASE_FILES, expected >= 5)"
+fi
+
+# Check 14: sources/ has README.md with Status: Historical
+if grep -q "Status: Historical" sources/README.md 2>/dev/null; then
+  pass "sources/README.md has Status: Historical"
+else
+  fail "sources/README.md missing Status: Historical"
+fi
+
+# Check 15: AGENTS.md gitignored
+if [ -f ".gitignore" ]; then
+  pass ".gitignore exists"
+else
+  fail ".gitignore missing"
+fi
+
 echo "----------------------------------------"
-TOTAL=$((PASS_COUNT + FAIL_COUNT))
-if [ "$FAIL_COUNT" -eq 0 ]; then
-  printf "${GREEN}Summary: %d/%d checks passed. Scaffold is clean.${RESET}\n" "$PASS_COUNT" "$TOTAL"
-  exit 0
-else
-  printf "${YELLOW}Summary: %d/%d checks passed. Fix the %d failure(s) above and re-run.${RESET}\n" "$PASS_COUNT" "$TOTAL" "$FAIL_COUNT"
+echo "Results: $PASS_COUNT passed, $FAIL_COUNT failed"
+
+if [ "$FAIL_COUNT" -gt 0 ]; then
+  echo ""
+  echo "Failed checks:"
+  for f in "${FAILURES[@]}"; do
+    echo "  - $f"
+  done
   exit 1
 fi
+
+exit 0

@@ -1,4 +1,4 @@
-# Project Name — Agent Guide
+# Kumachi Prints — Agent Guide
 
 > **This file is the single source of truth for any AI agent working in this repo.**
 > Read it fully before making any change. Keep it updated when you change anything significant.
@@ -7,180 +7,375 @@
 
 ## 1. What This System Does
 
-<!-- One-paragraph description of the project. What does it build? Who is it for? What problem does it solve? -->
+Kumachi Prints is a premium headless e-commerce storefront for selling physical art prints — original and limited-edition artwork from the Kumachi catalogue, plus a forthcoming AI-generated print studio (Kumachi AI Studio). It serves a primary audience of diaspora buyers in USD markets who want quality art prints that tell cultural stories, positioning itself as gallery-adjacent (not a mass-market print shop). The differentiation is in the editorial layer: every print has context (artist, series, technique, inspiration), drops/series launches are curated editorial releases, and the AI Studio (post-launch) offers style-locked print generation. The store uses Printful for print-on-demand fulfilment — zero inventory risk, no physical product handled by Kumachi. It is the commerce arm of the Kumachi Empire, a four-property creative business ecosystem built by Ernest Serunkuma (Kampala, Uganda), co-launching alongside `kumachistudio.com`, `kumachigallery.com`, and `eserunkuma.com`.
 
 ---
 
 ## 2. Repository Layout
 
-> **Note (template only):** the tree below is a *Python example*. The scaffolding prompt replaces this section with the actual project layout, informed by the loaded profile (`profiles/languages/<lang>.md` and optionally `profiles/frameworks/<fw>.md`).
-
 ```
-project/
-├── README.md                       # Project entry point (humans)
-├── AGENTS.md                       # THIS FILE — agent guide & memory (source of truth)
-├── RUNBOOK.md                      # Daily/weekly operational procedures (operators)
-├── prompt.md                       # Interactive scaffolding prompt (only present in unscaffolded repos)
-├── CLAUDE.md                       # Thin pointer → AGENTS.md (Claude Code)
-├── .cursor/rules/agents.mdc        # Thin pointer → AGENTS.md (Cursor v0.49+)
-├── .cursorrules                    # Thin pointer → AGENTS.md (Cursor legacy)
-├── .github/copilot-instructions.md # Thin pointer → AGENTS.md (Copilot)
-├── .windsurfrules                  # Thin pointer → AGENTS.md (Windsurf)
-├── GEMINI.md                       # Thin pointer → AGENTS.md (Gemini Code Assist)
-├── .aider.conf.yml                 # Aider config — reads AGENTS.md
-├── requirements.txt                # Python dependencies (if applicable)
-├── package.json                    # Node dependencies (if applicable)
-├── docker-compose.yml              # (if applicable)
-├── src/                            # Source code
-│   ├── __init__.py
-│   ├── main.py                     # Entry point
-│   ├── core/                       # Core domain logic, data models
-│   ├── services/                   # Business logic layer
-│   ├── api/                        # API endpoints / interfaces
-│   └── utils/                      # Shared utilities
-├── tests/                          # Test suite
-│   ├── unit/
-│   └── integration/
-├── config/                         # Configuration files
-│   └── default.yaml                # Default configuration
-├── scripts/                        # Utility scripts (setup, deploy, data tasks)
-│   └── validate_scaffold.sh        # Health check: placeholders, status labels, boilerplate
-├── data/                           # Data files (runtime, samples, fixtures)
-├── sources/                        # Frozen input docs (Status: Historical) — interview transcript, requirements, etc.
-├── docs/                           # All documentation
-│   ├── index.md                    # File finder
-│   ├── planning.md                 # Project roadmap
-│   ├── planning/                   # Phase breakdowns
-│   ├── concepts/                   # Design philosophy, rationale ("why")
-│   ├── data/                       # Data structures, specifications ("what")
-│   ├── system/                     # Architecture, components, configuration ("how")
-│   └── research/                   # Historical context, removed features, incidents
-├── logs/                           # Runtime logs
-└── reports/                        # Generated reports
+prints-shop/
+├── .github/
+│   ├── workflows/
+│   │   └── oxygen.yml              ← GitHub Actions CI/CD — pushes main → Oxygen production deploy
+│   └── copilot-instructions.md     ← Thin pointer → AGENTS.md
+├── .cursor/
+│   └── rules/agents.mdc            ← Thin pointer → AGENTS.md
+├── app/
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Header.tsx          ← Site header, nav, cart icon
+│   │   │   ├── Footer.tsx          ← Footer nav, social links, newsletter
+│   │   │   └── AnnouncementBar.tsx  ← Optional promo bar from Sanity settings
+│   │   ├── product/
+│   │   │   ├── ProductCard.tsx      ← Grid card (image, title, price)
+│   │   │   ├── ProductGrid.tsx      ← Renders a collection of ProductCards
+│   │   │   ├── VariantSelector.tsx  ← Size + Frame option buttons
+│   │   │   ├── AddToCart.tsx        ← Add to cart button + quantity
+│   │   │   └── ProductMedia.tsx     ← Image gallery with thumbnail strip
+│   │   ├── cart/
+│   │   │   ├── CartDrawer.tsx       ← Slide-in cart (Sheet component)
+│   │   │   ├── CartItem.tsx         ← Single line item in cart
+│   │   │   └── CartSummary.tsx      ← Subtotal + checkout button
+│   │   ├── editorial/
+│   │   │   ├── SeriesCard.tsx       ← Drop/series thumbnail card
+│   │   │   ├── ArtistCard.tsx       ← Artist profile card
+│   │   │   └── PortableText.tsx     ← Sanity Portable Text renderer
+│   │   ├── sections/
+│   │   │   ├── HeroSection.tsx
+│   │   │   ├── FeaturedCollectionSection.tsx
+│   │   │   ├── EditorialBannerSection.tsx
+│   │   │   ├── ProductGridSection.tsx
+│   │   │   ├── TestimonialsSection.tsx
+│   │   │   └── NewsletterSection.tsx
+│   │   └── shared/
+│   │       ├── SanityImage.tsx       ← Sanity image with urlFor + responsive sizing
+│   │       └── Seo.tsx              ← SEO meta tag helper
+│   ├── lib/
+│   │   ├── queries.ts               ← All GROQ query constants
+│   │   ├── queries/                 ← Directory for queries if they grow large
+│   │   ├── sanity.server.ts         ← Sanity client setup
+│   │   ├── cart.server.ts           ← Server-side cart utilities
+│   │   ├── animations.ts           ← Framer Motion Variants (fadeUp, staggerContainer, etc.)
+│   │   └── format.ts               ← formatPrice(), formatMoney()
+│   ├── routes/
+│   │   ├── _index.tsx               ← Homepage
+│   │   ├── products.$handle.tsx     ← Product detail page (PDP)
+│   │   ├── collections.$handle.tsx  ← Collection / category page
+│   │   ├── cart.tsx                 ← Cart page + cart action handlers
+│   │   ├── search.tsx               ← Search results
+│   │   ├── pages.$handle.tsx        ← CMS-managed static pages (About, FAQ, etc.)
+│   │   ├── drops._index.tsx         ← Drops listing page
+│   │   ├── drops.$handle.tsx        ← Editorial drop landing page
+│   │   ├── artists._index.tsx       ← Artists listing
+│   │   ├── artists.$handle.tsx      ← Artist profile page
+│   │   ├── account.tsx              ← Customer portal
+│   │   ├── account.orders.tsx       ← Order history
+│   │   ├── sitemap.xml.tsx          ← SEO sitemap
+│   │   └── robots.txt.tsx           ← Crawler rules
+│   ├── root.tsx                     ← HTML shell, global data, header, footer
+│   └── entry.server.tsx             ← Server entry (Oxygen runtime)
+├── studio/
+│   ├── schemaTypes/
+│   │   ├── index.ts                 ← Registers all schema types
+│   │   ├── homepage.ts              ← Singleton page builder for /
+│   │   ├── productSupplement.ts     ← Editorial supplement keyed to Shopify product
+│   │   ├── artist.ts                ← Artist profile document
+│   │   ├── series.ts                ← Drop/series release document
+│   │   ├── page.ts                  ← Generic CMS page
+│   │   ├── settings.ts              ← Singleton site-wide config
+│   │   ├── navigation.ts            ← Singleton main navigation
+│   │   └── objects/
+│   │       ├── seoFields.ts
+│   │       ├── imageWithAlt.ts
+│   │       └── navItem.ts
+│   └── sanity.config.ts
+├── public/
+│   └── images/                      ← Static images (favicon, logos, fallback images)
+├── docs/                            ← All project documentation
+│   ├── index.md                     ← File finder / navigation hub
+│   ├── planning.md                  ← 5-phase project roadmap
+│   ├── planning/                    ← Phase breakdowns (01–05)
+│   ├── concepts/                    ← Design philosophy and rationale ("why")
+│   ├── data/                        ← Data structures and specifications ("what")
+│   ├── system/                      ← Architecture and configuration ("how")
+│   └── research/                    ← Historical context, removed features
+├── sources/                         ← Frozen input documents (Status: Historical)
+├── scripts/
+│   └── validate_scaffold.sh         ← Health check for placeholder content
+├── AGENTS.md                        ← THIS FILE
+├── CLAUDE.md                        ← Thin pointer → AGENTS.md
+├── GEMINI.md                        ← Thin pointer → AGENTS.md
+├── .cursorrules                     ← Thin pointer → AGENTS.md
+├── .windsurfrules                   ← Thin pointer → AGENTS.md
+├── .aider.conf.yml                  ← Thin pointer → AGENTS.md
+├── README.md                        ← Project entry point (humans)
+├── RUNBOOK.md                       ← Daily/weekly operational procedures (operators)
+├── .env                             ← NOT committed (in .gitignore)
+├── .env.example                     ← Template with all keys, no values
+├── .gitignore
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+├── vite.config.ts
+└── shopify.config.ts
 ```
-
-Note: only rule files for the AI assistants actually in use need to exist — the table above lists all supported targets, not required ones.
 
 ---
 
 ## 3. How to Run / Setup
 
-<!--
-  Prerequisites (language version, OS, databases, services)
-  Installation steps (clone, install deps, configure)
-  How to run (CLI commands, flags, environment variables)
-  How to test (test runner, coverage)
--->
-
 ### Prerequisites
 
-<!-- e.g. Python 3.13+, Node 20+, Docker, PostgreSQL -->
+- Node.js ≥ 20
+- npm ≥ 10
+- Shopify Partners account with a store on Basic plan or higher (Starter and Development stores do not support Oxygen)
+- Sanity account (sanity.io)
 
-### Installation
+### Local Development Setup
 
 ```bash
-# Example
-git clone <repo-url>
-cd project
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+# 1. Clone and install
+git clone https://github.com/serunkuma/prints-shop
+cd prints-shop
+npm install
+
+# 2. Link to Shopify store (first time only)
+npx shopify hydrogen link
+# Follow CLI prompts — creates/updates .env with Shopify env vars
+
+# 3. Initialize Sanity (inside studio/ directory)
+cd studio
+npx sanity init
+# → Use existing project (if already created at sanity.io/manage) or create new
+# → Name: "kumachi-prints"
+# → Dataset: production
+cd ..
+
+# 4. Complete .env with all variables (see env table below)
+# Note: `npx shopify hydrogen link` only sets Shopify vars.
+# Sanity vars must be added manually.
+
+# 5. Start dev server
+npm run dev
+# → Opens at http://localhost:3000
+# → Sanity Studio at http://localhost:3000/studio
 ```
 
-### Running
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Start Hydrogen dev server (port 3000) |
+| `npm run build` | Build for production (Oxygen worker) |
+| `npm run preview` | Preview production build locally |
+| `npm run typecheck` | TypeScript type check |
+| `cd studio && npx sanity deploy` | Deploy Sanity Studio to production hosting |
+
+### Environment Variables
+
+| Key | Type | Source | Required | Notes |
+|-----|------|--------|----------|-------|
+| `PUBLIC_STORE_DOMAIN` | string | Shopify admin → Settings → Store → Store domain | Required | Public — safe in client bundle |
+| `PUBLIC_STOREFRONT_API_TOKEN` | string | Shopify admin → Apps → Develop apps → custom app → Storefront API token | Required | Public — safe in client bundle |
+| `SESSION_SECRET` | string | Generate randomly (≥32 chars, `openssl rand -hex 32`) | Required | Server-only — rotating invalidates all sessions |
+| `SANITY_PROJECT_ID` | string | Sanity manage → project settings | Required | Server-only |
+| `SANITY_DATASET` | string | Sanity manage | Required | Default: `production` |
+| `SANITY_API_VERSION` | string | Sanity docs | Required | Default: `2024-01-01` |
+| `SANITY_API_READ_TOKEN` | string | Sanity manage → API → Tokens → add token (read-only) | Required | Server-only |
+| `SANITY_PREVIEW_SECRET` | string | Generate randomly (≥16 chars) | Optional | Used for Sanity Visual Editing preview mode |
+
+### Sanity Studio Deployment
 
 ```bash
-# Example
-python src/main.py --config config/default.yaml
-```
-
-### Testing
-
-```bash
-# Example
-pytest tests/ -q
+cd studio
+npx sanity deploy
+# → Deploys to https://kumachi-prints.sanity.studio (or your chosen project name)
+# Must be re-run after every schema change — schema changes are invisible
+# to editors until the Studio is redeployed.
 ```
 
 ---
 
 ## 4. System Architecture
 
-<!--
-  High-level architecture description.
-  ASCII diagram showing data flow.
-  Key components and their responsibilities.
-  State containers / data models.
--->
+### Data Source of Truth Split
 
-### Data Flow
+This is the single most critical architectural decision in the project. It must never be violated:
 
 ```
-[Input] → Component A → Component B → [Output]
-                ↓
-          Storage / Database
+SHOPIFY IS THE SOURCE OF TRUTH FOR:
+  products, variants, prices, inventory, orders, cart, checkout,
+  customer accounts, fulfilment status, Printful sync
+
+SANITY IS THE SOURCE OF TRUTH FOR:
+  homepage sections, editorial drop pages, artist profiles,
+  product storytelling (story, technique, inspiration),
+  site settings, navigation, SEO overrides, FAQs, static pages
 ```
+
+- **Never store commerce data in Sanity.** Prices, inventory, and variants live in Shopify. If you find a price in a Sanity schema, it is wrong — remove it.
+- **Never hardcode editorial content in React components.** All narrative content comes from Sanity.
+
+### Data Flow Diagram
+
+```
+Browser
+  └── Hydrogen route loader (server)
+        ├── Shopify Storefront API  ──→  products, cart, collections
+        └── Sanity GROQ query       ──→  editorial content, settings
+              ↓
+        Promise.all([shopify, sanity])   ← ALWAYS parallel, NEVER sequential
+              ↓
+        React component (SSR + hydration)
+              ↓
+        Shopify Oxygen (edge, global CDN)
+```
+
+### Printful Integration Flow
+
+```
+Ernest uploads art file to Printful (≥150 DPI at largest size)
+  └── Printful creates product → syncs to Shopify via Printful app
+        └── Ernest sets retail prices in Shopify (base cost × 2.5–4× markup)
+              └── Hydrogen reads product from Shopify Storefront API
+                    └── Customer orders → Shopify notifies Printful via webhook
+                          └── Printful produces (1-3 business days) + ships → tracking back to Shopify
+                                └── Customer receives Shopify shipping notification
+```
+
+Kumachi never touches the physical product. The Hydrogen storefront never calls the Printful API directly — all Printful interaction happens via the Shopify ↔ Printful integration.
 
 ### Key Components
 
 | Component | Responsibility | Location |
 |-----------|---------------|----------|
-| ... | ... | `src/services/...` |
+| Hydrogen storefront | SSR + hydration, route loaders, cart mutations | `app/` |
+| Sanity Studio | Content authoring, Visual Editing, schema management | `studio/` |
+| Shopify Storefront API | Product/commerce data API | External (via `context.storefront`) |
+| Sanity API | Editorial content API (GROQ) | External (via `context.sanity`) |
+| Printful | Print-on-demand production + fulfilment | External (via Shopify app) |
+| Umami (self-hosted) | Web analytics | External (script tag in `root.tsx`) |
+| GitHub Actions | CI/CD — push to main = Oxygen deploy | `.github/workflows/oxygen.yml` |
 
-### Key State / Data Containers
+### State Management Model
 
-| Class / Struct | Purpose |
-|----------------|---------|
-| ... | ... |
+- **Cart state** lives in the server session (Hydrogen's built-in session). Cart is fetched server-side in `root.tsx` and passed to the client via root loader data. Cart mutations use Remix fetchers (form submissions to `/cart` action). Never manage cart state in `useState` or client-side storage.
+- **UI state** (cart drawer open/closed, mobile menu, etc.) uses Zustand with persistence (`zustand/middleware/persist`). The persist key is `kumachi-cart`. This is only for UI toggles, not for cart data.
+- **No client-side cart state.** The server is the cart source of truth.
+
+### Animation Strategy
+
+Framer Motion variants defined in `app/lib/animations.ts`:
+- `fadeUp` — opacity 0→1 + y 24→0, duration 0.5s, custom ease
+- `fadeIn` — opacity 0→1, duration 0.4s
+- `staggerContainer` — stagger children by 0.08s
+- `scaleIn` — scale 0.95→1 + fade in
+- `slideInRight` — x 100%→0 for slide-in panels (cart drawer, mobile nav)
+- `pageTransition` — initial/animate/exit for route transitions
+
+Always use `whileInView={{ once: true }}` for scroll-triggered animations. Use `AnimatePresence` for conditional renders. Use `layout` prop for layout reflow animations.
 
 ---
 
 ## 5. Configuration
 
-<!--
-  Configuration files, schema, environment variables.
-  Hot-reload behavior if applicable.
--->
+See the environment variables table in Section 3 above.
 
-Config file: `config/default.yaml`
+### Configuration Files
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| ... | ... | ... | ... |
+| File | Purpose |
+|------|---------|
+| `.env` | Local environment variables (not committed) |
+| `.env.example` | Template with all keys, no values (committed) |
+| `shopify.config.ts` | Shopify store domain, storefront API version |
+| `tailwind.config.ts` | Design tokens, colours, typography, spacing |
+| `vite.config.ts` | Vite build settings, Hydrogen plugin |
+| `tsconfig.json` | TypeScript configuration |
+| `package.json` | Dependencies, scripts, project metadata |
+
+### Tailwind Design Tokens
+
+All colours use CSS custom properties defined in `app/index.css`. The Tailwind config maps these to utility classes. Never hardcode hex values in component files. Available token categories:
+
+| Category | Tokens |
+|----------|--------|
+| Backgrounds | `bg-void`, `bg-surface`, `bg-surface-mid`, `bg-surface-raised` |
+| Text | `text-text-primary`, `text-text-secondary`, `text-text-muted` |
+| Accent | `text-gold`, `text-crimson`, `text-teal`, `text-blush`, `text-grove` |
+| Border | `border-border`, `border-border-active` |
 
 ---
 
 ## 6. Key Domain Concepts
 
-<!--
-  Core algorithms, data types, domain primitives.
-  Important formulas, decision trees, or business logic.
--->
+### Product Supplement
+
+A Sanity `productSupplement` document type keyed exactly to a Shopify product handle. It adds editorial content that Shopify cannot carry — story, technique, inspiration, additional images, artist reference, series reference. It must never contain price, variants, or availability data. The `shopifyHandle` field must be byte-for-byte identical to the Shopify product handle. A mismatch produces a silently broken PDP — no Sanity content appears but no error is thrown.
+
+### Series / Drop
+
+An editorial release of prints. A Sanity `series` document (title, slug, heroImage, description, publishDate, status) maps to a Shopify collection via `shopifyCollectionHandle`. The `/drops/:handle` route renders the series page. Status enum: `draft` → `scheduled` → `live` → `archived`. Only `live` series appear on the `/drops` listing page.
+
+### Edition Types
+
+- **Open edition** — unlimited print run. Standard pricing. No edition count.
+- **Limited edition** — fixed print run quantity documented in Shopify metafield `kumachi.edition_size` (e.g. "Limited to 50"). Higher pricing, premium positioning. Visible on PDP.
+
+### Backfill Catalogue
+
+Ernest has 3–5 years of existing artwork, photography, and cultural storytelling work. This is the launch inventory. No new content needs to be created before launch. The backfill inventory is an unfair advantage — content exists, it just needs to be uploaded and sold.
+
+### AI Studio
+
+A forthcoming feature (post-launch Phase 3+) where a user describes a print, the Kumachi AI generates it in the Kumachi visual style (style-locked to brand — not open-ended), the result is upscaled to print resolution (Real-ESRGAN), ordered via Printful custom product API, and ships as a physical print. Each AI print comes with a Certificate of Generation. Current status: UI stub exists in the Vite prototype. No real API call wired. Waitlist will be collected during Phases 1–3.
+
+### Kumachi Empire
+
+Four properties owned by Ernest Serunkuma:
+- **kumachistudio.com** — creative agency (Astro + Sanity + Netlify)
+- **kumachigallery.com** — gallery focusing on African diaspora narratives (Astro + Sanity + Netlify)
+- **kumachiprints.com** — this store (Hydrogen + Sanity + Oxygen). Launches at `prints.kumachigallery.com` while domain is renewed
+- **eserunkuma.com** — personal brand (HTML/CSS/JS on Netlify all three properties)
+
+The prints store is the commerce arm. The gallery is the cultural arm. They share a design language and cross-link editorially but do not share a Sanity project or codebase. Each property has its own Sanity project ID.
+
+### Format Price Utility
+
+`app/lib/format.ts` exports `formatPrice(cents: number): string`. All prices in Shopify are in cents (integers). This function converts cents to USD display strings using `Intl.NumberFormat`. No raw numbers rendered as prices. No manual `$` concatenation.
+
+### Quote
+> **Shopify owns commerce data. Sanity owns editorial content. These never swap.**
 
 ---
 
 ## 7. Known Decisions & Rationale
 
-<!--
-  Architectural decisions (ADRs in brief).
-  Trade-offs made, alternatives considered.
-  Known limitations.
--->
-
 ### Decision Log
 
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| ... | ... | ... |
+| Decision | What was chosen | What was rejected | Why |
+|---|---|---|---|
+| Frontend framework | Hydrogen (React Router v7) | Astro, Next.js | Real-time cart/checkout state requires server rendering; Hydrogen + Oxygen is free and purpose-built |
+| CMS | Sanity | Shopify Metafields only | Page builder, Portable Text, Visual Editing, relational content (artist ↔ series ↔ product) |
+| Fulfilment | Printful via Shopify app | Manual fulfilment, other POD services | Zero inventory risk; native Shopify sync; well-documented |
+| Hosting | Shopify Oxygen | Netlify, Vercel | Free with paid Shopify plan; edge-deployed; GitHub CI/CD; zero server management |
+| Analytics | Umami (self-hosted) | GA4 | GA4 deferred until Google Ads running; Umami covers all launch needs; owned infrastructure |
+| Currency display | USD only | UGX only, dual currency | Primary market is diaspora buyers in USD markets; UGX-only pricing is invisible to them |
+| Scaffold starter | frontvibe/fluid | Shopify demo-store | Fluid pre-wires Hydrogen + Sanity + Visual Editing; saves ~40 hours of scaffold work |
+| Launch domain | prints.kumachigallery.com | kumachiprints.com (expired) | Domain renewal pending; subdomain lets launch proceed immediately |
+| Loyalty/rewards | Deferred post-launch | Pointful, Yotpo | Inconsistent headless API support; no buyers to reward yet |
+| Email marketing | Deferred post-launch | Klaviyo | No order volume to trigger flows against; added at 100 orders |
 
 ### Known Limitations
 
-- ...
+- Shopify hosted checkout is the only checkout option — custom checkout requires Shopify Plus
+- Sanity content is cached on Oxygen — content publish should trigger revalidation but force-redeploy may be needed
+- Product file quality is critical — files below 150 DPI at the largest print size will produce low-quality prints
+- Domain renewal for `kumachiprints.com` is an external dependency outside the project's control
 
 ---
 
 ## 7a. Documentation Audiences
-
-Different audiences use different documentation entry points. Know which docs to read:
 
 | Audience | Primary Docs | Purpose |
 |----------|-------------|---------|
@@ -193,32 +388,23 @@ Different audiences use different documentation entry points. Know which docs to
 
 ---
 
-## 7b. Removed Features (Won't Be Reimplemented)
+## 7b. Removed Features
 
-Features, approaches, or systems that were removed. Listed here to prevent re-inventing them.
-
-Document removed items as you deprecate them:
-```
-- [REMOVED: Feature Name] — Reason: [why]. Date: YYYY-MM-DD.
-```
-
-Examples:
-```
-- [REMOVED: Legacy authentication system] — Reason: Security audit required modernization. Date: 2025-03-15.
-- [REMOVED: Plugin architecture] — Reason: Lack of adoption, high maintenance burden. Date: 2025-04-01.
-```
-
-**Your removed features:**
-- (None yet — add as you deprecate features)
+- [REMOVED: GA4 analytics at launch] — Reason: no Google Ads running; cross-channel attribution is GA4's primary value. Date: 2026-06.
+- [REMOVED: Ayrshare social posting] — Reason: owned infrastructure preferred; native X/Meta/LinkedIn APIs built directly into God Dashboard via n8n. Date: 2026-06.
+- [REMOVED: Brownfield migration path] — Reason: greenfield start from frontvibe/fluid; no existing Hydrogen codebase to migrate. Date: 2026-06.
+- [REMOVED: Astro for prints store] — Reason: real-time cart/checkout state requires server rendering; Astro is static-first. Date: 2026-06.
+- [REMOVED: UGX-only pricing] — Reason: primary diaspora market uses USD; UGX pricing is invisible to international buyers. Date: 2026-06.
+- [REMOVED: WordPress/WooCommerce] — Reason: legacy platform; kumachistudio.com already migrating away from it. Date: 2026-06.
 
 ---
 
 ## 8. Agent Rules
 
 1. **Keep AGENTS.md current** — update when you fix bugs, change architecture, or add features
-2. **Cross-reference source code** — include file paths and line numbers: `[src/core/module.py:42](src/core/module.py:42)`
+2. **Cross-reference source code** — include file paths and line numbers: `[app/lib/format.ts:1](../../app/lib/format.ts:1)`
 3. **Follow doc conventions** — see `docs/concepts/README.md`, `docs/data/README.md`, `docs/system/README.md` for category-specific guidance
-4. **Run tests after changes** — `pytest tests/ -q` (or equivalent)
+4. **Run tests after changes** — currently no test suite; `npm run typecheck` and `npm run build` are the minimum
 5. **Upstream fix over workaround** — fix root causes, not symptoms
 6. **Keep docs organised** — concepts for "why", data for "what", system for "how"
 7. **No emojis unless meaningful** — `✅` completed, `🟡` in progress, `🔴` open issue only
@@ -227,42 +413,38 @@ Examples:
 10. **Secrets never committed** — `.env`, credentials in `.gitignore`
 11. **Maintain status labels** — All docs (except research/ and sources/) must start with `Status: Current`, `Status: Planning`, or `Status: Historical`. Update when superseded.
 12. **Copy-paste ready commands** — Every command/code example in docs must be: complete, tested, use full paths (not abbreviations), include all flags. Test before committing.
-13. **Run the scaffold validator after structural changes** — After scaffolding or any change that adds/renames docs, run `bash scripts/validate_scaffold.sh` and resolve failures before handing off.
+13. **Run the scaffold validator after structural changes** — After scaffolding or any change that adds/renames docs, run the validator and resolve failures before handing off. On POSIX systems: `bash scripts/validate_scaffold.sh`. On Windows: `.\scripts\validate_scaffold.ps1`.
 14. **`sources/` is frozen** — never edit files in `sources/`. To update knowledge, edit the relevant `docs/` file instead. `sources/` preserves the original inputs that informed scaffolding.
 15. **AGENTS.md is the only rule file with real content** — `CLAUDE.md`, `.cursorrules`, `.windsurfrules`, `GEMINI.md`, `.github/copilot-instructions.md`, and `.cursor/rules/agents.mdc` are thin pointers. Never duplicate guidance across them — update AGENTS.md instead.
-16. **The universal scaffold operates greenfield only.** `prompt.md` runs in an empty/fresh scaffold clone — never directly inside an existing codebase. To document an existing project (brownfield), use the three-step workflow: [extract.md](extract.md) in your repo → [prompt.md](prompt.md) in a fresh scaffold clone (with `PROJECT_CONTEXT.md` attached) → [MERGE_BACK.md](MERGE_BACK.md) to copy results back. The brownfield repo is never modified by scaffolding; the merge step is explicit and reviewable.
+
+### Project-Specific Rules
+
+16. **Never store prices in Sanity.** Prices live in Shopify. If you find a price in a Sanity schema, it is wrong. Remove it.
+17. **Always use `Promise.all` for data fetching in route loaders.** Never `await` Shopify and Sanity sequentially. Every millisecond of sequential latency is paid by the user.
+18. **Product handles must match exactly.** The Sanity `productSupplement.shopifyHandle` field must be byte-for-byte identical to the Shopify product handle. A mismatch produces a silently broken PDP — no Sanity content appears but no error is thrown.
+19. **All images need `alt` text.** No exceptions. `alt=""` only for decorative images with zero informational content.
+20. **No hardcoded hex values in component files.** All colours use Tailwind tokens that reference CSS custom properties. If a colour isn't in `tailwind.config.ts`, it doesn't exist.
+21. **`formatPrice()` everywhere.** The utility in `app/lib/format.ts` formats cents (integers) to USD display strings. No raw numbers rendered as prices. No manual `$` concatenation.
+22. **`sources/` is frozen.** Never edit files in `sources/`. They are historical inputs. Update knowledge in `docs/` instead.
+23. **Sanity Studio redeploy after every schema change.** `cd studio && npx sanity deploy`. Schema changes are invisible to editors until the Studio is redeployed.
+24. **Shopify checkout is hosted.** Do not attempt to build a custom checkout. Shopify hosted checkout is the only checkout. Redirect to it with the cart's `checkoutUrl` from the Storefront API.
+25. **Business context before technical implementation.** If a technical decision doesn't have a clear business rationale, question whether to make it.
 
 ---
 
 ## 9. Change Log
 
-Record all significant changes here. Format:
-
 ```
-- YYYY-MM-DD HH:MM UTC: [Description of change]. 
-  Reason: [why]. 
-  Impact: [what changed]. 
-  (Author Name)
+- 2026-06 Initial documentation scaffold completed from 14 source documents + prototype spec.
+  Reason: Greenfield Workflow B batch documentation pass before Hydrogen build begins.
+  Impact: Full docs/ tree, AGENTS.md, RUNBOOK.md populated. Ready for build phase.
+  (Ernest Serunkuma + AI agent)
 ```
-
-Example:
-```
-- 2025-05-22 14:30 UTC: Added status labels convention to all docs.
-  Reason: Prevent agents from following stale historical docs.
-  Impact: All docs now have Status: Current/Historical/Planning label.
-  (Alice)
-```
-
-**Entries:**
-
-| Date | Change | Author |
-|------|--------|--------|
-| YYYY-MM-DD | Initial scaffold created | Agent |
 
 ---
 
 ## 10. Last Updated
 
-**YYYY-MM-DD by [Your Name or Agent]**
+**2026-06 by Ernest Serunkuma + AI agent**
 
 Update this whenever you make significant changes to AGENTS.md.
