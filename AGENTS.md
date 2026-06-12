@@ -11,6 +11,8 @@ Kumachi Prints is a premium headless e-commerce storefront for selling physical 
 
 The local WordPress/WooCommerce simulator lives outside this repo at `C:\wamp64\www\prints-local` and runs at `http://localhost/prints-local/`. Its `art-business` folder is the Python command center for catalog validation, Woo mirror sync, storefront export, Shopify/Printful planning, and Sanity sync. This repo owns the storefront implementation: the Vite bridge prototype in `sources/protoype` and the future production Hydrogen + Sanity build.
 
+The simulator also has WPGraphQL enabled for local testing at `http://localhost/prints-local/graphql`. Use it to inspect local WordPress content shape or prototype GraphQL query ideas only. The bridge prototype still reads commerce data from the Woo Store API plus the safe `art-business` export, and production Hydrogen must read commerce from Shopify and editorial content from Sanity.
+
 ---
 
 ## 2. Repository Layout
@@ -431,6 +433,7 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
 23. **Sanity Studio redeploy after every schema change.** `cd studio && npx sanity deploy`. Schema changes are invisible to editors until the Studio is redeployed.
 24. **Shopify checkout is hosted.** Do not attempt to build a custom checkout. Shopify hosted checkout is the only checkout. Redirect to it with the cart's `checkoutUrl` from the Storefront API.
 25. **Business context before technical implementation.** If a technical decision doesn't have a clear business rationale, question whether to make it.
+26. **WPGraphQL is local testing infrastructure.** The local endpoint is `http://localhost/prints-local/graphql`; debug/introspection may be enabled there. Do not use it as the production product API, do not expose secrets through it, and do not replace Shopify Storefront API or Sanity GROQ with it in Hydrogen.
 
 ---
 

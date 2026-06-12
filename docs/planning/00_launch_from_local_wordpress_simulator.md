@@ -102,6 +102,9 @@ Important context:
   Project ID: 2wo9hx90
   Organization ID: o9GdYjNoE
   Dataset: production
+- Sanity token roles:
+  - `SANITY_API_READ_TOKEN` is read-only and belongs to the Hydrogen/server runtime.
+  - The local `art-business` command center uses its own Sanity access-manager token for create/update operations.
 - Never put Woo consumer keys, Sanity tokens, Shopify tokens, or Printful tokens in source code or docs.
 
 Goal:
