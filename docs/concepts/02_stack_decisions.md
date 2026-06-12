@@ -37,6 +37,12 @@ Sanity: homepage sections, editorial drop pages, artist profiles, product storyt
 
 A Sanity "Product Supplement" document adds editorial content to a Shopify product by matching on the product handle. It never duplicates prices or variants.
 
+## Local Simulator Role
+
+WordPress/WooCommerce is not the production storefront, checkout, or long-term commerce backend. It is currently used as the local product simulator at `C:\wamp64\www\prints-local` so products, categories, tags, variants, images, and editorial export data can be reviewed before publishing to Shopify and Sanity.
+
+The `art-business` command center inside that local install owns simulator syncs and API operations. Hydrogen must treat Shopify and Sanity as the production sources once products are published.
+
 ## Why Printful
 
 Zero inventory risk. Printful integrates natively with Shopify as a product source — products created in Printful sync to Shopify automatically. Quality is sufficient for the intended price point (minimum 150 DPI requirement). The integration is well-documented and widely used.
@@ -48,7 +54,7 @@ The project starts greenfield from `frontvibe/fluid`, an open-source Hydrogen + 
 ## What Was Explicitly Rejected
 
 - **[REJECTED: Astro for prints store]** — Static-first framework; real-time cart and checkout require server rendering. Hydrogen is the correct tool.
-- **[REJECTED: WordPress/WooCommerce]** — Legacy platform; kumachistudio.com is already migrating away from it.
+- **[REJECTED: WordPress/WooCommerce as production storefront]** — Legacy platform for the public store, but retained as a local simulator and review surface before Shopify/Sanity publish.
 - **[REJECTED: GA4 at launch]** — GA4 earns its place only when Google Ads are running (cross-channel attribution). Umami covers all launch analytics needs.
 - **[REJECTED: Loyalty/rewards at launch]** — Inconsistent headless API support among providers; post-launch evaluation only.
 - **[REJECTED: Ayrshare social posting]** — Owned infrastructure preferred; native social API connections built into God Dashboard via n8n.

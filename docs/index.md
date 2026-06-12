@@ -44,6 +44,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | File | Description | Status |
 |------|-------------|--------|
 | [planning.md](planning.md) | 5-phase roadmap, dependency map, risks | Current |
+| [00_launch_from_local_wordpress_simulator.md](planning/00_launch_from_local_wordpress_simulator.md) | Local WordPress simulator to Shopify/Sanity production launch plan | Current |
 | [01_first_sale.md](planning/01_first_sale.md) | Phase 1 — bridge store, first order, Shopify setup | Current |
 | [02_hydrogen_sanity_production.md](planning/02_hydrogen_sanity_production.md) | Phase 2 — Oxygen deploy, Sanity schemas, core routes | Planning |
 | [03_editorial_layer.md](planning/03_editorial_layer.md) | Phase 3 — drops, artists, editorial pages, component library | Planning |

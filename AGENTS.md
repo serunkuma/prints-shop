@@ -9,6 +9,8 @@
 
 Kumachi Prints is a premium headless e-commerce storefront for selling physical art prints — original and limited-edition artwork from the Kumachi catalogue, plus a forthcoming AI-generated print studio (Kumachi AI Studio). It serves a primary audience of diaspora buyers in USD markets who want quality art prints that tell cultural stories, positioning itself as gallery-adjacent (not a mass-market print shop). The differentiation is in the editorial layer: every print has context (artist, series, technique, inspiration), drops/series launches are curated editorial releases, and the AI Studio (post-launch) offers style-locked print generation. The store uses Printful for print-on-demand fulfilment — zero inventory risk, no physical product handled by Kumachi. It is the commerce arm of the Kumachi Empire, a four-property creative business ecosystem built by Ernest Serunkuma (Kampala, Uganda), co-launching alongside `kumachistudio.com`, `kumachigallery.com`, and `eserunkuma.com`.
 
+The local WordPress/WooCommerce simulator lives outside this repo at `C:\wamp64\www\prints-local` and runs at `http://localhost/prints-local/`. Its `art-business` folder is the Python command center for catalog validation, Woo mirror sync, storefront export, Shopify/Printful planning, and Sanity sync. This repo owns the storefront implementation: the Vite bridge prototype in `sources/protoype` and the future production Hydrogen + Sanity build.
+
 ---
 
 ## 2. Repository Layout
@@ -395,7 +397,7 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
 - [REMOVED: Brownfield migration path] — Reason: greenfield start from frontvibe/fluid; no existing Hydrogen codebase to migrate. Date: 2026-06.
 - [REMOVED: Astro for prints store] — Reason: real-time cart/checkout state requires server rendering; Astro is static-first. Date: 2026-06.
 - [REMOVED: UGX-only pricing] — Reason: primary diaspora market uses USD; UGX pricing is invisible to international buyers. Date: 2026-06.
-- [REMOVED: WordPress/WooCommerce] — Reason: legacy platform; kumachistudio.com already migrating away from it. Date: 2026-06.
+- [REMOVED: WordPress/WooCommerce as production storefront] — Reason: legacy platform for the public store; retained as a local simulator in `C:\wamp64\www\prints-local`. Date: 2026-06.
 
 ---
 

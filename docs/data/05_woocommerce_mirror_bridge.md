@@ -2,7 +2,7 @@
 
 Status: Current
 
-The Vite prototype can use the local WooCommerce mirror as its real product source during the bridge phase.
+The Vite prototype can use the local WooCommerce mirror as its real product source during the bridge phase. The mirror lives inside the local WordPress simulator at `C:\wamp64\www\prints-local`; `art-business` is the command center that keeps this simulator and the exported storefront data current.
 
 ## Source URLs
 
@@ -42,3 +42,7 @@ The future Shopify/Hydrogen canonical route is:
 ```
 
 Keep both working while the prototype is the bridge storefront.
+
+## Production Handoff
+
+The bridge exists to prove product content before the Hydrogen build replaces it. Production Hydrogen should fetch commerce from Shopify and editorial supplements from Sanity by the same product handle. The local Woo mirror remains a simulator and planning environment, not a browser-facing production API.
