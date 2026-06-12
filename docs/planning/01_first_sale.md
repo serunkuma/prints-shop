@@ -1,33 +1,35 @@
-# Phase 1 — First Sale
+# Phase 1 — Production Launch Foundation
 
 Status: Current
 
 ## Objective
 
-Get the store live on `prints.kumachigallery.com` with at least 5 real products, a working checkout, and analytics running. Speed to first sale is the primary metric. A bridge deployment using the Vite prototype serves as the early storefront while the Hydrogen build proceeds in parallel.
+Build the final production foundation for Kumachi Prints before launch: Hydrogen + Sanity in `apps/hydrogen`, Shopify commerce, Printful fulfillment path, and the local Woo simulator feeding reviewed product context through `art-business`. The Vite prototype remains a local preview/reference, not a Netlify bridge store.
 
 ## Scope
 
-**In scope:** Shopify store setup, Printful product creation and sync, Vite bridge store deployment on Netlify, Hydrogen scaffold running locally, Checkout redirecting to Shopify hosted cart, Umami analytics tracking, first test order through to Printful fulfilment.
+**In scope:** Shopify store setup, Printful product creation and sync planning, Hydrogen production scaffold, Sanity schema setup, `.env.example`, product route proof by handle, cart/checkout foundation, Umami planning, local simulator health checks, and Vite prototype build preservation.
 
-**Out of scope:** Custom checkout, Sanity editoral content, drops/series pages, artist profiles, Oxygen deployment, customer accounts.
+**Out of scope:** Netlify bridge-store deployment, custom checkout, full editorial content completion, customer accounts, real AI generation, and live Shopify/Printful/Sanity writes before dry-run review.
 
 ## Task Checklist
 
 - [ ] Create Shopify store on Basic plan (not Starter — Starter does not support Oxygen)
 - [ ] Install Hydrogen sales channel in Shopify admin
 - [ ] Create Printful account and connect to Shopify
-- [ ] Upload minimum 5 print files to Printful (verify ≥150 DPI at largest size)
+- [ ] Use `art-business` mirror health checks before product publishing work
+- [ ] Confirm local Woo mirror reports 155 products and 837 variations
+- [ ] Export fresh storefront JSON from `art-business` for prototype/reference checks
+- [ ] Upload minimum 5 launch print files to Printful after DPI review
 - [ ] Configure sizes (A4/A3/A2/50×70cm/70×100cm) and frame variants in Printful
 - [ ] Sync Printful products to Shopify
 - [ ] Set retail prices in Shopify (base cost × 2.5×–4× markup)
 - [ ] Create Shopify collections (All Prints, New Arrivals)
 - [ ] Obtain Storefront API token from Shopify custom app
-- [ ] Create Sanity project with dataset `production`
-- [ ] Clone `frontvibe/fluid` scaffold and push to `serunkuma/prints-shop`
+- [x] Create Sanity project with dataset `production`
+- [ ] Create production Hydrogen app at `apps/hydrogen`
 - [ ] Configure `.env` with all Shopify and Sanity environment variables
 - [ ] Verify `npm run dev` runs without errors at localhost:3000
-- [ ] Deploy Vite prototype as bridge store on Netlify with checkout → Shopify hosted cart
 - [ ] Homepage route renders with hero section and featured products
 - [ ] Collection page renders Shopify products
 - [ ] Product detail page renders product with variant selector
@@ -61,7 +63,7 @@ Get the store live on `prints.kumachigallery.com` with at least 5 real products,
 
 ## Acceptance Criteria
 
-A real customer can browse products, add to cart, select size and frame, and complete checkout. Printful receives and processes the order. Umami records the session. The checkout completes without errors. The bridge store is live at the subdomain URL.
+A real customer can browse products, add to cart, select size and frame, and complete checkout on the production Hydrogen storefront. Printful receives and processes the order. Umami records the session. The checkout completes without errors. The Vite prototype still builds locally but is not the public launch store.
 
 ## Dependencies
 

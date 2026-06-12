@@ -45,12 +45,13 @@ Quick reference for all documentation files. Organized by category with one-line
 |------|-------------|--------|
 | [planning.md](planning.md) | 5-phase roadmap, dependency map, risks | Current |
 | [00_launch_from_local_wordpress_simulator.md](planning/00_launch_from_local_wordpress_simulator.md) | Local WordPress simulator to Shopify/Sanity production launch plan | Current |
-| [01_first_sale.md](planning/01_first_sale.md) | Phase 1 — bridge store, first order, Shopify setup | Current |
+| [01_first_sale.md](planning/01_first_sale.md) | Phase 1 — production launch foundation, Shopify setup, Hydrogen scaffold | Current |
 | [02_hydrogen_sanity_production.md](planning/02_hydrogen_sanity_production.md) | Phase 2 — Oxygen deploy, Sanity schemas, core routes | Planning |
 | [03_editorial_layer.md](planning/03_editorial_layer.md) | Phase 3 — drops, artists, editorial pages, component library | Planning |
 | [04_domain_migration.md](planning/04_domain_migration.md) | Phase 4 — kumachiprints.com migration, 301 redirect, SEO | Planning |
 | [05_growth_systems.md](planning/05_growth_systems.md) | Phase 5 — email marketing, reviews, God Dashboard integration | Planning |
 | [06_ai_studio.md](planning/06_ai_studio.md) | Future — AI Studio, style-locked generation, Certificate of Generation | Planning |
+| [07_production_build_handoff.md](planning/07_production_build_handoff.md) | Current handoff for the final Hydrogen + Sanity production build | Current |
 
 ## Research & Historical
 

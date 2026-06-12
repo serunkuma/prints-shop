@@ -4,29 +4,29 @@ Status: Current
 
 ## Project Vision
 
-Kumachi Prints exists to generate revenue from the Kumachi creative catalogue by selling physical art prints on demand. It is the commerce arm of the Kumachi Empire. Speed to first sale is the primary metric for Phase 1. Every subsequent phase builds on a store that is already selling. The long-term differentiator is the editorial layer — every print has context, and every drop is a curated release — plus the forthcoming AI Studio that enables style-locked AI print generation.
+Kumachi Prints exists to generate revenue from the Kumachi creative catalogue by selling physical art prints on demand. It is the commerce arm of the Kumachi Empire. The current launch path is final production build first: Hydrogen + Sanity on top of Shopify commerce and Printful fulfillment. The long-term differentiator is the editorial layer — every print has context, and every drop is a curated release — plus the forthcoming AI Studio that enables style-locked AI print generation.
 
 ## Five Phases
 
-## Phase 1 — First Sale
+## Phase 1 — Production Launch Foundation
 
-**Objective:** Live store on `prints.kumachigallery.com`, minimum 5 real products, working checkout, analytics running, first real order placed. The bridge deployment uses the Vite prototype deployed to Netlify with checkout redirecting to Shopify hosted cart. The Hydrogen build happens in parallel. First sale is the gate to Phase 2.
+**Objective:** Build the final Hydrogen + Sanity production foundation at `apps/hydrogen`, connect it to Shopify commerce and Sanity editorial content, and keep the Vite prototype as a local preview/reference only. No Netlify bridge-store launch is planned.
 
 | Item | Detail |
 |------|--------|
 | Timeline | Current sprint (weeks 1–2) |
-| Scope | Bridge store + Hydrogen scaffold running |
-| Gate | First real order placed and Printful fulfils it |
+| Scope | Hydrogen scaffold, Sanity schemas, Shopify/Printful setup path, Vite prototype preserved |
+| Gate | Production app builds, core routes render, and Shopify/Sanity join by handle is demonstrated |
 
 ## Phase 2 — Hydrogen + Sanity Production
 
-**Objective:** Replace the Vite bridge store with the real Hydrogen stack on Oxygen. Core routes live. Sanity schemas deployed. Visual Editing working. Domain migrated to Oxygen. Sanity-powered product supplements for all launch products.
+**Objective:** Complete and deploy the Hydrogen stack on Oxygen. Core routes live. Sanity schemas deployed. Visual Editing working. Domain connected. Sanity-powered product supplements for all launch products.
 
 | Item | Detail |
 |------|--------|
-| Timeline | Weeks 2–3 |
+| Timeline | Immediately after Phase 1 foundation |
 | Scope | Hydrogen build on Oxygen, Sanity schemas, Visual Editing |
-| Gate | Phase 1 first sale complete |
+| Gate | Production foundation complete and launch products ready in Shopify |
 
 ## Phase 3 — Editorial Layer
 
@@ -71,8 +71,8 @@ Kumachi Prints exists to generate revenue from the Kumachi creative catalogue by
 ## Dependency Map
 
 ```
-Phase 1 (first sale)
-  └── Phase 2 (Hydrogen build) — needs Phase 1 live first
+Phase 1 (production foundation)
+  └── Phase 2 (Hydrogen/Oxygen launch) — needs core app and data contracts working
         └── Phase 3 (editorial) — needs Phase 2 routes working
               ├── Phase 4 (domain) — needs domain renewal (external dependency)
               └── Phase 5 (growth) — needs Phase 1 order volume

@@ -27,7 +27,7 @@ The final production storefront is still to be created separately as Hydrogen + 
 |---|---|
 | Local WordPress/Woo simulator | Product mirror, review UI, Store API preview, local content modeling |
 | `art-business` command center | Catalog inputs, Woo sync, category/tag tools, storefront export, Shopify/Printful/Sanity API tooling |
-| Vite bridge prototype | Temporary storefront preview using Woo Store API and exported overlay JSON |
+| Vite prototype | Local storefront preview/reference using Woo Store API and exported overlay JSON |
 | Shopify | Production commerce, checkout, orders, products, variants, pricing, inventory |
 | Printful | Production fulfillment and print variant mapping |
 | Sanity | Production editorial content, product supplements, artists, series, pages, settings, navigation |
@@ -38,14 +38,14 @@ The final production storefront is still to be created separately as Hydrogen + 
 1. Validate the local catalog in `art-business`.
 2. Sync products to the local Woo mirror.
 3. Fix workbook categories, SEO tags, and editorial overlays.
-4. Export bridge storefront JSON.
+4. Export local storefront JSON.
 5. Preview products in the Vite prototype.
 6. Generate Sanity dry-run product supplement documents.
 7. Push reviewed editorial supplements to Sanity.
 8. Create or sync approved Shopify/Printful products.
 9. Build Hydrogen in a separate production app.
 10. Join Shopify products and Sanity supplements by product handle.
-11. Publish on Oxygen when the bridge prototype is no longer needed.
+11. Publish on Oxygen when the production Hydrogen build is ready.
 
 ## Command Center Checks
 
@@ -94,7 +94,7 @@ Important context:
 - The `art-business` command center lives inside that WordPress install:
   C:\wamp64\www\prints-local\art-business
 - `art-business` owns catalog validation, Woo mirror sync, storefront export, Shopify/Printful tooling, and Sanity sync tooling.
-- The Vite bridge prototype lives at:
+- The Vite prototype lives at:
   prints-shop\sources\protoype
 - Do not break the Vite prototype.
 - The final production Hydrogen + Sanity build does not exist yet. Create it separately.

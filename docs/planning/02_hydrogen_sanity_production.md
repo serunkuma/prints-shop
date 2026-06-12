@@ -4,17 +4,18 @@ Status: Planning
 
 ## Objective
 
-Replace the Vite bridge store with the real Hydrogen stack on Shopify Oxygen. Core routes are live, Sanity schemas are deployed and populated, Visual Editing is working, and product supplements provide editorial depth for all launch products.
+Build the real Hydrogen stack on Shopify Oxygen. Core routes are live, Sanity schemas are deployed and populated, Visual Editing is working, and product supplements provide editorial depth for all launch products. This is now the immediate production build path, not a replacement after a Netlify bridge launch.
 
 ## Scope
 
-**In scope:** Hydrogen deployment on Oxygen, Sanity schema implementation, Sanity Studio deployment, Visual Editing configuration, core route completion, product supplement documents for all products, SEO meta functions.
+**In scope:** production app creation at `apps/hydrogen`, Hydrogen deployment on Oxygen, Sanity schema implementation, Sanity Studio deployment, Visual Editing configuration, core route completion, product supplement documents for launch products, SEO meta functions.
 
 **Out of scope:** Editorial routes (drops, artist profiles), domain migration from subdomain, customer accounts.
 
 ## Task Checklist
 
 - [ ] Deploy Hydrogen app to Oxygen production environment
+- [ ] Create production app at `apps/hydrogen` without breaking `sources/protoype`
 - [ ] Configure Oxygen preview deployments for PR branches
 - [ ] Set `prints.kumachigallery.com` as custom domain in Oxygen
 - [ ] Implement all Sanity schema files in `studio/schemaTypes/`
@@ -89,7 +90,7 @@ A developer can clone the repo, run `npm run dev`, and see the full store with S
 
 ## Dependencies
 
-- Phase 1 complete — first sale through the bridge store
+- Phase 1 production foundation in progress or complete
 - Sanity project with `production` dataset
 - All 5+ launch products in Shopify with correct handles
 
