@@ -1,0 +1,102 @@
+import {Outlet, useLoaderData, Links, Meta, Scripts, ScrollRestoration, useRouteError, isRouteErrorResponse} from 'react-router';
+import {SITE_SETTINGS_QUERY} from '~/lib/queries';
+import styles from '~/styles/app.css?url';
+
+export function links() {
+  return [
+    {rel: 'stylesheet', href: styles},
+    {
+      rel: 'preconnect',
+      href: 'https://fonts.googleapis.com',
+    },
+    {
+      rel: 'preconnect',
+      href: 'https://fonts.gstatic.com',
+      crossOrigin: 'anonymous',
+    },
+    {
+      rel: 'stylesheet',
+      href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=DM+Sans:wght@400;500;600;700&display=swap',
+    },
+  ];
+}
+
+const CART_QUERY = `#graphql
+  query CartId($cartId: String!) {
+    cart(id: $cartId) {
+      id
+      checkoutUrl
+      totalQuantity
+      cost {
+        subtotalAmount { amount currencyCode }
+      }
+    }
+  }
+`;
+
+export async function loader({context}: {context: any}) {
+  const [settings, cart] = await Promise.all([
+    context.sanity.fetch(SITE_SETTINGS_QUERY).catch(() => null),
+    context.storefront.query(CART_QUERY, {
+      variables: {cartId: context.session.get('cartId')},
+    }),
+  ]);
+
+  return {
+    settings,
+    cart: cart?.cart || null,
+  };
+}
+
+export function Layout({children}: {children?: React.ReactNode}) {
+  return (
+    <html lang="en" className="dark">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+export default function Root() {
+  return <Outlet />;
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  let errorMessage = 'Unknown error';
+  let errorStatus = 500;
+
+  if (isRouteErrorResponse(error)) {
+    errorMessage = error?.data?.message ?? error.data;
+    errorStatus = error.status;
+  } else if (error instanceof Error) {
+    errorMessage = error.message;
+  }
+
+  return (
+    <html lang="en" className="dark">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <main className="container-gallery section-pad">
+          <h1 className="text-h1 mb-4">{errorStatus}</h1>
+          <p className="text-body text-text-secondary">{errorMessage}</p>
+          <a href="/" className="text-gold hover:opacity-80 transition-opacity mt-8 inline-block">Return home</a>
+        </main>
+      </body>
+    </html>
+  );
+}

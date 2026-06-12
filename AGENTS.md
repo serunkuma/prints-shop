@@ -65,6 +65,7 @@ prints-shop/
 │   ├── routes/
 │   │   ├── _index.tsx               ← Homepage
 │   │   ├── products.$handle.tsx     ← Product detail page (PDP)
+│   │   ├── collections._index.tsx   ← Collections listing
 │   │   ├── collections.$handle.tsx  ← Collection / category page
 │   │   ├── cart.tsx                 ← Cart page + cart action handlers
 │   │   ├── search.tsx               ← Search results
@@ -73,8 +74,12 @@ prints-shop/
 │   │   ├── drops.$handle.tsx        ← Editorial drop landing page
 │   │   ├── artists._index.tsx       ← Artists listing
 │   │   ├── artists.$handle.tsx      ← Artist profile page
-│   │   ├── account.tsx              ← Customer portal
+│   │   ├── account.tsx              ← Customer portal (login + dashboard)
+│   │   ├── account.login.tsx        ← Redirect to /account
+│   │   ├── account.authorize.tsx    ← OAuth callback handler
 │   │   ├── account.orders.tsx       ← Order history
+│   │   ├── account.orders.$orderId.tsx  ← Single order detail
+│   │   ├── policies.$policyHandle.tsx   ← Store policies (privacy, ToS, refund)
 │   │   ├── sitemap.xml.tsx          ← SEO sitemap
 │   │   └── robots.txt.tsx           ← Crawler rules
 │   ├── root.tsx                     ← HTML shell, global data, header, footer
@@ -443,6 +448,12 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
 - 2026-06 Initial documentation scaffold completed from 14 source documents + prototype spec.
   Reason: Greenfield Workflow B batch documentation pass before Hydrogen build begins.
   Impact: Full docs/ tree, AGENTS.md, RUNBOOK.md populated. Ready for build phase.
+  (Ernest Serunkuma + AI agent)
+
+- 2026-06 Build pass: typecheck + build fixed, routes completed.
+  Reason: Env type augmentation fixed, missing routes created (account, policies, drops, artists),
+  cache headers added, AGENTS.md route inventory updated.
+  Impact: Build passes clean (0 TS errors, 0 missing standard routes). Full route map live.
   (Ernest Serunkuma + AI agent)
 ```
 
