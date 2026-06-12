@@ -23,6 +23,21 @@ export interface Product {
   rating: number;
   reviewCount: number;
   sku: string;
+  defaultSize?: string;
+  sizePriceMap?: Record<string, number>;
+  artistLocation?: string;
+  artistBio?: string;
+  categoryName?: string;
+  printDetails?: {
+    paper?: string;
+    ink?: string;
+    edition?: string;
+  };
+  shippingNote?: string;
+  returnsNote?: string;
+  trustNotes?: string[];
+  isMirrorProduct?: boolean;
+  isMockProduct?: boolean;
   isNew?: boolean;
   isLimited?: boolean;
   isFeatured?: boolean;

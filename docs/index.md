@@ -26,6 +26,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | [02_sanity_schemas.md](data/02_sanity_schemas.md) | All 7 Sanity doc types, 4 object types, 7 GROQ query patterns | Current |
 | [03_cart_and_checkout.md](data/03_cart_and_checkout.md) | CartItem type, Zustand store shape, checkout flow, session secret | Current |
 | [04_printful_product_spec.md](data/04_printful_product_spec.md) | File requirements, size/frame spec, pixel dimensions, pricing strategy | Current |
+| [05_woocommerce_mirror_bridge.md](data/05_woocommerce_mirror_bridge.md) | Bridge data contract between local WooCommerce mirror and Vite prototype | Current |
 
 ## System (How We Built It)
 

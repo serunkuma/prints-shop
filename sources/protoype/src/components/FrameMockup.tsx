@@ -18,6 +18,11 @@ import {
 interface FrameMockupProps {
   imageSrc: string;
   basePrice: number;
+  availableSizes?: string[];
+  defaultSize?: string;
+  availableMaterials?: string[];
+  availableFrames?: string[];
+  sizePriceMap?: Record<string, number>;
   showPurchaseFooter?: boolean;
   onPriceChange?: (price: number) => void;
   onConfigChange?: (config: {
@@ -45,55 +50,53 @@ const frameOptionsInfo = [
 export default function FrameMockup({
   imageSrc,
   basePrice,
+  availableSizes,
+  defaultSize,
+  availableMaterials,
+  availableFrames,
+  sizePriceMap,
   showPurchaseFooter = false,
   onPriceChange,
   onConfigChange,
 }: FrameMockupProps) {
-  const [selectedSize, setSelectedSize] = useState('16"×20"');
-  const [selectedMaterial, setSelectedMaterial] = useState("Matte Paper");
-  const [selectedFrame, setSelectedFrame] = useState("black-metal");
+  const sizeOptions = availableSizes?.length ? availableSizes : ['8"×10"', '11"×14"', '16"×20"', '24"×36"'];
+  const materialOptions = availableMaterials?.length ? availableMaterials : ["Matte Paper", "Canvas"];
+  const frameIds = availableFrames?.length ? availableFrames : ["black-metal", "light-oak", "walnut", "unframed"];
+  const frameChoices = frameOptions.filter((frame) => frameIds.includes(frame.id));
+  const [selectedSize, setSelectedSize] = useState(defaultSize || sizeOptions[0]);
+  const [selectedMaterial, setSelectedMaterial] = useState(materialOptions[0]);
+  const [selectedFrame, setSelectedFrame] = useState(frameChoices[0]?.id || "unframed");
   const [added, setAdded] = useState(false);
 
   const currentFrame = frameOptions.find((f) => f.id === selectedFrame);
   const isLight = document.documentElement.getAttribute("data-theme") !== "dark";
 
   const calculatedPrice =
-    basePrice +
-    (sizePrices[selectedSize] || 0) +
+    (sizePriceMap?.[selectedSize] ?? basePrice + (sizePrices[selectedSize] || 0)) +
     (materialPrices[selectedMaterial] || 0) +
     (framePrices[selectedFrame] || 0);
+
+  const calculatePrice = (size: string, material: string, frame: string) =>
+    (sizePriceMap?.[size] ?? basePrice + (sizePrices[size] || 0)) +
+    (materialPrices[material] || 0) +
+    (framePrices[frame] || 0);
 
   const handleSizeChange = (size: string) => {
     setSelectedSize(size);
     onConfigChange?.({ size, material: selectedMaterial, frame: selectedFrame });
-    onPriceChange?.(
-      basePrice +
-        (sizePrices[size] || 0) +
-        (materialPrices[selectedMaterial] || 0) +
-        (framePrices[selectedFrame] || 0)
-    );
+    onPriceChange?.(calculatePrice(size, selectedMaterial, selectedFrame));
   };
 
   const handleMaterialChange = (material: string) => {
     setSelectedMaterial(material);
     onConfigChange?.({ size: selectedSize, material, frame: selectedFrame });
-    onPriceChange?.(
-      basePrice +
-        (sizePrices[selectedSize] || 0) +
-        (materialPrices[material] || 0) +
-        (framePrices[selectedFrame] || 0)
-    );
+    onPriceChange?.(calculatePrice(selectedSize, material, selectedFrame));
   };
 
   const handleFrameChange = (frame: string) => {
     setSelectedFrame(frame);
     onConfigChange?.({ size: selectedSize, material: selectedMaterial, frame });
-    onPriceChange?.(
-      basePrice +
-        (sizePrices[selectedSize] || 0) +
-        (materialPrices[selectedMaterial] || 0) +
-        (framePrices[frame] || 0)
-    );
+    onPriceChange?.(calculatePrice(selectedSize, selectedMaterial, frame));
   };
 
   const handleAddToCart = () => {
@@ -189,7 +192,7 @@ export default function FrameMockup({
           </Dialog>
         </div>
         <div className="flex flex-wrap gap-2">
-          {['8"×10"', '11"×14"', '16"×20"', '24"×36"'].map((size) => (
+          {sizeOptions.map((size) => (
             <button
               key={size}
               onClick={() => handleSizeChange(size)}
@@ -231,7 +234,7 @@ export default function FrameMockup({
             borderRadius: "100px",
           }}
         >
-          {["Matte Paper", "Canvas"].map((material) => (
+          {materialOptions.map((material) => (
             <button
               key={material}
               onClick={() => handleMaterialChange(material)}
@@ -303,7 +306,7 @@ export default function FrameMockup({
           </Dialog>
         </div>
         <div className="flex gap-3">
-          {frameOptions.map((frame) => (
+          {frameChoices.map((frame) => (
             <button
               key={frame.id}
               onClick={() => handleFrameChange(frame.id)}

@@ -19,22 +19,35 @@ import Breadcrumb from "@/components/Breadcrumb";
 import FrameMockup from "@/components/FrameMockup";
 import ProductCard from "@/components/ProductCard";
 import { getArtistById } from "@/data/artists";
+import { getMirrorProductByHandle } from "@/data/mirror";
 import { getProductByHandle, getRelatedProducts } from "@/data/products";
 import { formatPrice } from "@/lib/format";
 import { useCartStore } from "@/store/useCartStore";
 
 export default function ProductPage() {
   const { handle } = useParams<{ handle: string }>();
-  const product = handle ? getProductByHandle(handle) : undefined;
+  const fallbackProduct = handle ? getProductByHandle(handle) : undefined;
+  const [mirrorProduct, setMirrorProduct] = useState<Awaited<ReturnType<typeof getMirrorProductByHandle>> | undefined>(undefined);
+  const product = mirrorProduct ?? (fallbackProduct ? { ...fallbackProduct, isMockProduct: true } : undefined);
   const artist = product ? getArtistById(product.artistId) : undefined;
-  const relatedProducts = product ? getRelatedProducts(product) : [];
+  const artistProfile =
+    artist ||
+    (product?.artist
+      ? {
+          name: product.artist,
+          location: product.artistLocation || "",
+          bio: product.artistBio || "",
+          portrait: "/images/artist-portrait.jpg",
+        }
+      : undefined);
+  const relatedProducts = product && !product.isMirrorProduct ? getRelatedProducts(product) : [];
 
   const [mainView, setMainView] = useState<"frame" | "room">("frame");
   const [activeRoomIndex, setActiveRoomIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const [shippingOpen, setShippingOpen] = useState(false);
-  const [currentPrice, setCurrentPrice] = useState(product?.price || 0);
+  const [currentPrice, setCurrentPrice] = useState(0);
   const [frameConfig, setFrameConfig] = useState({
     size: '16"×20"',
     material: "Matte Paper",
@@ -48,6 +61,27 @@ export default function ProductPage() {
   const [showMobileBar, setShowMobileBar] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+    setMirrorProduct(undefined);
+    if (!handle) return;
+    getMirrorProductByHandle(handle).then((result) => {
+      if (!cancelled) setMirrorProduct(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [handle]);
+
+  useEffect(() => {
+    if (!product) return;
+    const initialSize = product.defaultSize || product.sizes[0] || '16"×20"';
+    const initialMaterial = product.materials[0] || "Matte Paper";
+    const initialFrame = product.frames[0] || "unframed";
+    setCurrentPrice(product.sizePriceMap?.[initialSize] ?? product.price);
+    setFrameConfig({ size: initialSize, material: initialMaterial, frame: initialFrame });
+  }, [product?.sku, product?.handle]);
+
+  useEffect(() => {
     const el = atcRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
@@ -57,6 +91,16 @@ export default function ProductPage() {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  if (!product && mirrorProduct === undefined) {
+    return (
+      <main style={{ backgroundColor: "var(--color-bg-primary)", paddingTop: "140px", minHeight: "70vh" }}>
+        <div className="container-gallery">
+          <p className="text-body" style={{ color: "var(--color-text-secondary)" }}>Loading product...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!product) return <Navigate to="/collection" replace />;
 
@@ -215,6 +259,11 @@ export default function ProductPage() {
             <h1 className="text-h1 font-display mt-1" style={{ color: "var(--color-text-primary)" }}>
               {product.title}
             </h1>
+            {product.isMockProduct && (
+              <p className="text-caption mt-2 uppercase" style={{ color: "var(--color-text-tertiary)" }}>
+                Demo product fallback
+              </p>
+            )}
 
             <div className="mt-4">
               <div className="flex items-center gap-3">
@@ -252,6 +301,11 @@ export default function ProductPage() {
               <FrameMockup
                 imageSrc={product.image}
                 basePrice={product.price}
+                availableSizes={product.sizes}
+                defaultSize={product.defaultSize}
+                availableMaterials={product.materials}
+                availableFrames={product.frames}
+                sizePriceMap={product.sizePriceMap}
                 onPriceChange={setCurrentPrice}
                 onConfigChange={setFrameConfig}
               />
@@ -281,7 +335,7 @@ export default function ProductPage() {
                     className="overflow-hidden"
                   >
                     <p className="text-body-small pb-3" style={{ color: "var(--color-text-secondary)" }}>
-                      Prints ship within 3-5 business days. Framed prints ship within 7-10 business days. Returns are accepted on unframed prints within 30 days.
+                      {product.shippingNote || "Prints ship within 3-5 business days. Framed prints ship within 7-10 business days. Returns are accepted on unframed prints within 30 days."}
                     </p>
                   </motion.div>
                 )}
@@ -341,24 +395,24 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {artist && (
+            {artistProfile && (
               <div className="mt-12 pt-8" style={{ borderTop: "1px solid var(--color-border)" }}>
                 <h3 className="text-h3 font-display" style={{ color: "var(--color-text-primary)" }}>
                   About the Artist
                 </h3>
                 <div className="mt-4 flex items-center gap-3">
-                  <img src={artist.portrait} alt={artist.name} className="h-[60px] w-[60px] rounded-full object-cover" />
+                  <img src={artistProfile.portrait} alt={artistProfile.name} className="h-[60px] w-[60px] rounded-full object-cover" />
                   <div>
                     <p className="text-body font-medium" style={{ color: "var(--color-text-primary)" }}>
-                      {artist.name}
+                      {artistProfile.name}
                     </p>
                     <p className="text-caption" style={{ color: "var(--color-text-secondary)" }}>
-                      {artist.location}
+                      {artistProfile.location}
                     </p>
                   </div>
                 </div>
                 <p className="text-body-small mt-3" style={{ color: "var(--color-text-secondary)" }}>
-                  {artist.bio}
+                  {artistProfile.bio}
                 </p>
               </div>
             )}
@@ -370,9 +424,9 @@ export default function ProductPage() {
               <div className="mt-4 space-y-3">
                 {[
                   { label: "Dimensions", value: frameConfig.size },
-                  { label: "Paper", value: frameConfig.material === "Canvas" ? "Archival canvas" : "310gsm archival matte paper" },
-                  { label: "Ink", value: "Archival Pigment" },
-                  { label: "Edition", value: product.isLimited ? "Limited Edition, Signed" : "Open Edition, Signed" },
+                  { label: "Paper", value: product.printDetails?.paper || (frameConfig.material === "Canvas" ? "Archival canvas" : "310gsm archival matte paper") },
+                  { label: "Ink", value: product.printDetails?.ink || "Archival Pigment" },
+                  { label: "Edition", value: product.printDetails?.edition || (product.isLimited ? "Limited Edition, Signed" : "Open Edition, Signed") },
                   { label: "SKU", value: product.sku },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex">

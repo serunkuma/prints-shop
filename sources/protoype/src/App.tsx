@@ -67,6 +67,7 @@ export default function App() {
             <Route path="/shop" element={<Navigate to="/collection" replace />} />
             <Route path="/shop/:handle" element={<Navigate to="/collection" replace />} />
             <Route path="/product/:handle" element={<RouteFrame reveal={introComplete}><ProductPage /></RouteFrame>} />
+            <Route path="/products/:handle" element={<RouteFrame reveal={introComplete}><ProductPage /></RouteFrame>} />
             <Route path="/drops" element={<RouteFrame reveal={introComplete}><DropsPage /></RouteFrame>} />
             <Route path="/drops/:handle" element={<RouteFrame reveal={introComplete}><DropDetailPage /></RouteFrame>} />
             <Route path="/artists" element={<RouteFrame reveal={introComplete}><ArtistsPage /></RouteFrame>} />
