@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import Breadcrumb from "@/components/Breadcrumb";
 import FrameMockup from "@/components/FrameMockup";
 import ProductCard from "@/components/ProductCard";
+import ProductGallery, { type ProductGalleryImage } from "@/components/product/ProductGallery";
 import { getArtistById } from "@/data/artists";
 import { getMirrorProductByHandle } from "@/data/mirror";
 import { getProductByHandle, getRelatedProducts } from "@/data/products";
@@ -42,8 +43,6 @@ export default function ProductPage() {
       : undefined);
   const relatedProducts = product && !product.isMirrorProduct ? getRelatedProducts(product) : [];
 
-  const [mainView, setMainView] = useState<"frame" | "room">("frame");
-  const [activeRoomIndex, setActiveRoomIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const [shippingOpen, setShippingOpen] = useState(false);
@@ -183,9 +182,18 @@ export default function ProductPage() {
       />
     ));
 
+  const galleryImages: ProductGalleryImage[] = [
+    { src: product.image, alt: `${product.title} print` },
+    ...product.roomMockups.map((mockup, index) => ({
+      src: mockup,
+      alt: `${product.title} in room setting ${index + 1}`,
+    })),
+  ];
+
   return (
-    <main style={{ backgroundColor: "var(--color-bg-primary)", paddingTop: "100px" }}>
-      <div className="container-gallery">
+    <main className="min-h-dvh pt-24" style={{ backgroundColor: "var(--color-bg-primary)" }}>
+      <section className="container-gallery grid grid-cols-1 gap-10 py-8 lg:grid-cols-[60%_40%] lg:gap-14">
+        <div className="lg:col-span-2">
         <Breadcrumb
           items={[
             { label: "Home", path: "/" },
@@ -193,65 +201,16 @@ export default function ProductPage() {
             { label: product.title },
           ]}
         />
+        </div>
 
-        <div className="grid grid-cols-1 gap-8 pb-16 lg:grid-cols-[55%_45%] lg:gap-12">
-          <div className="lg:sticky lg:top-[100px] lg:self-start">
-            <div className="relative overflow-hidden" style={{ aspectRatio: "4/5" }}>
-              {mainView === "frame" ? (
-                <div
-                  className="flex h-full w-full items-center justify-center p-8 sm:p-12"
-                  style={{ backgroundColor: "var(--color-bg-tertiary)" }}
-                >
-                  <div
-                    className="relative"
-                    style={{
-                      width: "65%",
-                      height: "75%",
-                      boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
-                      border: "10px solid #1A1A1A",
-                      padding: "40px",
-                      backgroundColor: "#FAFAF5",
-                    }}
-                  >
-                    <img src={product.image} alt={product.title} className="h-full w-full object-contain" />
-                  </div>
-                </div>
-              ) : (
-                <img
-                  src={product.roomMockups[activeRoomIndex]}
-                  alt={`${product.title} in room setting`}
-                  className="h-full w-full object-cover"
-                />
-              )}
-            </div>
-
-            <div className="mt-3 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setMainView("frame")}
-                className="h-[60px] w-20 flex-shrink-0 overflow-hidden transition-all duration-200"
-                style={{ border: mainView === "frame" ? "2px solid var(--color-border-active)" : "1px solid var(--color-border)" }}
-              >
-                <img src={product.image} alt="Frame view" className="h-full w-full object-cover" />
-              </button>
-              {product.roomMockups.map((mockup, i) => (
-                <button
-                  key={mockup}
-                  type="button"
-                  onClick={() => {
-                    setMainView("room");
-                    setActiveRoomIndex(i);
-                  }}
-                  className="h-[60px] w-20 flex-shrink-0 overflow-hidden transition-all duration-200"
-                  style={{ border: mainView === "room" && activeRoomIndex === i ? "2px solid var(--color-border-active)" : "1px solid var(--color-border)" }}
-                >
-                  <img src={mockup} alt={`Room setting ${i + 1}`} className="h-full w-full object-cover" />
-                </button>
-              ))}
-            </div>
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <ProductGallery images={galleryImages} />
           </div>
 
           <div className="pb-8">
+            <p className="text-caption uppercase" style={{ color: "var(--color-accent-clay)" }}>
+              {product.series || product.categoryName || product.genre}
+            </p>
             <Link to={`/artists/${product.artistId}`} className="text-h4 font-display hover:underline" style={{ color: "var(--color-text-secondary)" }}>
               {product.artist}
             </Link>
@@ -441,8 +400,7 @@ export default function ProductPage() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+      </section>
 
       {relatedProducts.length > 0 && (
         <section style={{ backgroundColor: "var(--color-bg-secondary)", padding: "var(--space-2xl) 0" }}>

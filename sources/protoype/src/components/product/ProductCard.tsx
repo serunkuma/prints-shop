@@ -33,7 +33,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       image: product.images[0].src,
     });
     openCart();
-    toast("Added to cart.");
+    toast.success("Added to cart");
   }
 
   const badge = !defaultSize.available
@@ -46,7 +46,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <motion.article layout whileHover="hover" className="group cursor-pointer">
-      <Link to={`/shop/${product.handle}`} className="block no-underline">
+      <Link to={`/product/${product.handle}`} className="block no-underline">
         <div className="relative aspect-[4/5] overflow-hidden bg-surface-mid">
           <motion.img
             src={product.images[0].src}

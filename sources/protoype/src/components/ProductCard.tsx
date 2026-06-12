@@ -1,7 +1,11 @@
+import type { MouseEvent } from "react";
 import { Link } from "react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { ShoppingBag } from "lucide-react";
+import { toast } from "sonner";
 import type { Product } from "@/data/products";
+import { useCartStore } from "@/store/useCartStore";
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +15,31 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, index = 0, featured = false }: ProductCardProps) {
   const [hovered, setHovered] = useState(false);
+  const addItem = useCartStore((state) => state.addItem);
+  const openCart = useCartStore((state) => state.openCart);
+  const defaultSize = product.defaultSize || product.sizes[0] || "";
+  const defaultMaterial = product.materials[0] || "Matte Paper";
+  const defaultFrame = product.frames[0] || "unframed";
+  const quickAddPrice = product.sizePriceMap?.[defaultSize] ?? product.price;
+
+  function quickAdd(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    addItem({
+      productId: product.id,
+      handle: product.handle,
+      title: product.title,
+      artist: product.artist,
+      size: defaultMaterial ? `${defaultSize} / ${defaultMaterial}` : defaultSize,
+      frame: defaultFrame,
+      price: quickAddPrice,
+      currency: product.currency,
+      quantity: 1,
+      image: product.image,
+    });
+    openCart();
+    toast.success("Added to cart");
+  }
 
   return (
     <motion.div
@@ -49,30 +78,34 @@ export default function ProductCard({ product, index = 0, featured = false }: Pr
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           />
 
-          {/* Hover Overlay */}
           <motion.div
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0"
             style={{ backgroundColor: "var(--color-overlay)" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: hovered ? 1 : 0 }}
             transition={{ duration: 0.3 }}
+          />
+          <motion.button
+            type="button"
+            onClick={quickAdd}
+            className="absolute bottom-4 right-4 flex min-h-11 items-center gap-2 px-3 py-2 text-caption uppercase shadow-lg"
+            style={{
+              backgroundColor: "var(--color-accent-ochre)",
+              color: "#15120d",
+            }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{
+              opacity: hovered ? 1 : 0,
+              y: hovered ? 0 : 8,
+            }}
+            whileFocus={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
           >
-            <motion.div
-              className="px-4 py-2 text-caption uppercase"
-              style={{
-                backgroundColor: "var(--color-accent-ochre)",
-                color: "#15120d",
-              }}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{
-                opacity: hovered ? 1 : 0,
-                y: hovered ? 0 : 8,
-              }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-            >
-              Quick View
-            </motion.div>
-          </motion.div>
+            <ShoppingBag size={14} />
+            Add
+          </motion.button>
 
           {/* Tags */}
           <div className="absolute top-3 left-3 flex gap-1">
@@ -100,7 +133,7 @@ export default function ProductCard({ product, index = 0, featured = false }: Pr
             )}
           </div>
           <div
-            className="absolute right-3 bottom-3 px-3 py-2 text-caption uppercase"
+            className="absolute bottom-3 left-3 max-w-[calc(100%-6.5rem)] truncate px-3 py-2 text-caption uppercase"
             style={{
               backgroundColor: "var(--color-surface-deep)",
               color: "var(--color-bg-primary)",
