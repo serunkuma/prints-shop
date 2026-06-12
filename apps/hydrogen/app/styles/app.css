@@ -167,6 +167,27 @@
     font-size: 1.125rem;
     line-height: 1;
   }
+
+  .text-h4 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+    line-height: 1.15;
+  }
+
+  .text-button {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+  }
+
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

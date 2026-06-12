@@ -20,10 +20,7 @@ export function createSanityClient(env: SanityEnv): SanityClient {
   });
 }
 
-export function createUrlBuilder(env: SanityEnv) {
-  const builder = imageUrlBuilder({
-    projectId: env.SANITY_PROJECT_ID,
-    dataset: env.SANITY_DATASET,
-  });
+export function createUrlBuilder(projectId: string, dataset: string) {
+  const builder = imageUrlBuilder({projectId, dataset});
   return (source: SanityImageSource) => builder.image(source);
 }

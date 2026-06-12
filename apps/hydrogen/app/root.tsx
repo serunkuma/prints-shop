@@ -1,23 +1,17 @@
 import {Outlet, useLoaderData, Links, Meta, Scripts, ScrollRestoration, useRouteError, isRouteErrorResponse} from 'react-router';
-import {SITE_SETTINGS_QUERY} from '~/lib/queries';
+import {SITE_SETTINGS_QUERY, NAVIGATION_QUERY} from '~/lib/queries';
 import styles from '~/styles/app.css?url';
+import {Header} from '~/components/layout/Header';
+import {Footer} from '~/components/layout/Footer';
+import {AnnouncementBar} from '~/components/layout/AnnouncementBar';
+import {CartDrawer} from '~/components/cart/CartDrawer';
 
 export function links() {
   return [
     {rel: 'stylesheet', href: styles},
-    {
-      rel: 'preconnect',
-      href: 'https://fonts.googleapis.com',
-    },
-    {
-      rel: 'preconnect',
-      href: 'https://fonts.gstatic.com',
-      crossOrigin: 'anonymous',
-    },
-    {
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=DM+Sans:wght@400;500;600;700&display=swap',
-    },
+    {rel: 'preconnect', href: 'https://fonts.googleapis.com'},
+    {rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous'},
+    {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=DM+Sans:wght@400;500;600;700&display=swap'},
   ];
 }
 
@@ -29,26 +23,53 @@ const CART_QUERY = `#graphql
       totalQuantity
       cost {
         subtotalAmount { amount currencyCode }
+        totalAmount { amount currencyCode }
+      }
+      lines(first: 100) {
+        nodes {
+          id
+          quantity
+          merchandise {
+            ... on ProductVariant {
+              id
+              title
+              product {
+                handle
+                title
+                featuredImage { url altText }
+              }
+              selectedOptions { name value }
+              price { amount currencyCode }
+            }
+          }
+        }
       }
     }
   }
 `;
 
 export async function loader({context}: {context: any}) {
-  const [settings, cart] = await Promise.all([
-    context.sanity.fetch(SITE_SETTINGS_QUERY).catch(() => null),
-    context.storefront.query(CART_QUERY, {
+  const [settings, navigation, cartData] = await Promise.all([
+    context?.sanity?.fetch(SITE_SETTINGS_QUERY).catch(() => null),
+    context?.sanity?.fetch(NAVIGATION_QUERY).catch(() => null),
+    context?.storefront?.query(CART_QUERY, {
       variables: {cartId: context.session.get('cartId')},
-    }),
+    }).catch(() => ({cart: null})),
   ]);
 
   return {
     settings,
-    cart: cart?.cart || null,
+    navigation,
+    cart: cartData?.cart || null,
+    sanity: {
+      urlFor: context.urlFor,
+    },
   };
 }
 
 export function Layout({children}: {children?: React.ReactNode}) {
+  const data = useLoaderData<typeof loader>();
+
   return (
     <html lang="en" className="dark">
       <head>
@@ -57,8 +78,12 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body className="flex flex-col min-h-screen">
+        <AnnouncementBar text={data?.settings?.announcementBar?.text} link={data?.settings?.announcementBar?.link} />
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+        <CartDrawer />
         <ScrollRestoration />
         <Scripts />
       </body>

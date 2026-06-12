@@ -28,6 +28,7 @@ declare module 'virtual:react-router/server-build' {
 declare global {
   interface HydrogenAdditionalContext {
     sanity: import('@sanity/client').SanityClient;
+    urlFor: (source: import('@sanity/image-url/lib/types/types').SanityImageSource) => import('@sanity/image-url').ImageUrlBuilder;
   }
 
   interface Env {

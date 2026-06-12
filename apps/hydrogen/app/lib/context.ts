@@ -1,6 +1,6 @@
 import {createHydrogenContext} from '@shopify/hydrogen';
 import {AppSession} from '~/lib/session';
-import {createSanityClient} from '~/lib/sanity.server';
+import {createSanityClient, createUrlBuilder} from '~/lib/sanity.server';
 
 export async function createHydrogenRouterContext(
   request: Request,
@@ -18,7 +18,9 @@ export async function createHydrogenRouterContext(
   ]);
 
   const sanity = createSanityClient(env as any);
-  const additionalContext = {sanity} as const;
+  const e = env as unknown as {SANITY_PROJECT_ID: string; SANITY_DATASET: string};
+  const urlFor = createUrlBuilder(e.SANITY_PROJECT_ID, e.SANITY_DATASET);
+  const additionalContext = {sanity, urlFor} as const;
 
   const hydrogenContext = createHydrogenContext(
     {
