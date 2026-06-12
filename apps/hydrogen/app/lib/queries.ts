@@ -115,6 +115,7 @@ export const COLLECTION_PRODUCTS_QUERY = `#graphql
           }
           variants(first: 1) {
             nodes {
+              id
               availableForSale
             }
           }
@@ -206,11 +207,16 @@ export const SEARCH_PRODUCTS_QUERY = `#graphql
             currencyCode
           }
         }
-        variants(first: 1) {
-          nodes {
-            availableForSale
+          variants(first: 1) {
+            nodes {
+              id
+              availableForSale
+              price {
+                amount
+                currencyCode
+              }
+            }
           }
-        }
       }
     }
   }
@@ -234,6 +240,16 @@ export const FEATURED_PRODUCTS_QUERY = `#graphql
           minVariantPrice {
             amount
             currencyCode
+          }
+        }
+        variants(first: 1) {
+          nodes {
+            id
+            availableForSale
+            price {
+              amount
+              currencyCode
+            }
           }
         }
       }

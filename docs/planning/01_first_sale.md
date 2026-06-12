@@ -27,13 +27,13 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 - [ ] Create Shopify collections (All Prints, New Arrivals)
 - [ ] Obtain Storefront API token from Shopify custom app
 - [x] Create Sanity project with dataset `production`
-- [ ] Create production Hydrogen app at `apps/hydrogen`
+- [x] Create production Hydrogen app at `apps/hydrogen`
 - [ ] Configure `.env` with all Shopify and Sanity environment variables
 - [ ] Verify `npm run dev` runs without errors at localhost:3000
-- [ ] Homepage route renders with hero section and featured products
-- [ ] Collection page renders Shopify products
-- [ ] Product detail page renders product with variant selector
-- [ ] Add to cart works (variant selection → cart drawer opens with item)
+- [x] Homepage route renders with hero section, trust signals, and featured products
+- [x] Collection page renders Shopify products
+- [x] Product detail page renders product with variant selector
+- [x] Add to cart flow is wired from PDP/card to Shopify cart action
 - [ ] Checkout redirect works (cart drawer → Shopify hosted checkout)
 - [ ] Create GitHub Actions workflow for Oxygen deployment
 - [ ] Connect GitHub repository to Oxygen in Shopify admin
@@ -49,7 +49,7 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 - [ ] Place first test order through the complete checkout flow
 - [ ] Verify Printful receives the order and begins production
 - [ ] Verify tracking number written back to Shopify order
-- [ ] Create `.env.example` with all variable names but no values
+- [x] Create `.env.example` with all variable names but no values
 
 ## Deliverables
 

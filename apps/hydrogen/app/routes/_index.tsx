@@ -1,8 +1,11 @@
 import {useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
 import {type HeadersFunction} from '@shopify/remix-oxygen';
 import {generateCacheControlHeader, CacheLong} from '@shopify/hydrogen';
-import {HOMEPAGE_QUERY, FEATURED_PRODUCTS_QUERY} from '~/lib/queries';
-import {formatPrice} from '~/lib/format';
+import {HOMEPAGE_QUERY, FEATURED_PRODUCTS_QUERY, COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
+import {HeroSection} from '~/components/sections/HeroSection';
+import {FeaturedCollectionSection} from '~/components/sections/FeaturedCollectionSection';
+import {ProductGridSection} from '~/components/sections/ProductGridSection';
+import {ProductGrid} from '~/components/product/ProductGrid';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheLong()),
@@ -11,62 +14,76 @@ export const headers: HeadersFunction = () => ({
 export const meta = () => [{title: 'Kumachi Prints'}];
 
 export async function loader({context}: {context: any}) {
-  const [homepage, featuredProducts] = await Promise.all([
+  const [homepage, featuredProducts, allPrints] = await Promise.all([
     context.sanity.fetch(HOMEPAGE_QUERY).catch(() => null),
     context.storefront.query(FEATURED_PRODUCTS_QUERY).catch(() => null),
+    context.storefront.query(COLLECTION_PRODUCTS_QUERY, {
+      variables: {handle: 'all'},
+    }).catch(() => null),
   ]);
 
-  return {homepage, featuredProducts};
+  return {homepage, featuredProducts, allPrints};
 }
 
 export default function Homepage() {
-  const {homepage, featuredProducts} = useLoaderData<typeof loader>();
+  const {homepage, featuredProducts, allPrints} = useLoaderData<typeof loader>();
+  const sections = homepage?.sections || [];
+
+  const products = allPrints?.collection?.products?.nodes?.filter(Boolean) || [];
+
+  const sectionRenderer = (section: any, index: number) => {
+    switch (section._type) {
+      case 'hero':
+        return <HeroSection key={index} section={section} />;
+      case 'featuredCollection':
+        return <FeaturedCollectionSection key={index} section={section} products={products} />;
+      case 'productGrid':
+        return <ProductGridSection key={index} section={section} products={products} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <main>
-      <section className="container-gallery section-pad">
-        <h1 className="text-display">Kumachi Prints</h1>
-        <div className="accent-rule mt-6 mb-8" />
-        <p className="text-h3 text-text-secondary max-w-2xl">
-          Premium art prints from the Kumachi catalogue.
-        </p>
-      </section>
+      {sections.length > 0 ? (
+        sections.map((section: any, index: number) => sectionRenderer(section, index))
+      ) : (
+        <>
+          <HeroSection
+            section={{
+              _type: 'hero',
+              heading: 'Museum-minded prints for everyday rooms',
+              subheading: 'Premium art prints from the Kumachi catalogue. Every print has a story.',
+              cta: {label: 'Explore', url: '/collections/all'},
+            }}
+          />
 
-      {featuredProducts?.products?.nodes && (
-        <section className="container-gallery section-pad">
-          <h2 className="text-h2 mb-10">Featured Prints</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
-            {featuredProducts.products.nodes.map(
-              (product: any) =>
-                product && (
-                  <a
-                    key={product.id}
-                    href={`/products/${product.handle}`}
-                    className="group"
-                  >
-                    <div className="aspect-[3/4] bg-surface-mid rounded-xs overflow-hidden mb-4">
-                      {product.featuredImage && (
-                        <img
-                          src={product.featuredImage.url}
-                          alt={product.featuredImage.altText || product.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          loading="lazy"
-                          width={product.featuredImage.width || 600}
-                          height={product.featuredImage.height || 800}
-                        />
-                      )}
-                    </div>
-                    <h3 className="text-h4 mb-1">{product.title}</h3>
-                    {product.priceRange?.minVariantPrice && (
-                      <p className="text-price text-gold">
-                        {formatPrice(parseFloat(product.priceRange.minVariantPrice.amount) * 100)}
-                      </p>
-                    )}
-                  </a>
-                ),
-            )}
-          </div>
-        </section>
+          <section className="border-y border-border bg-surface-mid/40">
+            <div className="container-gallery grid grid-cols-1 gap-6 py-6 text-body-small text-text-secondary md:grid-cols-3">
+              <p>Archival print materials</p>
+              <p>Secure Shopify checkout</p>
+              <p>Made to order through Printful</p>
+            </div>
+          </section>
+
+          <FeaturedCollectionSection
+            section={{
+              _type: 'featuredCollection',
+              title: 'All Prints',
+              description: 'Every print in the Kumachi catalogue, ready for your walls.',
+              collectionHandle: 'all',
+            }}
+            products={products}
+          />
+
+          {featuredProducts?.products?.nodes && (
+            <ProductGridSection
+              section={{_type: 'productGrid', title: 'Featured Prints'}}
+              products={featuredProducts.products.nodes.filter(Boolean)}
+            />
+          )}
+        </>
       )}
     </main>
   );

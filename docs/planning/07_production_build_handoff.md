@@ -53,7 +53,7 @@ Use this export and the Woo Store API only for local preview/bridge work. Produc
 
 ## Production Build Target
 
-Create the production Hydrogen app separately from the Vite prototype:
+The production Hydrogen app now exists separately from the Vite prototype:
 
 ```text
 apps/hydrogen
@@ -102,23 +102,21 @@ Important context:
 - The art-business command center is C:\wamp64\www\prints-local\art-business.
 - The Woo mirror is healthy: 155 products, 837 variations, 0 missing categories, 0 missing tags.
 - The Vite prototype is sources\protoype. Keep it working and use it as reference only.
-- The production app should be created separately at apps/hydrogen.
+- The production app exists at apps/hydrogen and should be hardened, not recreated.
 - Sanity project: 2wo9hx90, organization o9GdYjNoE, dataset production.
 - Never commit Woo, Shopify, Printful, or Sanity tokens.
 
 Goal:
-Build the production Hydrogen + Sanity foundation for Kumachi Prints using art-business and the local Woo simulator as upstream planning/data context.
+Finish the production Hydrogen + Sanity launch foundation for Kumachi Prints using art-business and the local Woo simulator as upstream planning/data context.
 
 Tasks:
-1. Create apps/hydrogen without breaking sources/protoype.
-2. Add safe environment placeholders for Shopify Storefront, Hydrogen session, Sanity project/dataset/api version/read token, and preview secret.
-3. Implement Sanity schema skeletons for productSupplement, artist, series, page, settings, navigation, seoFields, imageWithAlt, and navItem.
-4. Implement Hydrogen route skeletons for homepage, /products/:handle, /collections/:handle, cart, search, pages, sitemap, and robots.
-5. On product routes, fetch Shopify product and Sanity productSupplement by the same handle with Promise.all.
-6. Render products even if the Sanity supplement is missing.
-7. Keep commerce data in Shopify and editorial data in Sanity.
-8. Port design tokens and product-page UX from the Vite prototype/reference docs.
-9. Run build/typecheck for apps/hydrogen and verify sources/protoype still builds.
+1. Keep apps/hydrogen and sources/protoype both building.
+2. Use root studio/ as the canonical Sanity Studio.
+3. Populate Sanity content for launch products, settings, navigation, and homepage sections.
+4. Verify Shopify products, collections, handles, Storefront token, and Oxygen environment variables.
+5. Smoke-test homepage, collections, product variant selection, add to cart, cart update/remove, and checkout redirect.
+6. Keep commerce data in Shopify and editorial data in Sanity.
+7. Run build/typecheck for apps/hydrogen and verify sources/protoype still builds.
 ```
 
 ## Closeout Commands For Next Session

@@ -6,7 +6,11 @@ interface VariantSelectorProps {
   onSelect: (variantId: string) => void;
 }
 
-export function VariantSelector({variants, selectedVariantId, onSelect}: VariantSelectorProps) {
+export function VariantSelector({
+  variants,
+  selectedVariantId,
+  onSelect,
+}: VariantSelectorProps) {
   if (!variants?.length) return null;
 
   return (
@@ -17,14 +21,20 @@ export function VariantSelector({variants, selectedVariantId, onSelect}: Variant
           <button
             key={variant.id}
             onClick={() => onSelect(variant.id)}
+            disabled={!variant.availableForSale}
             className={`w-full flex justify-between items-center py-3 px-4 rounded-xs text-body-small transition-all ${
               selectedVariantId === variant.id
                 ? 'bg-gold/10 border border-gold text-gold'
                 : 'bg-surface-mid border border-border text-text-secondary hover:border-text-muted'
-            }`}
+            } ${!variant.availableForSale ? 'opacity-45 cursor-not-allowed' : ''}`}
+            aria-pressed={selectedVariantId === variant.id}
+            type="button"
           >
             <span>
               {variant.selectedOptions?.map((o: any) => o.value).join(' / ')}
+              {!variant.availableForSale && (
+                <span className="ml-2 text-text-muted">(Unavailable)</span>
+              )}
             </span>
             <span className="text-price">
               {formatPrice(parseFloat(variant.price.amount) * 100)}

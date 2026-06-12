@@ -1,79 +1,48 @@
 # Phase 2 — Hydrogen + Sanity Production
 
-Status: Planning
+Status: Current
 
 ## Objective
 
-Build the real Hydrogen stack on Shopify Oxygen. Core routes are live, Sanity schemas are deployed and populated, Visual Editing is working, and product supplements provide editorial depth for all launch products. This is now the immediate production build path, not a replacement after a Netlify bridge launch.
+Build the real Hydrogen stack on Shopify Oxygen. Core routes are live, Sanity schemas are deployed and populated, Visual Editing is working, and product supplements provide editorial depth for all launch products. The Hydrogen app at `apps/hydrogen` is the production target. The Vite prototype at `sources/protoype` is preview/reference only.
 
 ## Scope
 
-**In scope:** production app creation at `apps/hydrogen`, Hydrogen deployment on Oxygen, Sanity schema implementation, Sanity Studio deployment, Visual Editing configuration, core route completion, product supplement documents for launch products, SEO meta functions.
+**In scope:** production app hardening at `apps/hydrogen`, Hydrogen deployment on Oxygen, canonical root Sanity Studio deployment, Visual Editing configuration, core route completion, product supplement documents for launch products, SEO meta functions.
 
 **Out of scope:** Editorial routes (drops, artist profiles), domain migration from subdomain, customer accounts.
 
 ## Task Checklist
 
-- [ ] Deploy Hydrogen app to Oxygen production environment
-- [ ] Create production app at `apps/hydrogen` without breaking `sources/protoype`
-- [ ] Configure Oxygen preview deployments for PR branches
-- [ ] Set `prints.kumachigallery.com` as custom domain in Oxygen
-- [ ] Implement all Sanity schema files in `studio/schemaTypes/`
-  - [ ] `homepage.ts` — singleton page builder
-  - [ ] `productSupplement.ts` — editorial supplement keyed to `shopifyHandle`
-  - [ ] `artist.ts` — artist profile document
-  - [ ] `series.ts` — drop/series release document
-  - [ ] `page.ts` — generic CMS page
-  - [ ] `settings.ts` — singleton site-wide config
-  - [ ] `navigation.ts` — singleton main navigation
-  - [ ] `objects/seoFields.ts` — shared SEO metadata
-  - [ ] `objects/imageWithAlt.ts` — image with alt text and hotspot
-  - [ ] `objects/navItem.ts` — navigation item
-- [ ] Register all schema types in `studio/schemaTypes/index.ts`
+- [x] Hydrogen app at `apps/hydrogen` scaffolded and building
+- [x] Production app exists at `apps/hydrogen`, Vite prototype `sources/protoype` functional
+- [x] All Sanity schema files exist in canonical `studio/schemaTypes/`
+  - [x] `homepage.ts` — singleton page builder
+  - [x] `productSupplement.ts` — editorial supplement keyed to `shopifyHandle`
+  - [x] `artist.ts` — artist profile document
+  - [x] `series.ts` — drop/series release document
+  - [x] `page.ts` — generic CMS page
+  - [x] `settings.ts` — singleton site-wide config
+  - [x] `navigation.ts` — singleton main navigation
+  - [x] `objects/seoFields.ts` — shared SEO metadata
+  - [x] `objects/imageWithAlt.ts` — image with alt text and hotspot
+  - [x] `objects/navItem.ts` — navigation item
+- [x] All schema types registered in `studio/schemaTypes/index.ts`
+- [x] `app/lib/queries.ts` — Shopify and GROQ query constants
+- [x] `app/lib/sanity.server.ts` — Sanity client setup
+- [x] `app/lib/cart.server.ts` — server-side cart utilities
+- [x] `app/lib/format.ts` — `formatPrice()` and `formatMoney()`
+- [x] `app/lib/animations.ts` — Framer Motion variants
+- [x] Layout, product, cart components for the launch foundation
+- [x] Section components: HeroSection, FeaturedCollectionSection, ProductGridSection, NewsletterSection, TestimonialsSection, EditorialBannerSection
+- [x] Route implementations: `_index`, `products.$handle`, `collections.$handle`, `cart`, `search`, `pages.$handle`, `sitemap.xml`, `robots.txt`
+- [x] `ErrorBoundary` present on all routes
+- [x] `npm run typecheck` and `npm run build` pass
 - [ ] Deploy Sanity Studio: `cd studio && npx sanity deploy`
 - [ ] Verify Sanity Studio accessible at `kumachi-prints.sanity.studio`
 - [ ] Configure Sanity Visual Editing with preview secret
-- [ ] Create `app/lib/queries.ts` with all GROQ query constants
-  - [ ] Homepage sections query
-  - [ ] Product supplement by handle query
-  - [ ] All live series query
-  - [ ] Artist by slug query
-  - [ ] Site settings query
-  - [ ] Navigation query
-  - [ ] Page by slug query
-- [ ] Create `app/lib/sanity.server.ts` — Sanity client setup
-- [ ] Create `app/lib/cart.server.ts` — server-side cart utilities
-- [ ] Create `app/lib/format.ts` — `formatPrice()` and `formatMoney()`
-- [ ] Create `app/lib/animations.ts` — Framer Motion variants
-- [ ] Create `app/components/layout/Header.tsx` — site header with nav and cart icon
-- [ ] Create `app/components/layout/Footer.tsx` — footer with nav and social links
-- [ ] Create `app/components/layout/AnnouncementBar.tsx` — promo bar from Sanity settings
-- [ ] Create `app/components/product/ProductCard.tsx` — grid card component
-- [ ] Create `app/components/product/ProductGrid.tsx` — product card grid
-- [ ] Create `app/components/product/VariantSelector.tsx` — size and frame selector
-- [ ] Create `app/components/product/AddToCart.tsx` — add to cart button
-- [ ] Create `app/components/product/ProductMedia.tsx` — image gallery
-- [ ] Create `app/components/cart/CartDrawer.tsx` — slide-in cart
-- [ ] Create `app/components/cart/CartItem.tsx` — line item component
-- [ ] Create `app/components/cart/CartSummary.tsx` — subtotal and checkout
-- [ ] Create `app/components/sections/HeroSection.tsx`
-- [ ] Create `app/components/sections/FeaturedCollectionSection.tsx`
-- [ ] Create `app/components/sections/ProductGridSection.tsx`
-- [ ] Create `app/components/sections/NewsletterSection.tsx`
-- [ ] Create `app/components/shared/SanityImage.tsx`
-- [ ] Create `app/components/shared/Seo.tsx`
-- [ ] Implement `app/routes/_index.tsx` — homepage with Sanity sections
-- [ ] Implement `app/routes/products.$handle.tsx` — PDP with product supplement
-- [ ] Implement `app/routes/collections.$handle.tsx` — collection listing
-- [ ] Implement `app/routes/cart.tsx` — cart page with action handlers
-- [ ] Implement `app/routes/search.tsx` — search results page
-- [ ] Implement `app/routes/pages.$handle.tsx` — CMS static pages
-- [ ] Implement `app/routes/sitemap.xml.tsx` — SEO sitemap
-- [ ] Implement `app/routes/robots.txt.tsx` — crawler rules
 - [ ] Create product supplement documents in Sanity for all 5+ launch products
 - [ ] Add Sanity SEO fields override pattern in all route meta functions
-- [ ] Implement `ErrorBoundary` on every route
-- [ ] Run `npm run typecheck` and `npm run build` — fix all errors
 - [ ] Verify all routes work on Oxygen preview URL
 
 ## Deliverables

@@ -1,0 +1,70 @@
+# Launch Gap Closure
+
+Status: Current
+
+## Current State
+
+The production Hydrogen app exists at `apps/hydrogen` and is the launch target. The Vite prototype at `sources/protoype` remains a local preview/reference app only.
+
+The local WordPress/Woo simulator at `C:\wamp64\www\prints-local` remains upstream planning infrastructure. Its `art-business` command center reports `155` catalog products, `837` variations, and no missing categories or tags. Production Hydrogen must still read commerce from Shopify and editorial content from Sanity, not Woo.
+
+Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studio/` exists — confirmed absent.
+
+## Completed In This Pass
+
+- `apps/hydrogen` identified as sole production target; `sources/protoype` documented as preview/reference only.
+- `*.tsbuildinfo` removed from git tracking; `apps/hydrogen/tsconfig.tsbuildinfo` no longer tracked.
+- Scaffold validator `Search-Files` rewritten to avoid recursing into excluded directories — no more falsely scanning nested `node_modules`, `dist`, `.git`, or generated paths.
+- Cart action fixed: now creates a cart only when no `cartId` exists; if `cartId` exists, adds lines with `cartLinesAdd` and falls back to cart creation only if the existing cart was deleted/expired.
+- Product `/products/:handle` hardened: variant selection via Shopify variants as commerce truth, sold-out/unavailable handling, renders product even if Sanity supplement is missing, preserves Shopify + Sanity join-by-handle.
+- Homepage improved: `_index.tsx` features `FeaturedCollectionSection` rendering products from the "all" collection plus the existing featured prints grid.
+- Cart `CART_LINES_ADD_MUTATION` returns full line data (merchandise details, prices, options) so the drawer and page can render properly after add.
+- `CartSummary` component vendored into CartDrawer and CartPage to avoid duplication.
+- Duplicate `apps/hydrogen/studio/` confirmed non-existent — root `studio/` is already canonical.
+- No secret-worthy tokens found in docs or configs.
+- Hydrogen typecheck/build, Vite prototype build, and scaffold validation verified.
+
+## Remaining Launch Blockers
+
+- Configure real Shopify Storefront API environment values locally and in Oxygen.
+- Confirm Shopify products, collections, and handles match the `art-business` mirror/export.
+- Create or review Sanity documents for settings, navigation, homepage, and launch product supplements.
+- Deploy Sanity Studio from root `studio/`.
+- Configure Oxygen deployment token and environment variables.
+- Place a complete test order and confirm Printful receives fulfillment.
+- Add analytics/Search Console only after the purchase flow is verified.
+
+## Verification Commands
+
+From `C:\Users\sirer\Documents\GitHub\prints-shop\apps\hydrogen`:
+
+```powershell
+npm run typecheck
+npm run build
+```
+
+From `C:\Users\sirer\Documents\GitHub\prints-shop\sources\protoype`:
+
+```powershell
+npm run build
+```
+
+From `C:\Users\sirer\Documents\GitHub\prints-shop`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\validate_scaffold.ps1
+```
+
+From `C:\wamp64\www\prints-local\art-business` when upstream data context is needed:
+
+```powershell
+python .\scripts\artbiz.py catalog validate
+python .\scripts\artbiz.py woo population-status
+python .\scripts\artbiz.py mirror export-storefront
+```
+
+## Next Agent Instruction
+
+Do not recreate the Hydrogen app. Harden `apps/hydrogen`, keep `sources/protoype` building, use root `studio/` for Sanity, and do not commit secrets. Focus next on real Shopify/Sanity environment testing, content population, and Oxygen deployment readiness.
+
+*Last updated: 2026-06*

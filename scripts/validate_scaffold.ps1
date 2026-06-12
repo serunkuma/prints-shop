@@ -57,25 +57,46 @@ $SCAFFOLD_FILES = @(
   'extract.md', 'HOW_TO.md', 'prompt.md', 'MERGE_BACK.md',
   'scripts\validate_scaffold.sh', 'scripts\validate_scaffold.ps1'
 )
-$EXCLUDED_DIRS = @('sources', 'node_modules', '.git', 'dist', 'profiles', '.cursor')
+$EXCLUDED_DIRS = @(
+  'sources', 'node_modules', '.git', 'dist', 'profiles', '.cursor',
+  '.cache', '.vite', '.oxygen', 'coverage', 'build'
+)
 
 # ---------- content search helper ----------
 function Search-Files($pattern, $include = '*.md') {
-  $files = Get-ChildItem -Recurse -Filter $include -File |
-    Where-Object {
-      $relative = $_.FullName.Substring($PROJECT_ROOT.Length + 1)
-      foreach ($dir in $EXCLUDED_DIRS) {
-        if ($relative.StartsWith($dir + [IO.Path]::DirectorySeparatorChar) -or $relative -eq $dir) {
-          return $false
-        }
-      }
-      foreach ($sf in $SCAFFOLD_FILES) {
-        if ($relative -eq $sf) { return $false }
-      }
-      $true
+  $visited = @{}
+  function Traverse-Path($path) {
+    $results = @()
+    $relativeKey = $path.Substring($PROJECT_ROOT.Length).TrimStart('\', '/')
+    if ($visited.ContainsKey($relativeKey.ToLower())) { return @() }
+    $visited[$relativeKey.ToLower()] = $true
+    foreach ($exDir in $script:EXCLUDED_DIRS) {
+      if ($path -eq (Join-Path $script:PROJECT_ROOT $exDir) -or $relativeKey -eq $exDir) { return @() }
     }
-  $results = $files | Select-String -Pattern $pattern -CaseSensitive
-  return $results
+    $items = try { Get-ChildItem -LiteralPath $path -ErrorAction Stop } catch { return @() }
+    foreach ($item in $items) {
+      $relative = $item.FullName.Substring($script:PROJECT_ROOT.Length + 1)
+      $parts = $relative -split '[\\/]'
+      $excluded = $false
+      foreach ($exDir in $script:EXCLUDED_DIRS) {
+        if ($parts -contains $exDir) { $excluded = $true; break }
+      }
+      if ($excluded) { continue }
+      $skipScaffold = $false
+      foreach ($sf in $script:SCAFFOLD_FILES) {
+        if ($relative -eq $sf) { $skipScaffold = $true; break }
+      }
+      if ($skipScaffold) { continue }
+      if ($item.PSIsContainer) {
+        $results += Traverse-Path $item.FullName
+      } elseif ($item.Name -like $include) {
+        $results += $item
+      }
+    }
+    return $results
+  }
+  $files = Traverse-Path $script:PROJECT_ROOT
+  return $files | Select-String -Pattern $pattern -CaseSensitive
 }
 
 # ---------- CHECK 1: No 'Project Name' placeholder ----------

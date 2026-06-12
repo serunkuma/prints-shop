@@ -5,7 +5,7 @@ import {schemaTypes} from './schemaTypes';
 export default defineConfig({
   name: 'kumachi-prints',
   title: 'Kumachi Prints',
-  projectId: import.meta.env.SANITY_STUDIO_PROJECT_ID || 'YOUR_PROJECT_ID',
+  projectId: import.meta.env.SANITY_STUDIO_PROJECT_ID || '2wo9hx90',
   dataset: import.meta.env.SANITY_STUDIO_DATASET || 'production',
   plugins: [structureTool()],
   schema: {

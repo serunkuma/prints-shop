@@ -23,22 +23,6 @@ export async function action({request, context}: {request: Request; context: any
   const intent = formData.get('intent');
   let cartId = context.session.get('cartId');
 
-  if (intent === 'add') {
-    const lines = [{
-      merchandiseId: formData.get('variantId') as string,
-      quantity: parseInt(formData.get('quantity') as string) || 1,
-    }];
-
-    const {cartCreate} = await context.storefront.mutate(CART_CREATE_MUTATION, {
-      variables: {input: {lines}},
-    });
-
-    if (cartCreate?.cart) {
-      context.session.set('cartId', cartCreate.cart.id);
-      return {cart: cartCreate.cart};
-    }
-  }
-
   if (intent === 'update' && cartId) {
     const lineId = formData.get('lineId') as string;
     const quantity = parseInt(formData.get('quantity') as string);
@@ -47,6 +31,10 @@ export async function action({request, context}: {request: Request; context: any
       CART_LINES_UPDATE_MUTATION,
       {variables: {cartId, lines: [{id: lineId, quantity}]}},
     );
+
+    if (cartLinesUpdate?.userErrors?.length) {
+      return data({error: cartLinesUpdate.userErrors[0].message}, {status: 400});
+    }
 
     if (cartLinesUpdate?.cart) {
       return {cart: cartLinesUpdate.cart};
@@ -61,12 +49,73 @@ export async function action({request, context}: {request: Request; context: any
       {variables: {cartId, lineIds: [lineId]}},
     );
 
+    if (cartLinesRemove?.userErrors?.length) {
+      return data({error: cartLinesRemove.userErrors[0].message}, {status: 400});
+    }
+
     if (cartLinesRemove?.cart) {
       return {cart: cartLinesRemove.cart};
     }
   }
 
-  return data({error: 'Unknown intent'}, {status: 400});
+  if (intent === 'add') {
+    const variantId = formData.get('variantId') as string;
+    if (!variantId) {
+      return data({error: 'Choose an available variant before adding to cart.'}, {status: 400});
+    }
+
+    const lines = [{
+      merchandiseId: variantId,
+      quantity: parseInt(formData.get('quantity') as string) || 1,
+    }];
+
+    let cart;
+
+    // If a cart exists, add lines to it
+    if (cartId) {
+      const {cartLinesAdd} = await context.storefront.mutate(
+        CART_LINES_ADD_MUTATION,
+        {variables: {cartId, lines}},
+      );
+
+      if (cartLinesAdd?.userErrors?.length) {
+        return data({error: cartLinesAdd.userErrors[0].message}, {status: 400});
+      }
+
+      cart = cartLinesAdd?.cart;
+
+      if (!cart) {
+        // Existing cart expired or was deleted — clear stale ID and create new
+        context.session.set('cartId', null);
+      }
+    }
+
+    // Create a new cart if one doesn't exist yet
+    if (!cart) {
+      const {cartCreate} = await context.storefront.mutate(
+        CART_CREATE_MUTATION,
+        {variables: {input: {lines}}},
+      );
+
+      if (cartCreate?.userErrors?.length) {
+        return data({error: cartCreate.userErrors[0].message}, {status: 400});
+      }
+
+      cart = cartCreate?.cart;
+
+      if (cart) {
+        context.session.set('cartId', cart.id);
+      }
+    }
+
+    if (!cart) {
+      return data({error: 'Could not create or update cart. Please try again.'}, {status: 500});
+    }
+
+    return {cart};
+  }
+
+  return data({error: 'Cart action failed. Please try again.'}, {status: 400});
 }
 
 const CART_QUERY = `#graphql
@@ -112,6 +161,64 @@ const CART_CREATE_MUTATION = `#graphql
         cost {
           subtotalAmount { amount currencyCode }
           totalAmount { amount currencyCode }
+        }
+        lines(first: 100) {
+          nodes {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                id
+                title
+                product {
+                  handle
+                  title
+                  featuredImage { url altText }
+                }
+                selectedOptions { name value }
+                price { amount currencyCode }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const CART_LINES_ADD_MUTATION = `#graphql
+  mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+    cartLinesAdd(cartId: $cartId, lines: $lines) {
+      userErrors {
+        field
+        message
+      }
+      cart {
+        id
+        checkoutUrl
+        totalQuantity
+        cost {
+          subtotalAmount { amount currencyCode }
+          totalAmount { amount currencyCode }
+        }
+        lines(first: 100) {
+          nodes {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                id
+                title
+                product {
+                  handle
+                  title
+                  featuredImage { url altText }
+                }
+                selectedOptions { name value }
+                price { amount currencyCode }
+              }
+            }
+          }
         }
       }
     }

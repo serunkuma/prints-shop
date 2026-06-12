@@ -35,13 +35,13 @@ The prototype route remains:
 /product/:handle
 ```
 
-The future Shopify/Hydrogen canonical route is:
+The Shopify/Hydrogen canonical route is:
 
 ```text
 /products/:handle
 ```
 
-Keep both working while the prototype is used as a local preview/reference.
+That is what `apps/hydrogen` uses. The Vite prototype `/product/:handle` route is preview/reference only.
 
 ## Production Handoff
 

@@ -19,7 +19,7 @@ The Vite bridge prototype lives at:
 prints-shop\sources\protoype
 ```
 
-The final production storefront is still to be created separately as Hydrogen + Sanity.
+The production storefront lives at `apps/hydrogen`. Hydrogen + Sanity on Shopify Oxygen is the launch target. The Vite prototype is a local preview/reference only.
 
 ## Architecture
 
@@ -43,9 +43,9 @@ The final production storefront is still to be created separately as Hydrogen + 
 6. Generate Sanity dry-run product supplement documents.
 7. Push reviewed editorial supplements to Sanity.
 8. Create or sync approved Shopify/Printful products.
-9. Build Hydrogen in a separate production app.
+9. Hydrogen app at `apps/hydrogen` — production storefront on Shopify Oxygen.
 10. Join Shopify products and Sanity supplements by product handle.
-11. Publish on Oxygen when the production Hydrogen build is ready.
+11. Published on Oxygen at the production URL.
 
 ## Command Center Checks
 
@@ -97,7 +97,7 @@ Important context:
 - The Vite prototype lives at:
   prints-shop\sources\protoype
 - Do not break the Vite prototype.
-- The final production Hydrogen + Sanity build does not exist yet. Create it separately.
+- The production Hydrogen + Sanity build exists at `apps/hydrogen`. Do not recreate it.
 - Sanity project:
   Project ID: 2wo9hx90
   Organization ID: o9GdYjNoE

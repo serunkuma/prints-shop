@@ -21,11 +21,12 @@ These 5 rules keep the store running. Do not skip them.
 git pull origin main
 
 # Step 2: Start the dev server
+cd apps/hydrogen
 npm run dev
 # Opens at http://localhost:3000
 
 # Step 3: Make your changes
-# Edit files in app/ or studio/
+# Edit files in apps/hydrogen/app/ or root studio/
 
 # Step 4: Check for errors
 npm run typecheck
@@ -184,10 +185,10 @@ When you need to rotate a Shopify or Sanity token:
 
 | Task | Command |
 |------|---------|
-| Start dev server | `npm run dev` |
-| Build for production | `npm run build` |
-| Preview production build locally | `npm run preview` |
-| TypeScript type check | `npm run typecheck` |
+| Start dev server | `cd apps/hydrogen && npm run dev` |
+| Build for production | `cd apps/hydrogen && npm run build` |
+| Preview production build locally | `cd apps/hydrogen && npm run preview` |
+| TypeScript type check | `cd apps/hydrogen && npm run typecheck` |
 | Deploy Sanity Studio | `cd studio && npx sanity deploy` |
 | Link Shopify store (first time) | `npx shopify hydrogen link` |
 | Roll back Oxygen deployment | Shopify admin → Hydrogen → prints-shop → Production → View deployments → Make last good deployment current |

@@ -2,7 +2,7 @@ import {useLoaderData, Form, useRouteError, isRouteErrorResponse} from 'react-ro
 import {type HeadersFunction} from '@shopify/remix-oxygen';
 import {generateCacheControlHeader, CacheNone} from '@shopify/hydrogen';
 import {SEARCH_PRODUCTS_QUERY} from '~/lib/queries';
-import {formatPrice} from '~/lib/format';
+import {ProductGrid} from '~/components/product/ProductGrid';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheNone()),
@@ -50,30 +50,7 @@ export default function SearchPage() {
             {results.length} result{results.length !== 1 && 's'} for &ldquo;{query}&rdquo;
           </p>
           {results.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
-              {results.map((product: any) => (
-                <a key={product.id} href={`/products/${product.handle}`} className="group">
-                  <div className="aspect-[3/4] bg-surface-mid rounded-xs overflow-hidden mb-4">
-                    {product.featuredImage && (
-                      <img
-                        src={product.featuredImage.url}
-                        alt={product.featuredImage.altText || product.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                        width={product.featuredImage.width || 600}
-                        height={product.featuredImage.height || 800}
-                      />
-                    )}
-                  </div>
-                  <h3 className="text-h4 mb-1">{product.title}</h3>
-                  {product.priceRange?.minVariantPrice && (
-                    <p className="text-price text-gold">
-                      {formatPrice(parseFloat(product.priceRange.minVariantPrice.amount) * 100)}
-                    </p>
-                  )}
-                </a>
-              ))}
-            </div>
+            <ProductGrid products={results} />
           ) : (
             <p className="text-body text-text-secondary">No products found for &ldquo;{query}&rdquo;.</p>
           )}

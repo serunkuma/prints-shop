@@ -9,7 +9,7 @@
 
 Kumachi Prints is a premium headless e-commerce storefront for selling physical art prints — original and limited-edition artwork from the Kumachi catalogue, plus a forthcoming AI-generated print studio (Kumachi AI Studio). It serves a primary audience of diaspora buyers in USD markets who want quality art prints that tell cultural stories, positioning itself as gallery-adjacent (not a mass-market print shop). The differentiation is in the editorial layer: every print has context (artist, series, technique, inspiration), drops/series launches are curated editorial releases, and the AI Studio (post-launch) offers style-locked print generation. The store uses Printful for print-on-demand fulfilment — zero inventory risk, no physical product handled by Kumachi. It is the commerce arm of the Kumachi Empire, a four-property creative business ecosystem built by Ernest Serunkuma (Kampala, Uganda), co-launching alongside `kumachistudio.com`, `kumachigallery.com`, and `eserunkuma.com`.
 
-The local WordPress/WooCommerce simulator lives outside this repo at `C:\wamp64\www\prints-local` and runs at `http://localhost/prints-local/`. Its `art-business` folder is the Python command center for catalog validation, Woo mirror sync, storefront export, Shopify/Printful planning, and Sanity sync. This repo owns the storefront implementation: the Vite bridge prototype in `sources/protoype` and the future production Hydrogen + Sanity build.
+The local WordPress/WooCommerce simulator lives outside this repo at `C:\wamp64\www\prints-local` and runs at `http://localhost/prints-local/`. Its `art-business` folder is the Python command center for catalog validation, Woo mirror sync, storefront export, Shopify/Printful planning, and Sanity sync. This repo owns the storefront implementation: the Vite bridge prototype in `sources/protoype` and the production Hydrogen + Sanity app in `apps/hydrogen`.
 
 The simulator also has WPGraphQL enabled for local testing at `http://localhost/prints-local/graphql`. Use it to inspect local WordPress content shape or prototype GraphQL query ideas only. The bridge prototype still reads commerce data from the Woo Store API plus the safe `art-business` export, and production Hydrogen must read commerce from Shopify and editorial content from Sanity.
 
@@ -18,6 +18,8 @@ The simulator also has WPGraphQL enabled for local testing at `http://localhost/
 ## 2. Repository Layout
 
 ```
+
+Current production code lives under `apps/hydrogen`. When older documentation says `app/`, `root.tsx`, `shopify.config.ts`, or `.env.example` at the repository root, read that as the corresponding file under `apps/hydrogen` unless the document is explicitly marked historical. The root `studio/` directory is the canonical Sanity Studio; do not recreate or use `apps/hydrogen/studio`.
 prints-shop/
 ├── .github/
 │   ├── workflows/
@@ -147,6 +149,7 @@ prints-shop/
 # 1. Clone and install
 git clone https://github.com/serunkuma/prints-shop
 cd prints-shop
+cd apps/hydrogen
 npm install
 
 # 2. Link to Shopify store (first time only)
@@ -154,12 +157,12 @@ npx shopify hydrogen link
 # Follow CLI prompts — creates/updates .env with Shopify env vars
 
 # 3. Initialize Sanity (inside studio/ directory)
-cd studio
+cd ..\..\studio
 npx sanity init
 # → Use existing project (if already created at sanity.io/manage) or create new
 # → Name: "kumachi-prints"
 # → Dataset: production
-cd ..
+cd ..\apps\hydrogen
 
 # 4. Complete .env with all variables (see env table below)
 # Note: `npx shopify hydrogen link` only sets Shopify vars.
@@ -175,10 +178,10 @@ npm run dev
 
 | Command | Purpose |
 |---------|---------|
-| `npm run dev` | Start Hydrogen dev server (port 3000) |
-| `npm run build` | Build for production (Oxygen worker) |
-| `npm run preview` | Preview production build locally |
-| `npm run typecheck` | TypeScript type check |
+| `cd apps/hydrogen && npm run dev` | Start Hydrogen dev server (port 3000) |
+| `cd apps/hydrogen && npm run build` | Build for production (Oxygen worker) |
+| `cd apps/hydrogen && npm run preview` | Preview production build locally |
+| `cd apps/hydrogen && npm run typecheck` | TypeScript type check |
 | `cd studio && npx sanity deploy` | Deploy Sanity Studio to production hosting |
 
 ### Environment Variables
@@ -413,7 +416,7 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
 1. **Keep AGENTS.md current** — update when you fix bugs, change architecture, or add features
 2. **Cross-reference source code** — include file paths and line numbers: `[app/lib/format.ts:1](../../app/lib/format.ts:1)`
 3. **Follow doc conventions** — see `docs/concepts/README.md`, `docs/data/README.md`, `docs/system/README.md` for category-specific guidance
-4. **Run tests after changes** — currently no test suite; `npm run typecheck` and `npm run build` are the minimum
+4. **Run tests after changes** — currently no test suite; `cd apps/hydrogen && npm run typecheck` and `cd apps/hydrogen && npm run build` are the minimum
 5. **Upstream fix over workaround** — fix root causes, not symptoms
 6. **Keep docs organised** — concepts for "why", data for "what", system for "how"
 7. **No emojis unless meaningful** — `✅` completed, `🟡` in progress, `🔴` open issue only
@@ -455,6 +458,18 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
   cache headers added, AGENTS.md route inventory updated.
   Impact: Build passes clean (0 TS errors, 0 missing standard routes). Full route map live.
   (Ernest Serunkuma + AI agent)
+
+- 2026-06 Launch hardening pass: product variant selection, add-to-cart, cart update/create behavior,
+  canonical root Sanity Studio, scaffold validator nested generated-folder exclusions, and launch gap docs.
+  Impact: Hydrogen and Vite prototype builds pass; root studio/ is canonical; apps/hydrogen/studio removed.
+  (Ernest Serunkuma + AI agent)
+
+- 2026-06 Production launch foundation closeout: repo hygiene, cart fix, PDP hardening, docs update.
+  Reason: Launch readiness — fix cart fall-through bug, add sold-out PDP state, improve homepage sections,
+  refactor search to use ProductGrid, remove tracked tsbuildinfo, fix scaffold validator recursion,
+  create 08_launch_gap_closure.md, update docs to reflect apps/hydrogen as production target.
+  Impact: typecheck/build pass for both apps/hydrogen and sources/protoype; scaffold validator passes 15/15;
+  no secrets in docs; launch blockers documented. (Ernest Serunkuma + AI agent)
 ```
 
 ---
