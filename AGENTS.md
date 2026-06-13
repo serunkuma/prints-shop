@@ -22,6 +22,8 @@ The simulator also has WPGraphQL enabled for local testing at `http://localhost/
 Current production code lives under `apps/hydrogen`. When older documentation says `app/`, `root.tsx`, `shopify.config.ts`, or `.env.example` at the repository root, read that as the corresponding file under `apps/hydrogen` unless the document is explicitly marked historical. The root `studio/` directory is the canonical Sanity Studio; do not recreate or use `apps/hydrogen/studio`.
 
 Root `studio/` is deployable with its own `package.json` and `sanity.cli.ts`. The local Hydrogen `.env` file is intentionally ignored and must contain private Shopify/Sanity values supplied by Ernest; never commit it or copy its values into docs.
+
+Hydrogen intentionally does not import `@sanity/client` or `@sanity/image-url`. Use the small fetch-based GROQ client and local Sanity image URL helper in `apps/hydrogen/app/lib/sanity.server.ts` so MiniOxygen/Oxygen stays ESM-safe and `rxjs` stays out of the server runtime. The root Studio may keep Sanity's full authoring toolchain because it does not run inside Hydrogen.
 prints-shop/
 ├── .github/
 │   ├── workflows/
@@ -479,6 +481,13 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
   and external-account checklist added.
   Impact: repo can support Studio install/build/deploy; Ernest still owns private Shopify,
   Printful, Sanity, Oxygen, domain, and test-order setup.
+  (Ernest Serunkuma + AI agent)
+
+- 2026-06 MiniOxygen runtime cleanup: removed `@sanity/client` and `@sanity/image-url`
+  from `apps/hydrogen`, replaced them with ESM-safe local Sanity fetch/image helpers,
+  and switched `server.ts` to the React Router virtual server build import.
+  Impact: Hydrogen dependency tree and built server bundle no longer include `rxjs`
+  or Sanity CommonJS runtime packages; root Studio remains unchanged.
   (Ernest Serunkuma + AI agent)
 ```
 

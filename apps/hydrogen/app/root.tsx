@@ -16,7 +16,7 @@ export function links() {
 }
 
 const CART_QUERY = `#graphql
-  query CartId($cartId: String!) {
+  query CartId($cartId: ID!) {
     cart(id: $cartId) {
       id
       checkoutUrl
@@ -49,12 +49,15 @@ const CART_QUERY = `#graphql
 `;
 
 export async function loader({context}: {context: any}) {
+  const cartId = context.session.get('cartId');
   const [settings, navigation, cartData] = await Promise.all([
     context?.sanity?.fetch(SITE_SETTINGS_QUERY).catch(() => null),
     context?.sanity?.fetch(NAVIGATION_QUERY).catch(() => null),
-    context?.storefront?.query(CART_QUERY, {
-      variables: {cartId: context.session.get('cartId')},
-    }).catch(() => ({cart: null})),
+    cartId
+      ? context?.storefront?.query(CART_QUERY, {
+          variables: {cartId},
+        }).catch(() => ({cart: null}))
+      : Promise.resolve({cart: null}),
   ]);
 
   return {

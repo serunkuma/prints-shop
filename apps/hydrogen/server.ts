@@ -1,11 +1,7 @@
 import {createRequestHandler} from '@shopify/remix-oxygen';
 import {storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-type ServerBuild = import('react-router').ServerBuild;
-
-declare const __serverBuild: ServerBuild;
+import * as serverBuild from 'virtual:react-router/server-build';
 
 export default {
   async fetch(
@@ -21,7 +17,7 @@ export default {
       );
 
       const handleRequest = createRequestHandler({
-        build: __serverBuild,
+        build: serverBuild,
         mode: import.meta.env.NODE_ENV,
         getLoadContext: () => hydrogenContext,
       });

@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import type {SanityImageSource} from '@sanity/image-url/lib/types/types';
+import type {SanityImageSource} from '~/lib/sanity.server';
 import {useRootLoaderData} from '~/lib/useRootLoaderData';
 
 interface SanityImageProps {
