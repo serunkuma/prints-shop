@@ -83,6 +83,26 @@ git push origin main
 
 ## Deploying to Production
 
+Before deploying, fill local and Oxygen environment variables. Never commit `.env`.
+
+Local Hydrogen env:
+
+```bash
+cd apps/hydrogen
+cp .env.example .env
+# Fill PUBLIC_STORE_DOMAIN, PUBLIC_STOREFRONT_API_TOKEN, SESSION_SECRET,
+# SANITY_API_READ_TOKEN, and SANITY_PREVIEW_SECRET with real values.
+```
+
+Root Sanity Studio:
+
+```bash
+cd studio
+npm install
+npm run build
+npm run deploy
+```
+
 ```bash
 # Step 1: Push your feature branch and open a PR on GitHub
 # Step 2: Wait for the Oxygen preview deployment (~3 minutes)
@@ -103,6 +123,18 @@ No code changes needed:
 3. Or update footer navigation, social links, etc.
 4. Click Publish
 5. Changes appear on the live site immediately
+
+---
+
+## Launch Account Setup Checklist
+
+These tasks require Ernest's private account access and cannot be completed by an agent without credentials:
+
+- Shopify: plan that supports Oxygen, Hydrogen sales channel, Storefront API token, payments, taxes, shipping, products, collections, and storefront password settings.
+- Printful: Shopify connection, launch print files, DPI review, product/variant setup, retail pricing, SKU mapping, return address, and fulfillment settings.
+- Sanity: read-only Hydrogen token, private `art-business` write/admin token, deployed root Studio, settings/navigation/homepage/product supplements, artist docs, and series docs.
+- Oxygen/GitHub: `OXYGEN_DEPLOYMENT_TOKEN`, preview/production env vars, preview deploy, `prints.kumachigallery.com`, and SSL.
+- QA: desktop/mobile smoke test, variant selection, cart update/remove, checkout redirect, real test order, Printful receipt, tracking sync, and customer emails.
 
 ---
 
@@ -190,6 +222,8 @@ When you need to rotate a Shopify or Sanity token:
 | Preview production build locally | `cd apps/hydrogen && npm run preview` |
 | TypeScript type check | `cd apps/hydrogen && npm run typecheck` |
 | Deploy Sanity Studio | `cd studio && npx sanity deploy` |
+| Build Sanity Studio | `cd studio && npm run build` |
+| Deploy canonical Studio | `cd studio && npm run deploy` |
 | Link Shopify store (first time) | `npx shopify hydrogen link` |
 | Roll back Oxygen deployment | Shopify admin → Hydrogen → prints-shop → Production → View deployments → Make last good deployment current |
 

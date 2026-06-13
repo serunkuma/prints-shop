@@ -53,7 +53,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | [06_ai_studio.md](planning/06_ai_studio.md) | Future — AI Studio, style-locked generation, Certificate of Generation | Planning |
 | [07_production_build_handoff.md](planning/07_production_build_handoff.md) | Handoff for the Hydrogen + Sanity production build | Current |
 | [08_launch_gap_closure.md](planning/08_launch_gap_closure.md) | Launch gap closure and remaining blockers | Current |
-| [08_launch_gap_closure.md](planning/08_launch_gap_closure.md) | Current launch gaps after the Hydrogen app scaffold and hardening pass | Current |
+| [09_launch_account_setup_checklist.md](planning/09_launch_account_setup_checklist.md) | External account, env, deployment, and final QA checklist | Current |
 
 ## Research & Historical
 

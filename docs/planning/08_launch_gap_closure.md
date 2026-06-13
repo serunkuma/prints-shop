@@ -21,15 +21,18 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 - Cart `CART_LINES_ADD_MUTATION` returns full line data (merchandise details, prices, options) so the drawer and page can render properly after add.
 - `CartSummary` component vendored into CartDrawer and CartPage to avoid duplication.
 - Duplicate `apps/hydrogen/studio/` confirmed non-existent — root `studio/` is already canonical.
+- Root Sanity Studio is now deployable from `studio/` with `package.json`, `sanity.cli.ts`, and `.env.example`.
+- Local Hydrogen env placeholder exists at `apps/hydrogen/.env`; Ernest must fill it with real private values.
 - No secret-worthy tokens found in docs or configs.
 - Hydrogen typecheck/build, Vite prototype build, and scaffold validation verified.
+- Studio build is verified; remaining Studio audit warnings require a breaking Sanity major upgrade and are deferred from launch setup.
 
 ## Remaining Launch Blockers
 
-- Configure real Shopify Storefront API environment values locally and in Oxygen.
+- Fill real Shopify/Sanity values in local `apps/hydrogen/.env` and Oxygen.
 - Confirm Shopify products, collections, and handles match the `art-business` mirror/export.
 - Create or review Sanity documents for settings, navigation, homepage, and launch product supplements.
-- Deploy Sanity Studio from root `studio/`.
+- Install and deploy Sanity Studio from root `studio/`.
 - Configure Oxygen deployment token and environment variables.
 - Place a complete test order and confirm Printful receives fulfillment.
 - Add analytics/Search Console only after the purchase flow is verified.
@@ -55,6 +58,14 @@ From `C:\Users\sirer\Documents\GitHub\prints-shop`:
 powershell -ExecutionPolicy Bypass -File .\scripts\validate_scaffold.ps1
 ```
 
+From `C:\Users\sirer\Documents\GitHub\prints-shop\studio`:
+
+```powershell
+npm install
+npm run build
+npm run deploy
+```
+
 From `C:\wamp64\www\prints-local\art-business` when upstream data context is needed:
 
 ```powershell
@@ -66,5 +77,7 @@ python .\scripts\artbiz.py mirror export-storefront
 ## Next Agent Instruction
 
 Do not recreate the Hydrogen app. Harden `apps/hydrogen`, keep `sources/protoype` building, use root `studio/` for Sanity, and do not commit secrets. Focus next on real Shopify/Sanity environment testing, content population, and Oxygen deployment readiness.
+
+See [09_launch_account_setup_checklist.md](09_launch_account_setup_checklist.md) for the external-account tasks Ernest must complete.
 
 *Last updated: 2026-06*

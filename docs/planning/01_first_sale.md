@@ -28,7 +28,9 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 - [ ] Obtain Storefront API token from Shopify custom app
 - [x] Create Sanity project with dataset `production`
 - [x] Create production Hydrogen app at `apps/hydrogen`
-- [ ] Configure `.env` with all Shopify and Sanity environment variables
+- [x] Create local placeholder `apps/hydrogen/.env` with required variable names
+- [ ] Fill `.env` with real Shopify and Sanity values
+- [x] Make root Sanity Studio deployable from `studio/`
 - [ ] Verify `npm run dev` runs without errors at localhost:3000
 - [x] Homepage route renders with hero section, trust signals, and featured products
 - [x] Collection page renders Shopify products

@@ -20,6 +20,8 @@ The simulator also has WPGraphQL enabled for local testing at `http://localhost/
 ```
 
 Current production code lives under `apps/hydrogen`. When older documentation says `app/`, `root.tsx`, `shopify.config.ts`, or `.env.example` at the repository root, read that as the corresponding file under `apps/hydrogen` unless the document is explicitly marked historical. The root `studio/` directory is the canonical Sanity Studio; do not recreate or use `apps/hydrogen/studio`.
+
+Root `studio/` is deployable with its own `package.json` and `sanity.cli.ts`. The local Hydrogen `.env` file is intentionally ignored and must contain private Shopify/Sanity values supplied by Ernest; never commit it or copy its values into docs.
 prints-shop/
 ├── .github/
 │   ├── workflows/
@@ -183,6 +185,8 @@ npm run dev
 | `cd apps/hydrogen && npm run preview` | Preview production build locally |
 | `cd apps/hydrogen && npm run typecheck` | TypeScript type check |
 | `cd studio && npx sanity deploy` | Deploy Sanity Studio to production hosting |
+| `cd studio && npm run build` | Build the canonical Sanity Studio |
+| `cd studio && npm run deploy` | Deploy the canonical Sanity Studio |
 
 ### Environment Variables
 
@@ -470,6 +474,12 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
   create 08_launch_gap_closure.md, update docs to reflect apps/hydrogen as production target.
   Impact: typecheck/build pass for both apps/hydrogen and sources/protoype; scaffold validator passes 15/15;
   no secrets in docs; launch blockers documented. (Ernest Serunkuma + AI agent)
+
+- 2026-06 Launch setup handoff: root Sanity Studio deploy files, safe env placeholders,
+  and external-account checklist added.
+  Impact: repo can support Studio install/build/deploy; Ernest still owns private Shopify,
+  Printful, Sanity, Oxygen, domain, and test-order setup.
+  (Ernest Serunkuma + AI agent)
 ```
 
 ---
