@@ -21,6 +21,10 @@ const routes: RouteConfig = [
   {path: 'account/orders/:orderId', file: 'routes/account.orders.$orderId.tsx'},
   {path: 'account/recover', file: 'routes/account.recover.tsx'},
   {path: 'policies/:policyHandle', file: 'routes/policies.$policyHandle.tsx'},
+  {
+    path: '.well-known/appspecific/com.chrome.devtools.json',
+    file: 'routes/chrome-devtools-json.tsx',
+  },
   {path: 'robots.txt', file: 'routes/robots.txt.tsx'},
   {path: 'sitemap.xml', file: 'routes/sitemap.xml.tsx'},
 ];
