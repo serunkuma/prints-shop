@@ -9,9 +9,7 @@ export default defineConfig({
   build: {
     assetsInlineLimit: 0,
   },
-  ssr: {
-    optimizeDeps: {
-      include: ['set-cookie-parser', 'cookie', 'react-router'],
-    },
+  optimizeDeps: {
+    include: ['set-cookie-parser', 'cookie', 'react-router'],
   },
 });
