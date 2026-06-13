@@ -1,5 +1,5 @@
 import {useLoaderData, useFetcher, data, useRouteError, isRouteErrorResponse} from 'react-router';
-import {type HeadersFunction} from '@shopify/remix-oxygen';
+import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheNone} from '@shopify/hydrogen';
 import {formatPrice} from '~/lib/format';
 

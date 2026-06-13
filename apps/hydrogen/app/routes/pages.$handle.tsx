@@ -1,5 +1,5 @@
 import {useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
-import {type HeadersFunction} from '@shopify/remix-oxygen';
+import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheLong} from '@shopify/hydrogen';
 import {PAGE_QUERY} from '~/lib/queries';
 

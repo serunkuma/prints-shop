@@ -1,5 +1,5 @@
 import {useLoaderData, Form, useRouteError, isRouteErrorResponse} from 'react-router';
-import {type HeadersFunction} from '@shopify/remix-oxygen';
+import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheNone} from '@shopify/hydrogen';
 import {SEARCH_PRODUCTS_QUERY} from '~/lib/queries';
 import {ProductGrid} from '~/components/product/ProductGrid';

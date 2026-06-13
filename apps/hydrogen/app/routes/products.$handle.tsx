@@ -1,7 +1,7 @@
 import {useMemo, useState} from 'react';
 import {Link, useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
 import type {MetaArgs} from 'react-router';
-import {type HeadersFunction} from '@shopify/remix-oxygen';
+import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheShort} from '@shopify/hydrogen';
 import {ChevronDown, Lock, RefreshCw, Truck} from 'lucide-react';
 import {AnimatePresence, motion} from 'framer-motion';
