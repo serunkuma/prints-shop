@@ -2,6 +2,7 @@ import {Link} from 'react-router';
 import {motion} from 'framer-motion';
 import ClipRevealImage from '~/components/motion/ClipRevealImage';
 import AnimatedButton from '~/components/motion/AnimatedButton';
+import PathwaySwitch from '~/components/PathwaySwitch';
 
 interface HeroSectionProps {
   section?: any;
@@ -24,10 +25,7 @@ export function HeroSection({section}: HeroSectionProps) {
     >
       <div className="container-gallery grid min-h-[calc(100vh-96px)] grid-cols-1 items-center gap-10 py-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16 lg:py-16">
         <div className="relative z-10">
-          <div className="inline-flex border border-[var(--color-border)] bg-[var(--color-surface)] p-1">
-            <Link to="/collections" className="px-4 py-2 text-caption uppercase text-text-primary">Curated Prints</Link>
-            <Link to="/create" className="px-4 py-2 text-caption uppercase text-text-secondary hover:text-text-primary">Create Path</Link>
-          </div>
+          <PathwaySwitch />
 
           <div className="mt-10">
             <motion.p
@@ -45,7 +43,7 @@ export function HeroSection({section}: HeroSectionProps) {
               animate={{opacity: 1, y: 0}}
               transition={{duration: 0.7, delay: 0.32, ease: [0.16, 1, 0.3, 1]}}
               className="text-display mt-4 whitespace-pre-line"
-              style={{color: 'var(--color-text-primary)'}}
+              style={{color: 'var(--color-text-primary)', fontSize: 'clamp(4rem, 8vw, 100px)'}}
             >
               {title}
             </motion.h1>
