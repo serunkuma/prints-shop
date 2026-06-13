@@ -1,31 +1,18 @@
-interface NewsletterSectionProps {
-  section: any;
-}
-
-export function NewsletterSection({section}: NewsletterSectionProps) {
-  if (!section.heading) return null;
-
+export function NewsletterSection() {
   return (
-    <section className="container-gallery section-pad">
-      <div className="card-surface rounded-xs p-8 md:p-12 text-center max-w-lg mx-auto">
-        <h2 className="text-h2 mb-4">{section.heading}</h2>
-        {section.description && <p className="text-body text-text-secondary mb-8">{section.description}</p>}
-        <form
-          action="https://kumachi.us21.list-manage.com/subscribe/post?u=PLACEHOLDER&amp;id=PLACEHOLDER"
-          method="post"
-          target="_blank"
-          className="flex gap-3 max-w-md mx-auto"
-        >
-          <input
-            type="email"
-            name="EMAIL"
-            placeholder="Your email"
-            required
-            className="flex-1 px-4 py-3 bg-surface-mid border border-border rounded-xs text-body placeholder:text-text-muted focus:outline-none focus:border-gold"
-          />
-          <button type="submit" className="px-6 py-3 bg-gold text-void text-button rounded-xs font-medium hover:opacity-90 transition-opacity flex-shrink-0">
-            Subscribe
-          </button>
+    <section className="kumachi-section" style={{backgroundColor: 'var(--color-surface-deep)', color: 'var(--color-bg-primary)'}}>
+      <div className="container-gallery grid grid-cols-1 gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+        <div>
+          <p className="text-caption uppercase" style={{color: 'var(--color-accent-ochre)'}}>Stay close</p>
+          <h2 className="text-h2 mt-3 max-w-3xl">New drops, studio notes, and print stories.</h2>
+          <p className="text-body mt-5 max-w-xl" style={{color: '#d8cbb7'}}>
+            Join the list for release notes and first looks. The real email integration comes after checkout QA.
+          </p>
+        </div>
+        <form className="flex flex-col gap-3 sm:flex-row" onSubmit={(event) => event.preventDefault()}>
+          <label className="sr-only" htmlFor="newsletter-email">Email address</label>
+          <input id="newsletter-email" type="email" placeholder="you@example.com" className="min-h-12 flex-1 border border-white/20 bg-white/10 px-4 text-sm text-white placeholder:text-white/60" />
+          <button type="submit" className="min-h-12 bg-gold px-6 text-button uppercase text-void">Notify me</button>
         </form>
       </div>
     </section>

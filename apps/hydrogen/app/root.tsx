@@ -5,13 +5,14 @@ import {Header} from '~/components/layout/Header';
 import {Footer} from '~/components/layout/Footer';
 import {AnnouncementBar} from '~/components/layout/AnnouncementBar';
 import {CartDrawer} from '~/components/cart/CartDrawer';
+import {Toaster} from 'sonner';
 
 export function links() {
   return [
     {rel: 'stylesheet', href: styles},
     {rel: 'preconnect', href: 'https://fonts.googleapis.com'},
     {rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous'},
-    {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=DM+Sans:wght@400;500;600;700&display=swap'},
+    {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Manrope:wght@400;500;600;700&display=swap'},
   ];
 }
 
@@ -74,7 +75,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="light">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -87,6 +88,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <main className="flex-1">{children}</main>
         <Footer />
         <CartDrawer />
+        <Toaster richColors position="bottom-right" />
         <ScrollRestoration />
         <Scripts />
       </body>

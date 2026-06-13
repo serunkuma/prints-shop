@@ -1,46 +1,179 @@
-import {Link} from 'react-router';
-import {Suspense} from 'react';
+import {useEffect, useState} from 'react';
+import {Link, NavLink} from 'react-router';
+import {AnimatePresence, motion} from 'framer-motion';
+import {Menu, Moon, Search, ShoppingBag, Sun, X} from 'lucide-react';
 import {useUIStore} from '~/lib/store';
+import {useRootLoaderData} from '~/lib/useRootLoaderData';
+
+const nav = [
+  {label: 'Collection', to: '/collections'},
+  {label: 'Create', to: '/create'},
+  {label: 'Drops', to: '/drops'},
+  {label: 'Artists', to: '/artists'},
+  {label: 'About', to: '/pages/about'},
+];
 
 export function Header() {
-  const toggleCart = useUIStore((s) => s.toggleCart);
-  const toggleMobileMenu = useUIStore((s) => s.toggleMobileMenu);
-  const mobileMenuOpen = useUIStore((s) => s.mobileMenuOpen);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const setCartOpen = useUIStore((state) => state.setCartOpen);
+  const rootData = useRootLoaderData();
+  const count = rootData?.cart?.totalQuantity || 0;
+
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem('kumachi-theme');
+    const nextTheme = savedTheme === 'dark' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+    document.documentElement.classList.toggle('light', nextTheme !== 'dark');
+
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener('scroll', onScroll, {passive: true});
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    window.localStorage.setItem('kumachi-theme', nextTheme);
+    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+    document.documentElement.classList.toggle('light', nextTheme !== 'dark');
+  };
 
   return (
-    <header className="sticky top-0 z-50 bg-void/90 backdrop-blur-md border-b border-border">
-      <div className="container-gallery flex items-center justify-between h-16 md:h-20">
-        <Link to="/" className="text-h3 text-gold hover:opacity-80 transition-opacity">
-          Kumachi Prints
-        </Link>
+    <>
+      <motion.header
+        initial={{y: -64, opacity: 0}}
+        animate={{y: 0, opacity: 1}}
+        transition={{duration: 0.35, ease: [0.22, 1, 0.36, 1]}}
+        className="fixed left-0 right-0 top-0 z-50"
+      >
+        <div
+          className="flex h-20 items-center justify-between px-4 transition-all duration-300 md:px-12"
+          style={{
+            backgroundColor: scrolled
+              ? 'color-mix(in srgb, var(--color-bg-primary) 88%, transparent)'
+              : 'transparent',
+            borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
+            backdropFilter: scrolled ? 'blur(16px)' : 'none',
+          }}
+        >
+          <Link to="/" className="flex min-h-14 min-w-14 items-center no-underline" aria-label="Kumachi Prints home">
+            <img src="/kumachi-prints-logo.svg" alt="Kumachi Prints" className="h-14 w-auto max-w-[220px] object-contain md:h-16" />
+          </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
-          <Link to="/collections" className="text-body-small text-text-secondary hover:text-text-primary transition-colors">Shop</Link>
-          <Link to="/drops" className="text-body-small text-text-secondary hover:text-text-primary transition-colors">Drops</Link>
-          <Link to="/artists" className="text-body-small text-text-secondary hover:text-text-primary transition-colors">Artists</Link>
-          <Link to="/search" className="text-body-small text-text-secondary hover:text-text-primary transition-colors">Search</Link>
-        </nav>
+          <nav className="hidden items-center gap-8 md:flex" aria-label="Primary navigation">
+            {nav.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({isActive}) =>
+                  `text-nav transition-colors ${isActive ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'}`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
 
-        <div className="flex items-center gap-4">
-          <Link to="/account" className="text-body-small text-text-secondary hover:text-text-primary transition-colors hidden md:inline">Account</Link>
-          <button onClick={toggleCart} className="relative p-2 text-text-secondary hover:text-text-primary transition-colors" aria-label="Open cart">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 1h3l1.68 9.5a2 2 0 002 1.5h7.64a2 2 0 002-1.5L18 4H5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="1.5"/><circle cx="15" cy="17" r="1.5"/></svg>
-          </button>
-          <button onClick={toggleMobileMenu} className="md:hidden p-2 text-text-secondary" aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d={mobileMenuOpen ? 'M5 5l10 10M15 5l-10 10' : 'M3 5h14M3 10h14M3 15h14'} strokeLinecap="round"/></svg>
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/search"
+              aria-label="Open search"
+              className="flex min-h-11 min-w-11 items-center justify-center text-text-primary transition-colors hover:text-[var(--color-accent-ochre)]"
+            >
+              <Search size={20} strokeWidth={1.6} />
+            </Link>
+            <button
+              type="button"
+              aria-label="Toggle theme"
+              onClick={toggleTheme}
+              className="flex min-h-11 min-w-11 items-center justify-center text-text-primary transition-colors hover:text-[var(--color-accent-ochre)]"
+            >
+              {theme === 'light' ? <Moon size={20} strokeWidth={1.6} /> : <Sun size={20} strokeWidth={1.6} />}
+            </button>
+            <button
+              type="button"
+              aria-label="Open cart"
+              onClick={() => setCartOpen(true)}
+              className="relative flex min-h-11 min-w-11 items-center justify-center text-text-primary transition-colors hover:text-[var(--color-accent-ochre)]"
+            >
+              <ShoppingBag size={20} strokeWidth={1.6} />
+              <AnimatePresence>
+                {count > 0 && (
+                  <motion.span
+                    key={count}
+                    initial={{scale: 0}}
+                    animate={{scale: [1, 1.4, 1]}}
+                    exit={{scale: 0}}
+                    transition={{type: 'spring', stiffness: 500, damping: 20}}
+                    className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold"
+                    style={{backgroundColor: 'var(--color-accent-ochre)', color: '#15120d'}}
+                  >
+                    {count}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+            <button
+              type="button"
+              aria-label="Open menu"
+              onClick={() => setMenuOpen(true)}
+              className="flex min-h-11 min-w-11 items-center justify-center text-text-primary md:hidden"
+            >
+              <Menu size={22} strokeWidth={1.6} />
+            </button>
+          </div>
         </div>
-      </div>
+      </motion.header>
 
-      {mobileMenuOpen && (
-        <nav className="md:hidden border-t border-border px-4 py-6 space-y-4">
-          <Link to="/collections" className="block text-body text-text-secondary" onClick={toggleMobileMenu}>Shop</Link>
-          <Link to="/drops" className="block text-body text-text-secondary" onClick={toggleMobileMenu}>Drops</Link>
-          <Link to="/artists" className="block text-body text-text-secondary" onClick={toggleMobileMenu}>Artists</Link>
-          <Link to="/search" className="block text-body text-text-secondary" onClick={toggleMobileMenu}>Search</Link>
-          <Link to="/account" className="block text-body text-text-secondary" onClick={toggleMobileMenu}>Account</Link>
-        </nav>
-      )}
-    </header>
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            <motion.button
+              type="button"
+              aria-label="Close menu"
+              className="fixed inset-0 z-[60]"
+              style={{backgroundColor: 'color-mix(in srgb, var(--color-surface-deep) 70%, transparent)'}}
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              onClick={() => setMenuOpen(false)}
+            />
+            <motion.aside
+              initial={{x: '100%'}}
+              animate={{x: 0}}
+              exit={{x: '100%'}}
+              transition={{duration: 0.32, ease: [0.22, 1, 0.36, 1]}}
+              className="fixed bottom-0 right-0 top-0 z-[70] w-[min(88vw,360px)] p-6"
+              style={{backgroundColor: 'var(--color-surface)', borderLeft: '1px solid var(--color-border)'}}
+            >
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={() => setMenuOpen(false)}
+                className="ml-auto flex min-h-11 min-w-11 items-center justify-center text-text-primary"
+              >
+                <X size={22} strokeWidth={1.6} />
+              </button>
+              <nav className="mt-10 flex flex-col gap-6" aria-label="Mobile navigation">
+                {nav.map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setMenuOpen(false)}
+                    className="font-display text-4xl text-text-primary no-underline"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

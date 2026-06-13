@@ -5,7 +5,13 @@ import {HOMEPAGE_QUERY, FEATURED_PRODUCTS_QUERY, COLLECTION_PRODUCTS_QUERY} from
 import {HeroSection} from '~/components/sections/HeroSection';
 import {FeaturedCollectionSection} from '~/components/sections/FeaturedCollectionSection';
 import {ProductGridSection} from '~/components/sections/ProductGridSection';
-import {ProductGrid} from '~/components/product/ProductGrid';
+import {TrustBar} from '~/components/sections/TrustBar';
+import {AIPrintStudioTeaser} from '~/components/sections/AIPrintStudioTeaser';
+import {CategoryTiles} from '~/components/sections/CategoryTiles';
+import {EditorialProductRail} from '~/components/sections/EditorialProductRail';
+import {EditorialStorySection} from '~/components/sections/EditorialStorySection';
+import {ArtistSpotlightSection} from '~/components/sections/ArtistSpotlightSection';
+import {NewsletterSection} from '~/components/sections/NewsletterSection';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheLong()),
@@ -50,39 +56,34 @@ export default function Homepage() {
         sections.map((section: any, index: number) => sectionRenderer(section, index))
       ) : (
         <>
-          <HeroSection
-            section={{
-              _type: 'hero',
-              heading: 'Museum-minded prints for everyday rooms',
-              subheading: 'Premium art prints from the Kumachi catalogue. Every print has a story.',
-              cta: {label: 'Explore', url: '/collections/all'},
-            }}
-          />
+          <HeroSection />
+          <TrustBar />
+          <AIPrintStudioTeaser />
+          <CategoryTiles />
+          <EditorialProductRail products={products} />
 
-          <section className="border-y border-border bg-surface-mid/40">
-            <div className="container-gallery grid grid-cols-1 gap-6 py-6 text-body-small text-text-secondary md:grid-cols-3">
-              <p>Archival print materials</p>
-              <p>Secure Shopify checkout</p>
-              <p>Made to order through Printful</p>
-            </div>
-          </section>
+          {products.length > 0 && (
+            <FeaturedCollectionSection
+              section={{
+                _type: 'featuredCollection',
+                title: 'Featured Prints',
+                description: 'Every print in the Kumachi catalogue, ready for your walls.',
+                collectionHandle: 'all',
+              }}
+              products={products}
+            />
+          )}
 
-          <FeaturedCollectionSection
-            section={{
-              _type: 'featuredCollection',
-              title: 'All Prints',
-              description: 'Every print in the Kumachi catalogue, ready for your walls.',
-              collectionHandle: 'all',
-            }}
-            products={products}
-          />
-
-          {featuredProducts?.products?.nodes && (
+          {featuredProducts?.products?.nodes?.length > 0 && (
             <ProductGridSection
               section={{_type: 'productGrid', title: 'Featured Prints'}}
               products={featuredProducts.products.nodes.filter(Boolean)}
             />
           )}
+
+          <EditorialStorySection />
+          <ArtistSpotlightSection />
+          <NewsletterSection />
         </>
       )}
     </main>

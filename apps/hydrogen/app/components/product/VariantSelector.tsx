@@ -15,17 +15,17 @@ export function VariantSelector({
 
   return (
     <div className="mb-8">
-      <p className="text-caption text-text-muted mb-4">Size / Format</p>
-      <div className="space-y-3">
+      <p className="mb-4 text-caption uppercase text-text-muted">Size / Format</p>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {variants.slice(0, 10).map((variant: any) => (
           <button
             key={variant.id}
             onClick={() => onSelect(variant.id)}
             disabled={!variant.availableForSale}
-            className={`w-full flex justify-between items-center py-3 px-4 rounded-xs text-body-small transition-all ${
+            className={`flex min-h-14 w-full items-center justify-between gap-3 px-4 py-3 text-left text-body-small transition-all ${
               selectedVariantId === variant.id
-                ? 'bg-gold/10 border border-gold text-gold'
-                : 'bg-surface-mid border border-border text-text-secondary hover:border-text-muted'
+                ? 'border border-[var(--color-border-active)] bg-gold/10 text-text-primary'
+                : 'border border-border bg-surface text-text-secondary hover:border-text-muted'
             } ${!variant.availableForSale ? 'opacity-45 cursor-not-allowed' : ''}`}
             aria-pressed={selectedVariantId === variant.id}
             type="button"

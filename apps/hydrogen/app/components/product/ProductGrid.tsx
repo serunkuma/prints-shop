@@ -16,8 +16,8 @@ export function ProductGrid({products, columns = 4}: ProductGridProps) {
 
   return (
     <div className={`grid grid-cols-1 ${colClasses[columns]} gap-gutter`}>
-      {products.map((product: any) => (
-        <ProductCard key={product.id} product={product} />
+      {products.map((product: any, index: number) => (
+        <ProductCard key={product.id} product={product} index={index} />
       ))}
     </div>
   );

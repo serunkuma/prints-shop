@@ -1,5 +1,6 @@
 import {useFetcher} from 'react-router';
 import {useEffect} from 'react';
+import {toast} from 'sonner';
 import {useUIStore} from '~/lib/store';
 
 interface AddToCartProps {
@@ -16,6 +17,7 @@ export function AddToCart({variantId, disabled, label}: AddToCartProps) {
 
   useEffect(() => {
     if (fetcherData?.cart) {
+      toast.success('Added to cart');
       setCartOpen(true);
     }
   }, [fetcherData, setCartOpen]);
@@ -28,7 +30,7 @@ export function AddToCart({variantId, disabled, label}: AddToCartProps) {
       <button
         type="submit"
         disabled={!variantId || disabled || adding}
-        className="w-full py-4 px-8 bg-gold text-void text-button rounded-xs font-medium hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+        className="flex h-[52px] w-full items-center justify-center gap-2 bg-gold px-8 text-button text-void transition-all duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {adding ? 'Adding...' : !variantId ? 'Select a size' : label || 'Add to Cart'}
       </button>

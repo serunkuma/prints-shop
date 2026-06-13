@@ -14,6 +14,14 @@ type Pages = {
   "/": {
     params: {};
   };
+  "/create": {
+    params: {};
+  };
+  "/product/:handle": {
+    params: {
+      "handle": string;
+    };
+  };
   "/products/:handle": {
     params: {
       "handle": string;
@@ -90,11 +98,19 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/robots.txt" | "/sitemap.xml";
+    page: "/" | "/create" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/robots.txt" | "/sitemap.xml";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
     page: "/";
+  };
+  "routes/create.tsx": {
+    id: "routes/create";
+    page: "/create";
+  };
+  "routes/product.$handle.tsx": {
+    id: "routes/product.$handle";
+    page: "/product/:handle";
   };
   "routes/products.$handle.tsx": {
     id: "routes/products.$handle";
@@ -177,6 +193,8 @@ type RouteFiles = {
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/_index": typeof import("./app/routes/_index.tsx");
+  "routes/create": typeof import("./app/routes/create.tsx");
+  "routes/product.$handle": typeof import("./app/routes/product.$handle.tsx");
   "routes/products.$handle": typeof import("./app/routes/products.$handle.tsx");
   "routes/collections._index": typeof import("./app/routes/collections._index.tsx");
   "routes/collections.$handle": typeof import("./app/routes/collections.$handle.tsx");

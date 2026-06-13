@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
 
 interface ProductMediaProps {
   featuredImage: any;
@@ -13,35 +14,39 @@ export function ProductMedia({featuredImage, images, title}: ProductMediaProps) 
 
   return (
     <div>
-      <div className="aspect-[3/4] bg-surface-mid rounded-xs overflow-hidden mb-4">
-        {current && (
-          <img
-            src={current.url}
-            alt={current.altText || title}
-            className="w-full h-full object-cover"
-            width={current.width || 800}
-            height={current.height || 1067}
-          />
-        )}
+      <div className="relative aspect-[4/5] overflow-hidden" style={{backgroundColor: 'var(--color-bg-tertiary)'}}>
+        <AnimatePresence mode="wait">
+          {current && (
+            <motion.img
+              key={current.url}
+              src={current.url}
+              alt={current.altText || title}
+              className="absolute inset-0 h-full w-full object-cover"
+              width={current.width || 800}
+              height={current.height || 1000}
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              transition={{duration: 0.2}}
+            />
+          )}
+        </AnimatePresence>
       </div>
       {allImages.length > 1 && (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="mt-3 flex gap-3 overflow-x-auto">
           {allImages.map((img: any, i: number) => (
             <button
-              key={img.id || i}
+              key={img.id || img.url || i}
+              type="button"
               onClick={() => setSelectedIndex(i)}
-              className={`aspect-square bg-surface-mid rounded-xs overflow-hidden border transition-colors ${
-                i === selectedIndex ? 'border-gold' : 'border-border hover:border-text-muted'
-              }`}
+              className="h-[72px] w-[72px] shrink-0 overflow-hidden border"
+              style={{
+                backgroundColor: 'var(--color-bg-secondary)',
+                borderColor: i === selectedIndex ? 'var(--color-border-active)' : 'var(--color-border)',
+              }}
+              aria-label={`Show ${img.altText || `${title} view ${i + 1}`}`}
             >
-              <img
-                src={img.url}
-                alt={img.altText || `${title} view ${i + 1}`}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                width={img.width || 200}
-                height={img.height || 200}
-              />
+              <img src={img.url} alt={img.altText || `${title} view ${i + 1}`} className="h-full w-full object-cover" loading="lazy" />
             </button>
           ))}
         </div>

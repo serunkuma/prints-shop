@@ -7,17 +7,17 @@ interface CartSummaryProps {
 
 export function CartSummary({cost, checkoutUrl}: CartSummaryProps) {
   return (
-    <div className="border-t border-border pt-6">
-      <div className="flex justify-between items-center mb-6">
-        <span className="text-h4">Subtotal</span>
-        <span className="text-price text-gold">
+    <div>
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-text-secondary">Subtotal</span>
+        <span className="text-sm font-semibold text-text-primary">
           {cost?.subtotalAmount && formatPrice(parseFloat(cost.subtotalAmount.amount) * 100)}
         </span>
       </div>
-      <p className="text-body-small text-text-muted mb-4">Shipping &amp; taxes calculated at checkout.</p>
+      <p className="mt-2 text-xs text-text-muted">Free shipping on orders over $75. Shipping &amp; taxes calculated at checkout.</p>
       <a
         href={checkoutUrl}
-        className="inline-block w-full text-center py-4 px-8 bg-gold text-void text-button rounded-xs font-medium hover:opacity-90 transition-opacity"
+        className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-gold text-sm font-semibold uppercase tracking-wider text-void transition-opacity hover:opacity-90"
       >
         Checkout
       </a>
