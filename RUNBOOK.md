@@ -68,6 +68,28 @@ git push origin main
 
 ---
 
+## Populating Selected Shopify Draft Products From The Woo Mirror
+
+Use this when launch products already exist in the local Woo simulator and need to become real Shopify draft products for Hydrogen to read.
+
+From `C:\wamp64\www\prints-local\art-business`:
+
+```powershell
+python .\scripts\artbiz.py catalog validate
+python .\scripts\artbiz.py shopify launch-list --ids 15,22
+```
+
+From `C:\Users\sirer\Documents\GitHub\prints-shop\apps\hydrogen`:
+
+```powershell
+node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-business\artifacts\exports\shopify-launch-products.json --dry-run
+node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-business\artifacts\exports\shopify-launch-products.json --live
+```
+
+Only run `--live` after the dry-run output is reviewed. The script creates or updates Shopify products as drafts, uploads local images through Shopify staged uploads, and preserves Shopify as commerce truth.
+
+---
+
 ## Publishing a New Drop (8 Steps)
 
 1. **Upload all products** — follow the 10-step "Adding a New Print Product" procedure for every print in the drop
@@ -221,6 +243,7 @@ When you need to rotate a Shopify or Sanity token:
 | Build for production | `cd apps/hydrogen && npm run build` |
 | Preview production build locally | `cd apps/hydrogen && npm run preview` |
 | TypeScript type check | `cd apps/hydrogen && npm run typecheck` |
+| Populate selected Shopify drafts | `cd apps/hydrogen && node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-business\artifacts\exports\shopify-launch-products.json --dry-run` |
 | Deploy Sanity Studio | `cd studio && npx sanity deploy` |
 | Build Sanity Studio | `cd studio && npm run build` |
 | Deploy canonical Studio | `cd studio && npm run deploy` |

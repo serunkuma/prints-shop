@@ -13,6 +13,8 @@ The local WordPress/WooCommerce simulator lives outside this repo at `C:\wamp64\
 
 The simulator also has WPGraphQL enabled for local testing at `http://localhost/prints-local/graphql`. Use it to inspect local WordPress content shape or prototype GraphQL query ideas only. The bridge prototype still reads commerce data from the Woo Store API plus the safe `art-business` export, and production Hydrogen must read commerce from Shopify and editorial content from Sanity.
 
+For selected launch products, `art-business` can generate `artifacts/exports/shopify-launch-products.json` with `python .\scripts\artbiz.py shopify launch-list --ids ...`. The Hydrogen app owns `apps/hydrogen/scripts/populate-products.mjs`, which dry-runs or creates Shopify `DRAFT` products from that selected export. Do not treat Hydrogen as a product database, and do not use Woo credentials in the production app.
+
 ---
 
 ## 2. Repository Layout
@@ -186,6 +188,7 @@ npm run dev
 | `cd apps/hydrogen && npm run build` | Build for production (Oxygen worker) |
 | `cd apps/hydrogen && npm run preview` | Preview production build locally |
 | `cd apps/hydrogen && npm run typecheck` | TypeScript type check |
+| `cd apps/hydrogen && node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-business\artifacts\exports\shopify-launch-products.json --dry-run` | Validate selected Shopify draft-product payload |
 | `cd studio && npx sanity deploy` | Deploy Sanity Studio to production hosting |
 | `cd studio && npm run build` | Build the canonical Sanity Studio |
 | `cd studio && npm run deploy` | Deploy the canonical Sanity Studio |

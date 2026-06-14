@@ -20,6 +20,7 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 - Homepage improved: `_index.tsx` features `FeaturedCollectionSection` rendering products from the "all" collection plus the existing featured prints grid.
 - Cart `CART_LINES_ADD_MUTATION` returns full line data (merchandise details, prices, options) so the drawer and page can render properly after add.
 - `CartSummary` component vendored into CartDrawer and CartPage to avoid duplication.
+- Selected-product Shopify population pipeline added: `art-business` generates `shopify-launch-products.json`, and `apps/hydrogen/scripts/populate-products.mjs` dry-runs or creates Shopify draft products from that list.
 - Duplicate `apps/hydrogen/studio/` confirmed non-existent — root `studio/` is already canonical.
 - Root Sanity Studio is now deployable from `studio/` with `package.json`, `sanity.cli.ts`, and `.env.example`.
 - Local Hydrogen env placeholder exists at `apps/hydrogen/.env`; Ernest must fill it with real private values.
@@ -30,7 +31,7 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 ## Remaining Launch Blockers
 
 - Fill real Shopify/Sanity values in local `apps/hydrogen/.env` and Oxygen.
-- Confirm Shopify products, collections, and handles match the `art-business` mirror/export.
+- Use the selected-product pipeline to create reviewed Shopify draft products, then confirm products, collections, and handles match the `art-business` mirror/export.
 - Create or review Sanity documents for settings, navigation, homepage, and launch product supplements.
 - Install and deploy Sanity Studio from root `studio/`.
 - Configure Oxygen deployment token and environment variables.
@@ -72,6 +73,13 @@ From `C:\wamp64\www\prints-local\art-business` when upstream data context is nee
 python .\scripts\artbiz.py catalog validate
 python .\scripts\artbiz.py woo population-status
 python .\scripts\artbiz.py mirror export-storefront
+python .\scripts\artbiz.py shopify launch-list --ids 15
+```
+
+From `C:\Users\sirer\Documents\GitHub\prints-shop\apps\hydrogen` when preparing selected Shopify draft products:
+
+```powershell
+node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-business\artifacts\exports\shopify-launch-products.json --dry-run
 ```
 
 ## Next Agent Instruction

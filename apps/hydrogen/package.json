@@ -8,7 +8,8 @@
     "build": "shopify hydrogen build --no-bundle-stats",
     "preview": "shopify hydrogen preview",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --ext .ts,.tsx"
+    "lint": "eslint . --ext .ts,.tsx",
+    "populate:products": "node scripts/populate-products.mjs"
   },
   "dependencies": {
     "@shopify/hydrogen": "^2026.4.3",

@@ -28,6 +28,9 @@ SANITY_DATASET=production
 SANITY_API_VERSION=2026-06-01
 SANITY_API_READ_TOKEN=
 SANITY_PREVIEW_SECRET=
+SHOPIFY_STORE_DOMAIN=
+SHOPIFY_ADMIN_ACCESS_TOKEN=
+SHOPIFY_API_VERSION=2026-04
 ```
 
 Optional Studio env, only if overriding defaults:
@@ -44,6 +47,7 @@ SANITY_STUDIO_DATASET=production
 - Create Storefront API token.
 - Configure payments, taxes, shipping, and store password.
 - Create collections: `all`, `new-arrivals`, and launch collection/series handles.
+- Use `art-business` to generate a selected launch list, then use `apps/hydrogen/scripts/populate-products.mjs --dry-run` before any `--live` Shopify draft population.
 - Confirm Shopify product handles match the `art-business` Woo mirror/export handles.
 
 ## Printful Tasks

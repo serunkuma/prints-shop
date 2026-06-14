@@ -38,6 +38,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | [03_routes_and_components.md](system/03_routes_and_components.md) | Route map, data loading patterns, component directory, conventions | Current |
 | [04_operations.md](system/04_operations.md) | Daily workflow, adding products, publishing drops, troubleshooting | Current |
 | [05_deployment.md](system/05_deployment.md) | Local dev, CI/CD, Oxygen deployment, domain migration, .env.example | Current |
+| [06_selected_product_population.md](system/06_selected_product_population.md) | Populate selected Shopify draft products from the art-business launch list | Current |
 
 ## Planning (How We're Building It)
 
@@ -80,6 +81,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | Why Hydrogen and not Astro? | [docs/concepts/02_stack_decisions.md](concepts/02_stack_decisions.md) |
 | What are the Shopify API scopes needed? | [docs/system/02_shopify_configuration.md](system/02_shopify_configuration.md) |
 | How do I deploy Sanity Studio? | [docs/system/05_deployment.md](system/05_deployment.md) |
+| How do selected Woo mirror products become Shopify draft products? | [docs/system/06_selected_product_population.md](system/06_selected_product_population.md) |
 | What is the cart data model? | [docs/data/03_cart_and_checkout.md](data/03_cart_and_checkout.md) |
 | What are the Tailwind colour tokens? | [docs/concepts/03_design_system.md](concepts/03_design_system.md) |
 | How do I set up local dev? | [docs/system/05_deployment.md](system/05_deployment.md) |

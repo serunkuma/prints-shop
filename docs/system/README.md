@@ -26,5 +26,6 @@ This directory answers the "how" questions about Kumachi Prints. Every document 
 | `03_routes_and_components.md` | Route map, component hierarchy, data loading patterns, conventions |
 | `04_operations.md` | Daily/weekly development workflow, adding products, publishing drops |
 | `05_deployment.md` | Local dev, CI/CD, Oxygen deployment, domain migration, rollback |
+| `06_selected_product_population.md` | Selected Woo mirror products to Shopify draft products through Hydrogen script |
 
 *Last updated: 2026-06*

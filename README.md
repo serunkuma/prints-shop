@@ -41,6 +41,20 @@ See [docs/system/05_deployment.md](docs/system/05_deployment.md) for the complet
 | [docs/data/](docs/data/) | Developers | Data structures, schemas, GROQ queries |
 | [docs/system/](docs/system/) | Developers & operators | Architecture, configuration, deployment |
 
+## Selected Product Population
+
+The local Woo simulator remains upstream for launch product planning. To create selected Shopify draft products, generate a launch list in `art-business`, then run the Hydrogen population script:
+
+```bash
+cd C:\wamp64\www\prints-local\art-business
+python .\scripts\artbiz.py shopify launch-list --ids 15,22
+
+cd C:\Users\sirer\Documents\GitHub\prints-shop\apps\hydrogen
+node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-business\artifacts\exports\shopify-launch-products.json --dry-run
+```
+
+See [docs/system/06_selected_product_population.md](docs/system/06_selected_product_population.md) for the live draft-product workflow.
+
 ## Design Prototype
 
 The complete interactive design prototype is at [github.com/serunkuma/prints-headless-shop-theme](https://github.com/serunkuma/prints-headless-shop-theme). This Hydrogen build is the production implementation of that prototype.

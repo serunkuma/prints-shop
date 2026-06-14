@@ -64,6 +64,27 @@ Create these in Settings → Custom data → Products → Add definition:
 4. Sync products to Shopify
 5. Set retail prices in Shopify
 
+## Selected Product Draft Population
+
+For early launch setup, selected Woo mirror products can be exported from `art-business` and created as Shopify draft products by the Hydrogen app.
+
+From `C:\wamp64\www\prints-local\art-business`:
+
+```powershell
+python .\scripts\artbiz.py shopify launch-list --ids 15,22
+```
+
+From `C:\Users\sirer\Documents\GitHub\prints-shop\apps\hydrogen`:
+
+```powershell
+node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-business\artifacts\exports\shopify-launch-products.json --dry-run
+node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-business\artifacts\exports\shopify-launch-products.json --live
+```
+
+Live mode requires `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_ADMIN_ACCESS_TOKEN`, and `SHOPIFY_API_VERSION` in `apps/hydrogen/.env`. Products are written as `DRAFT` and should be reviewed in Shopify before publishing or Printful mapping.
+
+See [06_selected_product_population.md](06_selected_product_population.md) for the full workflow.
+
 ## DNS Configuration
 
 ### Phase 1: Subdomain on kumachigallery.com
