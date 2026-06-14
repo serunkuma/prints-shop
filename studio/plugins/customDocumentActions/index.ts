@@ -1,5 +1,4 @@
 import {definePlugin, type DocumentActionComponent, type DocumentActionsResolver, type NewDocumentOptionsResolver} from 'sanity'
-import shopifyDelete from './shopifyDelete'
 import shopifyLink from './shopifyLink'
 import {LOCKED_DOCUMENT_TYPES, SHOPIFY_DOCUMENT_TYPES} from '../../constants'
 
@@ -17,7 +16,7 @@ export const resolveDocumentActions: DocumentActionsResolver = (prev, {schemaTyp
         previousAction.action === 'unpublish' ||
         previousAction.action === 'discardChanges',
     )
-    return [...prev, shopifyDelete as DocumentActionComponent, shopifyLink as DocumentActionComponent]
+    return [...prev, shopifyLink as DocumentActionComponent]
   }
   return prev
 }

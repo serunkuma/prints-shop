@@ -49,6 +49,7 @@ export const collectionType = defineType({
       type: 'shopifyCollection',
       description: 'Collection data from Shopify (read-only)',
       group: 'shopifySync',
+      readOnly: true,
     }),
     defineField({
       name: 'seo',

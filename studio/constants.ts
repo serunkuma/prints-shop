@@ -10,7 +10,7 @@ export const PAGE_REFERENCES = [
   {type: 'product'},
 ]
 export const SANITY_API_VERSION = '2024-01-01'
-export const SHOPIFY_STORE_ID = ''
+export const SHOPIFY_STORE_ID = import.meta.env.SANITY_STUDIO_SHOPIFY_STORE_ID || ''
 
 export const GROUPS = [
   {name: 'theme', title: 'Theme', icon: ColorWheelIcon},

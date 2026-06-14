@@ -32,6 +32,7 @@ export const productVariantType = defineType({
       type: 'shopifyProductVariant',
       description: 'Variant data from Shopify (read-only)',
       group: 'shopifySync',
+      readOnly: true,
     }),
     defineField({
       name: 'seo',

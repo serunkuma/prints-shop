@@ -52,6 +52,7 @@ export const productType = defineType({
       type: 'shopifyProduct',
       description: 'Product data from Shopify (read-only)',
       group: 'shopifySync',
+      readOnly: true,
     }),
     defineField({
       name: 'seo',

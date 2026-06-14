@@ -1,4 +1,5 @@
 import type {ListItemBuilder, StructureResolver} from 'sanity/structure'
+import {ComposeIcon} from '@sanity/icons'
 import collections from './collectionStructure'
 import colorThemes from './colorThemeStructure'
 import home from './homeStructure'
@@ -34,6 +35,19 @@ export const structure: StructureResolver = (S, context) =>
       S.divider(),
       collections(S, context),
       products(S, context),
+      S.divider(),
+      S.listItem()
+        .title('Editorial')
+        .icon(ComposeIcon)
+        .child(
+          S.list()
+            .title('Editorial')
+            .items([
+              S.documentTypeListItem('productSupplement').title('Product Supplements'),
+              S.documentTypeListItem('series').title('Series'),
+              S.documentTypeListItem('artist').title('Artists'),
+            ]),
+        ),
       S.divider(),
       colorThemes(S, context),
       S.divider(),
