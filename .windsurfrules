@@ -1,1 +1,64 @@
-See AGENTS.md — single source of truth for this repository.
+# Kumachi Prints — Agent Instructions
+
+This file is a condensed project reference. Read `AGENTS.md` for the full source of truth.
+
+## What This Is
+
+A premium headless e-commerce storefront for selling physical art prints. Built with Hydrogen (React Router v7) + Sanity + Shopify, deployed on Oxygen.
+
+## Data Source Split (Non-Negotiable)
+
+| Owns | What |
+|------|------|
+| **Shopify** | Products, variants, prices, inventory, cart, checkout, orders, customers, fulfilment |
+| **Sanity** | Homepage sections, editorial drop pages, artist profiles, product storytelling, site settings, navigation, static pages |
+
+- Never store prices or inventory in Sanity.
+- Never hardcode editorial content in React components.
+
+## Key Directories
+
+| Path | Purpose |
+|------|---------|
+| `apps/hydrogen/` | Production storefront (React Router v7 + Oxygen) |
+| `studio/` | Canonical Sanity Studio |
+| `docs/` | Full project documentation |
+| `AGENTS.md` | Exhaustive single source of truth |
+
+## Commands
+
+```
+cd apps/hydrogen
+npm run dev                     # Dev server at http://localhost:3000
+npm run build                   # Production build
+npm run typecheck               # TypeScript check
+
+cd studio
+npx sanity deploy               # Deploy Studio after every schema change
+```
+
+## Critical Rules
+
+1. **`Promise.all` for data fetching** — Shopify and Sanity calls in route loaders must always run in parallel. Never await them sequentially.
+
+2. **Product handle matching** — Sanity `productSupplement.shopifyHandle` must be identical to the Shopify product handle. A mismatch silently breaks the PDP.
+
+3. **All images need `alt` text** — No exceptions. Use `alt=""` only for purely decorative images.
+
+4. **Tailwind tokens only** — No hardcoded hex values in components. Colours reference CSS custom properties from `tailwind.config.ts`.
+
+5. **`formatPrice()` for all prices** — Utility in `app/lib/format.ts` converts cents (integers) to USD. No raw numbers. No manual `$`.
+
+6. **Shopify hosted checkout only** — Do not build a custom checkout. Redirect with the cart's `checkoutUrl`.
+
+7. **Cart state in server session** — Cart lives in server session, not client state. UI toggles (drawer, mobile menu) use Zustand.
+
+8. **WPGraphQL is local-only** — `http://localhost/prints-local/graphql` is for local debugging. Never use in production.
+
+9. **Redeploy Studio after schema changes** — Schema changes are invisible to editors until `npx sanity deploy` is run.
+
+10. **Never commit `.env`** — It's gitignored. Use `.env.example` as template.
+
+---
+
+See `AGENTS.md` for the complete project reference.

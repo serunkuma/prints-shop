@@ -436,9 +436,9 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
 10. **Secrets never committed** — `.env`, credentials in `.gitignore`
 11. **Maintain status labels** — All docs (except research/ and sources/) must start with `Status: Current`, `Status: Planning`, or `Status: Historical`. Update when superseded.
 12. **Copy-paste ready commands** — Every command/code example in docs must be: complete, tested, use full paths (not abbreviations), include all flags. Test before committing.
-13. **Run the scaffold validator after structural changes** — After scaffolding or any change that adds/renames docs, run the validator and resolve failures before handing off. On POSIX systems: `bash scripts/validate_scaffold.sh`. On Windows: `.\scripts\validate_scaffold.ps1`.
+13. ~~**Run the scaffold validator after structural changes** — deleted 2026-06. Validation scripts removed as they became limiting once the repo structure matured.~~
 14. **`sources/` is frozen** — never edit files in `sources/`. To update knowledge, edit the relevant `docs/` file instead. `sources/` preserves the original inputs that informed scaffolding.
-15. **AGENTS.md is the only rule file with real content** — `CLAUDE.md`, `.cursorrules`, `.windsurfrules`, `GEMINI.md`, `.github/copilot-instructions.md`, and `.cursor/rules/agents.mdc` are thin pointers. Never duplicate guidance across them — update AGENTS.md instead.
+15. **Pointer files contain a condensed project summary** — `CLAUDE.md`, `GEMINI.md`, `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, and `.cursor/rules/agents.mdc` each contain a self-contained summary of critical project rules so any agent tool gets consistent context. `AGENTS.md` remains the exhaustive single source of truth. Keep the summary in sync with AGENTS.md when architectural rules change.
 
 ### Project-Specific Rules
 
