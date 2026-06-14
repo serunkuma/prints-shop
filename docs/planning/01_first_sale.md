@@ -4,7 +4,7 @@ Status: Current
 
 ## Objective
 
-Build the final production foundation for Kumachi Prints before launch: Hydrogen + Sanity in `apps/hydrogen`, Shopify commerce, Printful fulfillment path, and the local Woo simulator feeding reviewed product context through `art-business`. The Vite prototype remains a local preview/reference, not a Netlify bridge store.
+Build the final production foundation for Kumachi Prints before launch: Hydrogen + Sanity in `apps/hydrogen`, Shopify commerce, Printful fulfillment path, and the local Woo simulator feeding reviewed product context through `art-business`. The first sale should launch `Opening Drop` as a curated open drop. The Vite prototype remains a local preview/reference, not a Netlify bridge store.
 
 ## Scope
 
@@ -18,11 +18,13 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 - [ ] Install Hydrogen sales channel in Shopify admin
 - [ ] Create Printful account and connect to Shopify
 - [ ] Use `art-business` mirror health checks before product publishing work
+- [ ] Create `Opening Drop` manifest in `art-business`
 - [ ] Confirm local Woo mirror reports 155 products and 837 variations
 - [ ] Export fresh storefront JSON from `art-business` for prototype/reference checks
 - [ ] Upload minimum 5 launch print files to Printful after DPI review
 - [ ] Configure sizes (A4/A3/A2/50×70cm/70×100cm) and frame variants in Printful
 - [ ] Sync Printful products to Shopify
+- [ ] Create Shopify collection `drop-opening-drop` for `Opening Drop`
 - [ ] Set retail prices in Shopify (base cost × 2.5×–4× markup)
 - [ ] Create Shopify collections (All Prints, New Arrivals)
 - [ ] Obtain Storefront API token from Shopify custom app
@@ -37,6 +39,7 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 - [x] Product detail page renders product with variant selector
 - [x] Add to cart flow is wired from PDP/card to Shopify cart action
 - [ ] Checkout redirect works (cart drawer → Shopify hosted checkout)
+- [ ] `/drops/opening-drop` renders Sanity story plus Shopify collection products
 - [ ] Create GitHub Actions workflow for Oxygen deployment
 - [ ] Connect GitHub repository to Oxygen in Shopify admin
 - [ ] Set environment variables in Oxygen (both Production and Preview environments)
@@ -56,7 +59,7 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 ## Deliverables
 
 - Live store at `https://prints.kumachigallery.com`
-- Minimum 5 purchasable products with complete variant matrix
+- `Opening Drop` live with minimum 5 purchasable products and complete variant matrix
 - Working cart and checkout flow
 - Umami analytics recording visits and custom events
 - Google Search Console property active
@@ -65,7 +68,7 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 
 ## Acceptance Criteria
 
-A real customer can browse products, add to cart, select size and frame, and complete checkout on the production Hydrogen storefront. Printful receives and processes the order. Umami records the session. The checkout completes without errors. The Vite prototype still builds locally but is not the public launch store.
+A real customer can visit `Opening Drop`, browse products, add to cart, select size and frame, and complete checkout on the production Hydrogen storefront. Printful receives and processes the order. Umami records the session. The checkout completes without errors. The Vite prototype still builds locally but is not the public launch store.
 
 ## Dependencies
 

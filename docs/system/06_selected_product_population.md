@@ -38,7 +38,8 @@ From `C:\wamp64\www\prints-local\art-business`, generate the selected launch lis
 
 ```powershell
 python .\scripts\artbiz.py catalog validate
-python .\scripts\artbiz.py shopify launch-list --ids 15,22
+python .\scripts\artbiz.py drops create --ids 15,22 --slug opening-drop --title "Opening Drop" --mode curated_open
+python .\scripts\artbiz.py shopify launch-list --drop opening-drop
 ```
 
 From `C:\Users\sirer\Documents\GitHub\prints-shop\apps\hydrogen`, dry-run the Shopify population:
@@ -58,6 +59,7 @@ The script defaults to dry-run unless `--live` is present.
 ## What The Script Does
 
 - Reads the selected launch list JSON.
+- Preserves drop metadata when the launch list was generated from a drop manifest.
 - Validates product handles, SKUs, variants, and local image files.
 - Refuses unexpectedly large inputs unless explicitly allowed.
 - Uploads local product images through Shopify staged uploads.

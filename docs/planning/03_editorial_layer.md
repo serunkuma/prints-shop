@@ -4,7 +4,7 @@ Status: Planning
 
 ## Objective
 
-Build everything that differentiates Kumachi Prints from a commodity print shop. Drops/series pages with editorial storytelling, artist profiles with biography and featured work, CMS-managed static pages (About, FAQ, Shipping, Returns), and a component library. After this phase, Ernest can publish a new drop entirely from Sanity Studio without any developer involvement.
+Build everything that differentiates Kumachi Prints from a commodity print shop. Drops/series pages with editorial storytelling, artist profiles with biography and featured work, CMS-managed static pages (About, FAQ, Shipping, Returns), and a component library. After this phase, Ernest can publish a new drop from a reviewed `art-business` drop manifest plus Sanity Studio without developer involvement.
 
 ## Scope
 
@@ -20,7 +20,7 @@ Build everything that differentiates Kumachi Prints from a commodity print shop.
 - [ ] Create `app/components/sections/EditorialBannerSection.tsx` — full-width editorial banner
 - [ ] Create `app/components/sections/TestimonialsSection.tsx` — testimonial carousel
 - [ ] Implement `app/routes/drops._index.tsx` — drops listing page querying Sanity for all `series` with `status == "live"`
-- [ ] Implement `app/routes/drops.$handle.tsx` — editorial drop landing page with series data and featured products
+- [ ] Improve `app/routes/drops.$handle.tsx` — editorial drop landing page with Sanity `series` story and Shopify collection products
 - [ ] Implement `app/routes/artists._index.tsx` — artists listing page
 - [ ] Implement `app/routes/artists.$handle.tsx` — artist profile page with bio, portrait, and associated products
 - [ ] Create About page in Sanity (`page` document)
@@ -32,6 +32,7 @@ Build everything that differentiates Kumachi Prints from a commodity print shop.
 - [ ] Implement staggered route transition animations
 - [ ] Add OG image generation for all editorial pages
 - [ ] Create at least 2 series documents in Sanity (retroactive drops from back catalogue)
+- [ ] Create `Opening Drop` series document linked to Shopify collection `drop-opening-drop`
 - [ ] Create artist documents for all artists represented in the product catalogue
 - [ ] Link product supplements to series and artist references
 - [ ] Verify Ernest can create a new series, add products, publish, and see the drop page live
@@ -52,7 +53,7 @@ Build everything that differentiates Kumachi Prints from a commodity print shop.
 
 ## Acceptance Criteria
 
-Ernest logs into Sanity Studio, creates a new series document, sets it to `live`, adds featured products, publishes. The new drop appears on `/drops` automatically. The drop page shows hero image, description, and product grid. No code changes required. TypeScript and build pass with zero errors.
+Ernest creates a drop manifest in `art-business`, creates or updates matching Shopify products/collection, logs into Sanity Studio, creates a `series` document, sets it to `live`, and publishes. The new drop appears on `/drops` automatically. The drop page shows hero image, description, and product grid. No code changes required. TypeScript and build pass with zero errors.
 
 ## Dependencies
 

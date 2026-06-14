@@ -76,7 +76,8 @@ From `C:\wamp64\www\prints-local\art-business`:
 
 ```powershell
 python .\scripts\artbiz.py catalog validate
-python .\scripts\artbiz.py shopify launch-list --ids 15,22
+python .\scripts\artbiz.py drops create --ids 15,22 --slug opening-drop --title "Opening Drop" --mode curated_open
+python .\scripts\artbiz.py shopify launch-list --drop opening-drop
 ```
 
 From `C:\Users\sirer\Documents\GitHub\prints-shop\apps\hydrogen`:
@@ -87,6 +88,24 @@ node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-busine
 ```
 
 Only run `--live` after the dry-run output is reviewed. The script creates or updates Shopify products as drafts, uploads local images through Shopify staged uploads, and preserves Shopify as commerce truth.
+
+---
+
+## Launch Opening Drop Today
+
+Use this as the first-sale checklist:
+
+1. Pick 5-10 products for `Opening Drop`.
+2. Create the drop manifest in `art-business`.
+3. Generate `shopify-launch-products.json`.
+4. Dry-run `populate-products.mjs`.
+5. Run `populate-products.mjs --live` for approved products.
+6. In Shopify, create collection `drop-opening-drop` and add the selected draft products.
+7. Set prices, verify images/variants, and publish products only when checkout is ready.
+8. In Sanity, create `series` document `opening-drop` with `shopifyCollectionHandle=drop-opening-drop`.
+9. Create/review product supplements for every selected product handle.
+10. Verify `/drops/opening-drop`, product pages, cart add, and checkout redirect.
+11. Place one real test order before announcing.
 
 ---
 

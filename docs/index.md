@@ -27,6 +27,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | [03_cart_and_checkout.md](data/03_cart_and_checkout.md) | CartItem type, Zustand store shape, checkout flow, session secret | Current |
 | [04_printful_product_spec.md](data/04_printful_product_spec.md) | File requirements, size/frame spec, pixel dimensions, pricing strategy | Current |
 | [05_woocommerce_mirror_bridge.md](data/05_woocommerce_mirror_bridge.md) | Bridge data contract between local WooCommerce mirror and Vite prototype | Current |
+| [06_drops_and_releases.md](data/06_drops_and_releases.md) | Drop/release data contract across art-business, Shopify, Sanity, and Hydrogen | Current |
 
 ## System (How We Built It)
 
@@ -89,6 +90,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | What print sizes does Printful support? | [docs/data/04_printful_product_spec.md](data/04_printful_product_spec.md) |
 | How do I roll back a bad deploy? | [docs/system/02_shopify_configuration.md](system/02_shopify_configuration.md) |
 | What is the product supplement? | [docs/data/01_product_model.md](data/01_product_model.md) |
+| What is a drop? | [docs/data/06_drops_and_releases.md](data/06_drops_and_releases.md) |
 | How does the God Dashboard integrate? | [docs/concepts/01_project_vision.md](concepts/01_project_vision.md) |
 | What are the Framer Motion variants? | [docs/system/01_architecture.md](system/01_architecture.md) |
 

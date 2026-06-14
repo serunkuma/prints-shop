@@ -25,5 +25,7 @@ This directory answers the "what" questions about Kumachi Prints. Every document
 | `02_sanity_schemas.md` | All Sanity document types, object types, and GROQ queries |
 | `03_cart_and_checkout.md` | Cart data model, Zustand store, checkout flow |
 | `04_printful_product_spec.md` | Printful file requirements, size/frame specs, pricing strategy |
+| `05_woocommerce_mirror_bridge.md` | Local Woo mirror bridge contract for prototype/reference data |
+| `06_drops_and_releases.md` | Drop/release data contract across Shopify, Sanity, Hydrogen, and art-business |
 
 *Last updated: 2026-06*

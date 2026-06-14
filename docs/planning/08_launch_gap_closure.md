@@ -21,6 +21,7 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 - Cart `CART_LINES_ADD_MUTATION` returns full line data (merchandise details, prices, options) so the drawer and page can render properly after add.
 - `CartSummary` component vendored into CartDrawer and CartPage to avoid duplication.
 - Selected-product Shopify population pipeline added: `art-business` generates `shopify-launch-products.json`, and `apps/hydrogen/scripts/populate-products.mjs` dry-runs or creates Shopify draft products from that list.
+- Drop model documented: first sale should launch `Opening Drop` as a curated open drop backed by an `art-business` manifest, Shopify collection, Sanity `series`, and Hydrogen `/drops/opening-drop`.
 - Duplicate `apps/hydrogen/studio/` confirmed non-existent — root `studio/` is already canonical.
 - Root Sanity Studio is now deployable from `studio/` with `package.json`, `sanity.cli.ts`, and `.env.example`.
 - Local Hydrogen env placeholder exists at `apps/hydrogen/.env`; Ernest must fill it with real private values.
@@ -31,7 +32,7 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 ## Remaining Launch Blockers
 
 - Fill real Shopify/Sanity values in local `apps/hydrogen/.env` and Oxygen.
-- Use the selected-product pipeline to create reviewed Shopify draft products, then confirm products, collections, and handles match the `art-business` mirror/export.
+- Use the selected-product pipeline to create reviewed Shopify draft products for `Opening Drop`, then confirm products, collection `drop-opening-drop`, and handles match the `art-business` mirror/export.
 - Create or review Sanity documents for settings, navigation, homepage, and launch product supplements.
 - Install and deploy Sanity Studio from root `studio/`.
 - Configure Oxygen deployment token and environment variables.
@@ -73,7 +74,8 @@ From `C:\wamp64\www\prints-local\art-business` when upstream data context is nee
 python .\scripts\artbiz.py catalog validate
 python .\scripts\artbiz.py woo population-status
 python .\scripts\artbiz.py mirror export-storefront
-python .\scripts\artbiz.py shopify launch-list --ids 15
+python .\scripts\artbiz.py drops create --ids 15,22 --slug opening-drop --title "Opening Drop" --mode curated_open
+python .\scripts\artbiz.py shopify launch-list --drop opening-drop
 ```
 
 From `C:\Users\sirer\Documents\GitHub\prints-shop\apps\hydrogen` when preparing selected Shopify draft products:
