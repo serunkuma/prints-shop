@@ -119,7 +119,7 @@ export async function action({request, context}: {request: Request; context: any
 }
 
 const CART_QUERY = `#graphql
-  query CartQuery($cartId: String!) {
+  query CartQuery($cartId: ID!) {
     cart(id: $cartId) {
       id
       checkoutUrl

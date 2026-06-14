@@ -1,6 +1,14 @@
 import {createHydrogenContext} from '@shopify/hydrogen';
+import {createSanityContext, type SanityContext} from 'hydrogen-sanity';
+import {isPreviewEnabled} from 'hydrogen-sanity/preview';
+import {PreviewSession} from 'hydrogen-sanity/preview/session';
 import {AppSession} from '~/lib/session';
-import {createSanityClient, createUrlBuilder} from '~/lib/sanity.server';
+
+declare global {
+  interface HydrogenAdditionalContext {
+    sanity: SanityContext;
+  }
+}
 
 export async function createHydrogenRouterContext(
   request: Request,
@@ -12,15 +20,37 @@ export async function createHydrogenRouterContext(
   }
 
   const waitUntil = executionContext.waitUntil.bind(executionContext);
-  const [cache, session] = await Promise.all([
+  const [cache, session, previewSession] = await Promise.all([
     caches.open('hydrogen'),
     AppSession.init(request, [env.SESSION_SECRET]),
+    PreviewSession.init(request, [env.SESSION_SECRET]),
   ]);
 
-  const sanity = createSanityClient(env as any);
-  const e = env as unknown as {SANITY_PROJECT_ID: string; SANITY_DATASET: string};
-  const urlFor = createUrlBuilder(e.SANITY_PROJECT_ID, e.SANITY_DATASET);
-  const additionalContext = {sanity, urlFor} as const;
+  const previewToken = env.SANITY_PREVIEW_TOKEN || env.SANITY_API_READ_TOKEN;
+  const previewEnabled = isPreviewEnabled(env.SANITY_PROJECT_ID, previewSession);
+  const sanity = await createSanityContext({
+    request,
+    cache,
+    waitUntil,
+    client: {
+      projectId: env.SANITY_PROJECT_ID,
+      dataset: env.SANITY_DATASET || 'production',
+      apiVersion: env.SANITY_API_VERSION || '2026-06-01',
+      useCdn: true,
+      stega: {
+        enabled: previewEnabled,
+        studioUrl: env.SANITY_STUDIO_URL || 'http://localhost:3333',
+      },
+    },
+    ...(previewToken
+      ? {
+          preview: {
+            token: previewToken,
+            session: previewSession,
+          },
+        }
+      : {}),
+  });
 
   const hydrogenContext = createHydrogenContext(
     {
@@ -32,7 +62,7 @@ export async function createHydrogenRouterContext(
       i18n: {language: 'EN', country: 'US'},
       cart: {},
     },
-    additionalContext,
+    {sanity},
   );
 
   return hydrogenContext;

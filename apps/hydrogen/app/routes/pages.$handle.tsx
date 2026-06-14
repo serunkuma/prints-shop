@@ -2,6 +2,7 @@ import {useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
 import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheLong} from '@shopify/hydrogen';
 import {PAGE_QUERY} from '~/lib/queries';
+import {PortableText} from '~/components/editorial/PortableText';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheLong()),
@@ -28,7 +29,7 @@ export default function Page() {
     <main className="container-gallery section-pad">
       <h1 className="text-h1 mb-8">{page.title}</h1>
       <div className="max-w-3xl text-body text-text-secondary leading-relaxed">
-        {page.body}
+        <PortableText value={page.body} />
       </div>
     </main>
   );

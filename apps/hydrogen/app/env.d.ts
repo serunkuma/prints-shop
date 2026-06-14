@@ -25,12 +25,9 @@ declare module 'virtual:react-router/server-build' {
   export const unstable_getCriticalCss: ServerBuild['unstable_getCriticalCss'];
 }
 
-declare global {
-  interface HydrogenAdditionalContext {
-    sanity: import('~/lib/sanity.server').SanityFetchClient;
-    urlFor: (source: import('~/lib/sanity.server').SanityImageSource) => import('~/lib/sanity.server').SanityImageUrlBuilder;
-  }
+export {};
 
+declare global {
   interface Env {
     SESSION_SECRET: string;
     PUBLIC_STORE_DOMAIN: string;
@@ -39,7 +36,9 @@ declare global {
     SANITY_DATASET: string;
     SANITY_API_VERSION: string;
     SANITY_API_READ_TOKEN?: string;
+    SANITY_PREVIEW_TOKEN?: string;
     SANITY_PREVIEW_SECRET?: string;
+    SANITY_STUDIO_URL?: string;
     [key: string]: string | undefined;
   }
 }

@@ -11,7 +11,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 
   const {customerAccessTokenCreate} = await context.storefront.mutate(
     AUTHORIZE_MUTATION,
-    {variables: {input: {code, shopUrl: shop}}},
+    {variables: {input: {code, shopUrl: shop} as any}},
   ).catch(() => ({customerAccessTokenCreate: null}));
 
   if (customerAccessTokenCreate?.customerAccessToken?.accessToken) {

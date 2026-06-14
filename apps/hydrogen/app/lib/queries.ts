@@ -1,31 +1,33 @@
-export const HOMEPAGE_QUERY = `*[_type == "homepage"][0]{
+import {defineQuery} from 'groq';
+
+export const HOMEPAGE_QUERY = defineQuery(`*[_type == "homepage"][0]{
   sections[]{
     _type,
     ...,
     "seriesRef": seriesRef->{title, slug, heroImage, shopifyCollectionHandle}
   },
   seo
-}`;
+}`);
 
-export const PRODUCT_SUPPLEMENT_QUERY = `*[_type == "productSupplement" && shopifyHandle == $handle][0]{
+export const PRODUCT_SUPPLEMENT_QUERY = defineQuery(`*[_type == "productSupplement" && shopifyHandle == $handle][0]{
   story,
   technique,
   inspiration,
   additionalImages,
   "artist": artistRef->{name, slug, portrait, bio, featuredQuote},
   "series": seriesRef->{title, slug}
-}`;
+}`);
 
-export const SITE_SETTINGS_QUERY = `*[_type == "settings"][0]{
+export const SITE_SETTINGS_QUERY = defineQuery(`*[_type == "settings"][0]{
   siteName,
   siteDescription,
   announcementBar,
   footerNavigation,
   socialLinks,
   defaultSeo
-}`;
+}`);
 
-export const NAVIGATION_QUERY = `*[_type == "navigation"][0]{
+export const NAVIGATION_QUERY = defineQuery(`*[_type == "navigation"][0]{
   mainNav[]{
     label,
     type,
@@ -34,24 +36,24 @@ export const NAVIGATION_QUERY = `*[_type == "navigation"][0]{
     collectionHandle,
     "seriesRef": seriesRef->{title, slug}
   }
-}`;
+}`);
 
-export const PAGE_QUERY = `*[_type == "page" && slug.current == $slug][0]{
+export const PAGE_QUERY = defineQuery(`*[_type == "page" && slug.current == $slug][0]{
   title,
   body,
   seo
-}`;
+}`);
 
-export const SERIES_LIST_QUERY = `*[_type == "series" && status == "live"] | order(publishDate desc){
+export const SERIES_LIST_QUERY = defineQuery(`*[_type == "series" && status == "live"] | order(publishDate desc){
   title,
   slug,
   heroImage,
   publishDate,
   description,
   "artist": artistRef->{name, slug}
-}`;
+}`);
 
-export const SERIES_BY_SLUG_QUERY = `*[_type == "series" && slug.current == $slug][0]{
+export const SERIES_BY_SLUG_QUERY = defineQuery(`*[_type == "series" && slug.current == $slug][0]{
   title,
   slug,
   heroImage,
@@ -61,18 +63,18 @@ export const SERIES_BY_SLUG_QUERY = `*[_type == "series" && slug.current == $slu
   "artist": artistRef->{name, slug, portrait},
   shopifyCollectionHandle,
   featuredProducts
-}`;
+}`);
 
-export const ARTIST_LIST_QUERY = `*[_type == "artist"] | order(name asc){
+export const ARTIST_LIST_QUERY = defineQuery(`*[_type == "artist"] | order(name asc){
   name,
   slug,
   portrait,
   bio,
   location,
   featuredQuote
-}`;
+}`);
 
-export const ARTIST_BY_SLUG_QUERY = `*[_type == "artist" && slug.current == $slug][0]{
+export const ARTIST_BY_SLUG_QUERY = defineQuery(`*[_type == "artist" && slug.current == $slug][0]{
   name,
   slug,
   portrait,
@@ -81,7 +83,7 @@ export const ARTIST_BY_SLUG_QUERY = `*[_type == "artist" && slug.current == $slu
   website,
   instagramHandle,
   featuredQuote
-}`;
+}`);
 
 export const COLLECTION_PRODUCTS_QUERY = `#graphql
   query CollectionProducts($handle: String!) {

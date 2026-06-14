@@ -1,6 +1,6 @@
 import {useMemo} from 'react';
-import type {SanityImageSource} from '~/lib/sanity.server';
-import {useRootLoaderData} from '~/lib/useRootLoaderData';
+import {useImageUrl} from 'hydrogen-sanity';
+import type {SanityImageSource} from '@sanity/image-url';
 
 interface SanityImageProps {
   image: SanityImageSource;
@@ -12,13 +12,12 @@ interface SanityImageProps {
 }
 
 export function SanityImage({image, alt, width = 800, height, className, loading = 'lazy'}: SanityImageProps) {
-  const rootData = useRootLoaderData();
-  const sanity = rootData?.sanity;
+  const imageUrl = useImageUrl(image);
 
   const src = useMemo(() => {
-    if (!sanity?.urlFor || !image) return '';
-    return sanity.urlFor(image).width(width).auto('format').url();
-  }, [sanity, image, width]);
+    if (!image) return '';
+    return imageUrl.width(width).auto('format').url();
+  }, [image, imageUrl, width]);
 
   if (!src) return null;
 

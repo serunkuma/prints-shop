@@ -1,6 +1,8 @@
 import {ServerRouter} from 'react-router';
 import {isbot} from 'isbot';
 import {renderToReadableStream} from 'react-dom/server';
+import type {ComponentType, ReactNode} from 'react';
+import type {HydrogenRouterContextProvider} from '@shopify/hydrogen';
 import type {EntryContext} from 'react-router';
 
 export default async function handleRequest(
@@ -8,9 +10,16 @@ export default async function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   reactRouterContext: EntryContext,
+  context: HydrogenRouterContextProvider,
 ) {
+  const SanityProvider = context.sanity.SanityProvider as unknown as ComponentType<{
+    children: ReactNode;
+  }>;
+
   const body = await renderToReadableStream(
-    <ServerRouter context={reactRouterContext} url={request.url} />,
+    <SanityProvider>
+      <ServerRouter context={reactRouterContext} url={request.url} />
+    </SanityProvider>,
     {
       signal: request.signal,
       onError(error: unknown) {

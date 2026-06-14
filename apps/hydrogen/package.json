@@ -4,14 +4,17 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "shopify hydrogen dev",
-    "build": "shopify hydrogen build --no-bundle-stats",
+    "dev": "shopify hydrogen dev --codegen",
+    "build": "shopify hydrogen build --codegen --no-bundle-stats",
     "preview": "shopify hydrogen preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "react-router typegen && tsc --noEmit",
+    "codegen": "shopify hydrogen codegen && react-router typegen",
     "lint": "eslint . --ext .ts,.tsx",
     "populate:products": "node scripts/populate-products.mjs"
   },
   "dependencies": {
+    "@portabletext/react": "^6.2.0",
+    "@sanity/client": "^7.22.1",
     "@shopify/hydrogen": "^2026.4.3",
     "@shopify/hydrogen-react": "^2026.4.3",
     "@shopify/oxygen-workers-types": "^4.2.0",
@@ -19,6 +22,8 @@
     "framer-motion": "^12.40.0",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
+    "groq": "^5.4.0",
+    "hydrogen-sanity": "^6.3.0",
     "isbot": "^5.1.0",
     "lucide-react": "^1.18.0",
     "react": "^19.0.0",
@@ -29,8 +34,10 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
     "@react-router/dev": "~7.16.0",
     "@shopify/cli": "^4.1.0",
+    "@shopify/hydrogen-codegen": "^0.3.3",
     "@shopify/mini-oxygen": "^4.1.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

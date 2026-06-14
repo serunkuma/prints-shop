@@ -1,71 +1,97 @@
+import {PortableText as PortableTextRenderer, type PortableTextComponents} from '@portabletext/react';
+import {SanityImage} from '~/components/shared/SanityImage';
+
 interface PortableTextProps {
-  blocks: any[];
+  value?: any[];
+  blocks?: any[];
 }
 
-function renderBlock(block: any) {
-  switch (block._type) {
-    case 'block':
-      return renderBlockContent(block);
-    case 'imageBlock':
+const components: PortableTextComponents = {
+  block: {
+    normal: ({children}) => <p className="text-body text-text-secondary leading-relaxed mb-4">{children}</p>,
+    h2: ({children}) => <h2 className="text-h2 mt-10 mb-4">{children}</h2>,
+    h3: ({children}) => <h3 className="text-h3 mt-8 mb-3">{children}</h3>,
+    h4: ({children}) => <h4 className="text-h4 mt-6 mb-2">{children}</h4>,
+    blockquote: ({children}) => (
+      <blockquote className="pl-6 border-l-2 border-gold text-h4 text-text-primary italic my-6">
+        {children}
+      </blockquote>
+    ),
+  },
+  list: {
+    bullet: ({children}) => <ul className="mb-4 ml-6 list-disc text-body text-text-secondary">{children}</ul>,
+    number: ({children}) => <ol className="mb-4 ml-6 list-decimal text-body text-text-secondary">{children}</ol>,
+  },
+  listItem: {
+    bullet: ({children}) => <li className="mb-2">{children}</li>,
+    number: ({children}) => <li className="mb-2">{children}</li>,
+  },
+  marks: {
+    strong: ({children}) => <strong className="font-semibold text-text-primary">{children}</strong>,
+    em: ({children}) => <em>{children}</em>,
+    underline: ({children}) => <u>{children}</u>,
+    link: ({children, value}) => {
+      const href = value?.href || value?.url || '#';
+      const openInNewTab = value?.openInNewTab || /^https?:\/\//.test(href);
       return (
-        <figure className="my-8">
-          <img
-            src={block.image?.asset?.url}
-            alt={block.image?.alt || ''}
-            className="w-full rounded-xs"
-            loading="lazy"
-          />
-          {block.caption && (
-            <figcaption className="text-body-small text-text-muted mt-2 text-center">{block.caption}</figcaption>
-          )}
-        </figure>
+        <a
+          href={href}
+          target={openInNewTab ? '_blank' : undefined}
+          rel={openInNewTab ? 'noreferrer noopener' : undefined}
+          className="text-gold hover:opacity-80"
+        >
+          {children}
+        </a>
       );
-    case 'productEmbed':
-      return (
-        <div className="my-8 p-4 card-surface rounded-xs">
-          <p className="text-body-small text-text-muted">Featured print</p>
-          <a href={`/products/${block.productHandle}`} className="text-gold hover:opacity-80 transition-opacity">
-            {block.productTitle || block.productHandle}
-          </a>
-        </div>
-      );
-    default:
-      return null;
-  }
-}
+    },
+  },
+  types: {
+    imageBlock: ({value}) => (
+      <figure className="my-8">
+        <SanityImage
+          image={value.image}
+          alt={value.image?.alt || value.alt || ''}
+          width={1200}
+          className="w-full rounded-xs"
+          loading="lazy"
+        />
+        {value.caption && (
+          <figcaption className="text-body-small text-text-muted mt-2 text-center">
+            {value.caption}
+          </figcaption>
+        )}
+      </figure>
+    ),
+    image: ({value}) => (
+      <figure className="my-8">
+        <SanityImage
+          image={value}
+          alt={value.alt || ''}
+          width={1200}
+          className="w-full rounded-xs"
+          loading="lazy"
+        />
+        {value.caption && (
+          <figcaption className="text-body-small text-text-muted mt-2 text-center">
+            {value.caption}
+          </figcaption>
+        )}
+      </figure>
+    ),
+    productEmbed: ({value}) => (
+      <div className="my-8 p-4 card-surface rounded-xs">
+        <p className="text-body-small text-text-muted">Featured print</p>
+        <a href={`/products/${value.productHandle}`} className="text-gold hover:opacity-80 transition-opacity">
+          {value.productTitle || value.productHandle}
+        </a>
+      </div>
+    ),
+  },
+};
 
-function renderBlockContent(block: any) {
-  const style = block.style || 'normal';
-  const children = block.children?.map((child: any, i: number) => {
-    let text = child.text;
-    if (child.marks?.includes('strong')) text = <strong key={i}>{text}</strong>;
-    if (child.marks?.includes('em')) text = <em key={i}>{text}</em>;
-    if (child.marks?.includes('underline')) text = <u key={i}>{text}</u>;
-    if (child._type === 'link') {
-      text = <a key={i} href={child.url} className="text-gold hover:opacity-80">{text}</a>;
-    }
-    return <span key={i}>{text}</span>;
-  });
+export function PortableText({value, blocks}: PortableTextProps) {
+  const portableText = value || blocks;
+  if (!portableText?.length) return null;
 
-  switch (style) {
-    case 'h2': return <h2 key={block._key} className="text-h2 mt-10 mb-4">{children}</h2>;
-    case 'h3': return <h3 key={block._key} className="text-h3 mt-8 mb-3">{children}</h3>;
-    case 'h4': return <h4 key={block._key} className="text-h4 mt-6 mb-2">{children}</h4>;
-    case 'blockquote': return <blockquote key={block._key} className="pl-6 border-l-2 border-gold text-h4 text-text-primary italic my-6">{children}</blockquote>;
-    default: return <p key={block._key} className="text-body text-text-secondary leading-relaxed mb-4">{children}</p>;
-  }
-}
-
-export function PortableText({blocks}: PortableTextProps) {
-  if (!blocks?.length) return null;
-
-  return (
-    <div>
-      {blocks.map((block: any) => (
-        <div key={block._key || block._type}>
-          {renderBlock(block)}
-        </div>
-      ))}
-    </div>
-  );
+  return <PortableTextRenderer value={portableText} components={components} />;
 }

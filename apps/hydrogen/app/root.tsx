@@ -1,3 +1,7 @@
+import {useNonce} from '@shopify/hydrogen';
+import {Sanity} from 'hydrogen-sanity';
+import {usePreviewMode} from 'hydrogen-sanity/preview';
+import {VisualEditing} from 'hydrogen-sanity/visual-editing';
 import {Outlet, useLoaderData, Links, Meta, Scripts, ScrollRestoration, useRouteError, isRouteErrorResponse} from 'react-router';
 import {SITE_SETTINGS_QUERY, NAVIGATION_QUERY} from '~/lib/queries';
 import styles from '~/styles/app.css?url';
@@ -65,14 +69,13 @@ export async function loader({context}: {context: any}) {
     settings,
     navigation,
     cart: cartData?.cart || null,
-    sanity: {
-      urlFor: context.urlFor,
-    },
   };
 }
 
 export function Layout({children}: {children?: React.ReactNode}) {
   const data = useLoaderData<typeof loader>();
+  const nonce = useNonce();
+  const previewMode = usePreviewMode();
 
   return (
     <html lang="en" className="light">
@@ -89,8 +92,10 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <Footer />
         <CartDrawer />
         <Toaster richColors position="bottom-right" />
-        <ScrollRestoration />
-        <Scripts />
+        <Sanity nonce={nonce} />
+        {previewMode ? <VisualEditing action="/api/preview" /> : null}
+        <ScrollRestoration nonce={nonce} />
+        <Scripts nonce={nonce} />
       </body>
     </html>
   );

@@ -87,6 +87,9 @@ type Pages = {
       "policyHandle": string;
     };
   };
+  "/api/preview": {
+    params: {};
+  };
   "/.well-known/appspecific/com.chrome.devtools.json": {
     params: {};
   };
@@ -101,7 +104,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/create" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap.xml";
+    page: "/" | "/create" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/api/preview" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap.xml";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
@@ -183,6 +186,10 @@ type RouteFiles = {
     id: "routes/policies.$policyHandle";
     page: "/policies/:policyHandle";
   };
+  "routes/api.preview.ts": {
+    id: "routes/api.preview";
+    page: "/api/preview";
+  };
   "routes/chrome-devtools-json.tsx": {
     id: "routes/chrome-devtools-json";
     page: "/.well-known/appspecific/com.chrome.devtools.json";
@@ -219,6 +226,7 @@ type RouteModules = {
   "routes/account.orders.$orderId": typeof import("./app/routes/account.orders.$orderId.tsx");
   "routes/account.recover": typeof import("./app/routes/account.recover.tsx");
   "routes/policies.$policyHandle": typeof import("./app/routes/policies.$policyHandle.tsx");
+  "routes/api.preview": typeof import("./app/routes/api.preview.ts");
   "routes/chrome-devtools-json": typeof import("./app/routes/chrome-devtools-json.tsx");
   "routes/robots.txt": typeof import("./app/routes/robots.txt.tsx");
   "routes/sitemap.xml": typeof import("./app/routes/sitemap.xml.tsx");

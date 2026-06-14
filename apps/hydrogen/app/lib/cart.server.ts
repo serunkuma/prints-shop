@@ -1,5 +1,5 @@
 const CART_QUERY = `#graphql
-  query Cart($cartId: String!) {
+  query Cart($cartId: ID!) {
     cart(id: $cartId) {
       id
       checkoutUrl
