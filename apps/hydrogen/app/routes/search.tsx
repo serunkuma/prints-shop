@@ -3,6 +3,7 @@ import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheNone} from '@shopify/hydrogen';
 import {SEARCH_PRODUCTS_QUERY} from '~/lib/queries';
 import {ProductGrid} from '~/components/product/ProductGrid';
+import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheNone()),
@@ -19,7 +20,8 @@ export async function loader({request, context}: {request: Request; context: any
     variables: {query: q},
   });
 
-  return {results: products?.nodes || [], query: q};
+  const nodes = (products?.nodes || []).filter((p: any) => OPENING_DROP_HANDLES.has(p.handle));
+  return {results: nodes, query: q};
 }
 
 export default function SearchPage() {

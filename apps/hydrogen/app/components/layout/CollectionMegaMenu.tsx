@@ -8,7 +8,7 @@ const columns = [
     title: 'Start Here',
     links: [
       {label: 'All Prints', to: '/collection'},
-      {label: 'Opening Drop', to: '/drops/opening-drop'},
+      {label: 'Opening Drop', to: '/blog/drops/opening-drop'},
       {label: 'New Arrivals', to: '/collection?sort=newest'},
       {label: 'Large Prints', to: '/collection/large-prints'},
     ],

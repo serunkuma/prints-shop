@@ -16,6 +16,7 @@ import {EditorialStorySection} from '~/components/sections/EditorialStorySection
 import {ArtistSpotlightSection} from '~/components/sections/ArtistSpotlightSection';
 import {PortableText} from '~/components/editorial/PortableText';
 import {getFallbackProducts, getFallbackSiteDoc} from '~/lib/localFallback.server';
+import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheLong()),
@@ -85,9 +86,8 @@ export default function Homepage() {
   const sections = homepage?.sections || [];
 
   const products =
-    allPrints?.collection?.products?.nodes?.filter(Boolean) ||
-    fallbackProducts?.filter(Boolean) ||
-    [];
+    (allPrints?.collection?.products?.nodes?.filter(Boolean) || fallbackProducts?.filter(Boolean) || [])
+      .filter((p: any) => OPENING_DROP_HANDLES.has(p.handle));
   const featured =
     featuredProducts?.products?.nodes?.filter(Boolean)?.length > 0
       ? featuredProducts.products.nodes.filter(Boolean)

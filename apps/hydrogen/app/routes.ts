@@ -17,6 +17,8 @@ const routes: RouteConfig = [
   {path: 'drops/:handle', file: 'routes/drops.$handle.tsx'},
   {path: 'artists', file: 'routes/artists._index.tsx'},
   {path: 'artists/:handle', file: 'routes/artists.$handle.tsx'},
+  {path: 'blog/drops', file: 'routes/blog.drops._index.tsx'},
+  {path: 'blog/drops/:handle', file: 'routes/blog.drops.$handle.tsx'},
   {path: 'account', file: 'routes/account.tsx'},
   {path: 'account/login', file: 'routes/account.login.tsx'},
   {path: 'account/orders', file: 'routes/account.orders.tsx'},

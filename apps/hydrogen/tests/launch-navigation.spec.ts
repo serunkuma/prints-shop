@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test';
 
-const navLabels = ['Collection', 'Create', 'Drops', 'About'];
-const forbiddenNav = ['Artists', 'Home', 'Shop'];
+const navLabels = ['Collection', 'Create', 'Blog', 'About'];
+const forbiddenNav = ['Artists', 'Home', 'Shop', 'Drops'];
 
 test.describe('Launch navigation', () => {
   test('Given the homepage loads Then the top nav has correct labels', async ({page}) => {
@@ -19,7 +19,7 @@ test.describe('Launch navigation', () => {
   });
 
   test('Given a visitor navigates to new routes Then they return 200', async ({page}) => {
-    for (const path of ['/collection', '/about', '/create', '/drops']) {
+    for (const path of ['/collection', '/about', '/create', '/blog/drops']) {
       const response = await page.goto(path);
       expect(response?.ok()).toBeTruthy();
       await expect(page.locator('body')).not.toContainText(/Page not found|free shipping|over \$75/i);
@@ -38,6 +38,14 @@ test.describe('Launch navigation', () => {
     await page.goto('/pages/about');
     await page.waitForURL('/about');
     expect(page.url()).toContain('/about');
+
+    await page.goto('/drops');
+    await page.waitForURL('/blog/drops');
+    expect(page.url()).toContain('/blog/drops');
+
+    await page.goto('/drops/opening-drop');
+    await page.waitForURL('/blog/drops/opening-drop');
+    expect(page.url()).toContain('/blog/drops/opening-drop');
   });
 
   test('Given the Collection hover mega menu Then it opens and closes correctly', async ({page}) => {
@@ -70,7 +78,7 @@ test.describe('Launch navigation', () => {
     await page.getByRole('button', {name: 'Open menu'}).click();
     const mobileNav = page.locator('nav[aria-label="Mobile navigation"]');
 
-    for (const label of ['Create', 'Drops', 'About']) {
+    for (const label of ['Create', 'Blog', 'About']) {
       await expect(mobileNav.getByRole('link', {name: label})).toBeVisible();
     }
     await expect(mobileNav.getByText('Collection')).toBeVisible();

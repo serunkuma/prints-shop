@@ -6,6 +6,7 @@ import PathwaySwitch from '~/components/PathwaySwitch';
 import {CategoryTiles} from '~/components/sections/CategoryTiles';
 import {ProductGrid} from '~/components/product/ProductGrid';
 import {getFallbackProducts} from '~/lib/localFallback.server';
+import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 import {COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
 
 const sortOptions = [
@@ -60,7 +61,8 @@ export async function loader({context}: {context: any}) {
     getFallbackProducts(context.env),
   ]);
 
-  const products = shopifyData?.collection?.products?.nodes?.filter(Boolean) || fallbackProducts || [];
+  const products = (shopifyData?.collection?.products?.nodes?.filter(Boolean) || fallbackProducts || [])
+    .filter((p: any) => OPENING_DROP_HANDLES.has(p.handle));
   return {products};
 }
 

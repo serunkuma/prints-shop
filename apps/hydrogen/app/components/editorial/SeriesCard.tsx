@@ -6,7 +6,7 @@ interface SeriesCardProps {
 
 export function SeriesCard({series}: SeriesCardProps) {
   return (
-    <Link to={`/drops/${series.slug?.current}`} className="group">
+    <Link to={`/blog/drops/${series.slug?.current}`} className="group">
       <div className="aspect-[16/9] bg-surface-mid rounded-xs overflow-hidden mb-4">
         {series.heroImage && (
           <img

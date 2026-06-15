@@ -1,29 +1,6 @@
 import storefrontExport from '~/data/local-fallback/storefront-products.json';
 import siteContentExport from '~/data/local-fallback/sanity-site-content.ndjson?raw';
-const OPENING_DROP_HANDLES = new Set([
-  'majestic-monarch',
-  'rapt-in-observation',
-  'transfixed-beauty',
-  'graceful-potbearer',
-  'boys-in-joyful-abandon',
-  'captivating-beauty',
-  'unbridled-laughter',
-  'serious-beauty',
-  'thinking-faces',
-  'nurtured-wings',
-  'a-continents-tapestry',
-  'african-youths-smile',
-  'tireless-joy',
-  'elephant-in-calmness',
-  'timeless-majesty',
-  'young-innocence',
-  'eyes-with-desire',
-  'african-warrior',
-  'skin-deep-beauty',
-  'african-equine-grace',
-  'silence-in-spirit',
-  'triadic-reflections',
-]);
+import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 
 let storefrontCache: any[] | null = null;
 let siteContentCache: Record<string, any> | null = null;
@@ -131,7 +108,7 @@ export async function getFallbackProduct(handle: string, env: any = {}) {
 
 export async function getFallbackProducts(env: any = {}) {
   const products = await readStorefrontProducts(env);
-  return products.map(toHydrogenProduct);
+  return products.filter((p) => OPENING_DROP_HANDLES.has(p.handle)).map(toHydrogenProduct);
 }
 
 export async function getFallbackCollection(handle: string, env: any = {}) {

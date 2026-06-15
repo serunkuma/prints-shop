@@ -1,6 +1,7 @@
-import {SITEMAP_PRODUCTS_QUERY, SITEMAP_COLLECTIONS_QUERY, SITEMAP_SERIES_QUERY, SITEMAP_ARTISTS_QUERY, SITEMAP_PAGES_QUERY} from '~/lib/queries';
+import {SITEMAP_PRODUCTS_QUERY, SITEMAP_COLLECTIONS_QUERY, SITEMAP_SERIES_QUERY, SITEMAP_PAGES_QUERY} from '~/lib/queries';
 import {getCanonicalSiteUrl} from '~/lib/siteUrl.server';
 import {getFallbackProducts} from '~/lib/localFallback.server';
+import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 
 function escapeXml(str: string): string {
   return str
@@ -17,11 +18,10 @@ export async function buildSitemap(context: any): Promise<string> {
   const storefront = context?.storefront;
   const siteUrl = getCanonicalSiteUrl(env);
 
-  const [productsData, collectionsData, seriesData, artistsData, pagesData, fallbackProducts] = await Promise.all([
+  const [productsData, collectionsData, seriesData, pagesData, fallbackProducts] = await Promise.all([
     storefront?.query(SITEMAP_PRODUCTS_QUERY).catch(() => null) || null,
     storefront?.query(SITEMAP_COLLECTIONS_QUERY).catch(() => null) || null,
     sanity?.fetch(SITEMAP_SERIES_QUERY).catch(() => []) || [],
-    sanity?.fetch(SITEMAP_ARTISTS_QUERY).catch(() => []) || [],
     sanity?.fetch(SITEMAP_PAGES_QUERY).catch(() => []) || [],
     getFallbackProducts(env),
   ]);
@@ -39,19 +39,19 @@ export async function buildSitemap(context: any): Promise<string> {
   }
 
   addUrl(siteUrl + '/', undefined, '1.0');
-  addUrl(siteUrl + '/collections', undefined, '0.9');
-  addUrl(siteUrl + '/collections/all', undefined, '0.9');
-  addUrl(siteUrl + '/collections/drop-opening-drop', undefined, '0.9');
-  addUrl(siteUrl + '/drops', undefined, '0.9');
-  addUrl(siteUrl + '/drops/opening-drop', undefined, '0.9');
-  addUrl(siteUrl + '/artists', undefined, '0.9');
+  addUrl(siteUrl + '/collection', undefined, '0.9');
+  addUrl(siteUrl + '/collection/all', undefined, '0.9');
+  addUrl(siteUrl + '/collection/drop-opening-drop', undefined, '0.9');
+  addUrl(siteUrl + '/blog/drops', undefined, '0.9');
+  addUrl(siteUrl + '/blog/drops/opening-drop', undefined, '0.9');
   addUrl(siteUrl + '/search', undefined, '0.3');
 
-  for (const slug of ['about', 'size-guide', 'print-quality', 'shipping-returns', 'faq', 'contact']) {
+  addUrl(siteUrl + '/about', undefined, '0.7');
+  for (const slug of ['size-guide', 'print-quality', 'shipping-returns', 'faq', 'contact']) {
     addUrl(siteUrl + '/pages/' + slug, undefined, '0.7');
   }
 
-  const products = productsData?.products?.nodes || [];
+  const products = (productsData?.products?.nodes || []).filter((p: any) => OPENING_DROP_HANDLES.has(p.handle));
   for (const product of products) {
     addUrl(siteUrl + '/products/' + product.handle, product.updatedAt, '0.8');
   }
@@ -64,20 +64,13 @@ export async function buildSitemap(context: any): Promise<string> {
 
   const collections = collectionsData?.collections?.nodes || [];
   for (const collection of collections) {
-    addUrl(siteUrl + '/collections/' + collection.handle, collection.updatedAt, '0.6');
+    addUrl(siteUrl + '/collection/' + collection.handle, collection.updatedAt, '0.6');
   }
 
   if (Array.isArray(seriesData)) {
     for (const series of seriesData) {
       const slug = series.slug?.current || series.slug;
-      if (slug) addUrl(siteUrl + '/drops/' + slug, series._updatedAt, '0.7');
-    }
-  }
-
-  if (Array.isArray(artistsData)) {
-    for (const artist of artistsData) {
-      const slug = artist.slug?.current || artist.slug;
-      if (slug) addUrl(siteUrl + '/artists/' + slug, artist._updatedAt, '0.5');
+      if (slug) addUrl(siteUrl + '/blog/drops/' + slug, series._updatedAt, '0.7');
     }
   }
 

@@ -23,7 +23,7 @@ function navItemToLink(item: any): FooterLink | null {
             ? item.seriesRef._ref.replace(/^series-/, '')
             : null;
         const handle = slug || refSlug;
-        return handle ? {label: item.label, href: '/drops/' + handle} : null;
+        return handle ? {label: item.label, href: '/blog/drops/' + handle} : null;
       }
     default:
       return null;
@@ -100,7 +100,7 @@ export function Footer() {
                 {label: 'All Prints', href: '/collection'},
                 {label: 'New Arrivals', href: '/collection?sort=newest'},
                 {label: 'Large Prints', href: '/collection/large-prints'},
-                {label: 'The Drops', href: '/drops'},
+                {label: 'Blog', href: '/blog/drops'},
               ]}
             />
             <FooterColumn

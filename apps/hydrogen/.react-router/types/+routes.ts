@@ -73,6 +73,14 @@ type Pages = {
       "handle": string;
     };
   };
+  "/blog/drops": {
+    params: {};
+  };
+  "/blog/drops/:handle": {
+    params: {
+      "handle": string;
+    };
+  };
   "/account": {
     params: {};
   };
@@ -121,7 +129,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/create" | "/about" | "/collection" | "/collection/:handle" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/api/preview" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap" | "/sitemap.xml" | "/components";
+    page: "/" | "/create" | "/about" | "/collection" | "/collection/:handle" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/blog/drops" | "/blog/drops/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/api/preview" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap" | "/sitemap.xml" | "/components";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
@@ -186,6 +194,14 @@ type RouteFiles = {
   "routes/artists.$handle.tsx": {
     id: "routes/artists.$handle";
     page: "/artists/:handle";
+  };
+  "routes/blog.drops._index.tsx": {
+    id: "routes/blog.drops._index";
+    page: "/blog/drops";
+  };
+  "routes/blog.drops.$handle.tsx": {
+    id: "routes/blog.drops.$handle";
+    page: "/blog/drops/:handle";
   };
   "routes/account.tsx": {
     id: "routes/account";
@@ -259,6 +275,8 @@ type RouteModules = {
   "routes/drops.$handle": typeof import("./app/routes/drops.$handle.tsx");
   "routes/artists._index": typeof import("./app/routes/artists._index.tsx");
   "routes/artists.$handle": typeof import("./app/routes/artists.$handle.tsx");
+  "routes/blog.drops._index": typeof import("./app/routes/blog.drops._index.tsx");
+  "routes/blog.drops.$handle": typeof import("./app/routes/blog.drops.$handle.tsx");
   "routes/account": typeof import("./app/routes/account.tsx");
   "routes/account.login": typeof import("./app/routes/account.login.tsx");
   "routes/account.orders": typeof import("./app/routes/account.orders.tsx");

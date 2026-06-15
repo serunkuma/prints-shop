@@ -9,7 +9,7 @@ test.describe('Launch SEO', () => {
     '/pages/shipping-returns',
     '/pages/faq',
     '/pages/contact',
-    '/drops/opening-drop',
+    '/blog/drops/opening-drop',
     '/collection',
     '/products/majestic-monarch',
   ]) {
@@ -29,19 +29,37 @@ test.describe('Launch SEO', () => {
 
     for (const url of [
       '/',
-      '/pages/about',
+      '/about',
       '/pages/size-guide',
       '/pages/print-quality',
       '/pages/shipping-returns',
       '/pages/faq',
       '/pages/contact',
-      '/drops/opening-drop',
-      '/collections/all',
-      '/collections/drop-opening-drop',
+      '/blog/drops/opening-drop',
+      '/collection/all',
+      '/collection/drop-opening-drop',
       '/products/majestic-monarch',
     ]) {
       expect(body).toContain(url === '/' ? 'https://prints.kumachigallery.com/</loc>' : `https://prints.kumachigallery.com${url}`);
     }
+  });
+
+  test('Given the sitemap is requested Then old drop URLs are NOT included', async ({request}) => {
+    const response = await request.get('/sitemap.xml');
+    expect(response.ok()).toBeTruthy();
+    const body = await response.text();
+
+    expect(body).not.toContain('prints.kumachigallery.com/drops/');
+    expect(body).not.toContain('/artists');
+  });
+
+  test('Given the sitemap is requested Then non-opening products are NOT included', async ({request}) => {
+    const response = await request.get('/sitemap.xml');
+    expect(response.ok()).toBeTruthy();
+    const body = await response.text();
+
+    expect(body).not.toContain('/products/legacy-in-the-last-light');
+    expect(body).not.toContain('/products/skyward-carriers');
   });
 
   test('Given robots.txt is requested Then it references the canonical sitemap', async ({request}) => {

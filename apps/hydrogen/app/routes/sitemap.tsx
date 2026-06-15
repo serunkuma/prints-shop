@@ -6,7 +6,7 @@ export const meta: MetaFunction = () => [
   {
     name: 'description',
     content:
-      'An HTML sitemap for Kumachi Prints — find every public page, collection, drop, product, and support link in one place. For the machine-readable XML sitemap visit /sitemap.xml.',
+      'An HTML sitemap for Kumachi Prints — find every public page, collection, product, and support link in one place. For the machine-readable XML sitemap visit /sitemap.xml.',
   },
 ];
 
@@ -19,13 +19,13 @@ type SitemapLink = {
 const mainPages: SitemapLink[] = [
   {label: 'Home', href: '/', description: 'Kumachi Prints landing page.'},
   {label: 'Collection', href: '/collection', description: 'Browse the full collection of curated art prints.'},
-  {label: 'Drops', href: '/drops', description: 'Editorial print releases and series drops.'},
+  {label: 'Blog', href: '/blog/drops', description: 'Editorial drops and print stories.'},
   {label: 'Search', href: '/search', description: 'Search the Kumachi Prints catalogue.'},
 ];
 
 const shopPages: SitemapLink[] = [
-  {label: 'All Prints', href: '/collections/all', description: 'Every print in the Kumachi catalogue.'},
-  {label: 'Opening Drop Collection', href: '/collections/drop-opening-drop', description: 'The first curated release.'},
+  {label: 'All Prints', href: '/collection/all', description: 'Every print in the Kumachi catalogue.'},
+  {label: 'Opening Drop Collection', href: '/collection/drop-opening-drop', description: 'The first curated release.'},
 ];
 
 const supportPages: SitemapLink[] = [
@@ -65,7 +65,7 @@ export default function SitemapPage() {
         <p className="text-caption uppercase" style={{color: 'var(--color-accent-clay)'}}>Site index</p>
         <h1 className="text-h1 mt-3" style={{color: 'var(--color-text-primary)'}}>Kumachi Prints sitemap.</h1>
         <p className="text-body mt-5 max-w-2xl" style={{color: 'var(--color-text-secondary)'}}>
-          Every public page, collection, print, drop, and support link in one quiet place.
+          Every public page, collection, print, and support link in one quiet place.
           For the machine-readable XML sitemap, visit{' '}
           <a href="/sitemap.xml" style={{color: 'var(--color-accent-ochre)', textDecoration: 'underline'}}>
             /sitemap.xml
@@ -76,7 +76,7 @@ export default function SitemapPage() {
       <section className="container-gallery grid gap-6 pb-20 lg:grid-cols-2">
         <SitemapSection title="Main Pages" count={mainPages.length} links={mainPages} />
         <SitemapSection title="Shop & Collections" count={shopPages.length} links={shopPages} />
-        <SitemapSection title="Opening Drop" count={1} links={[{label: 'Opening Drop', href: '/drops/opening-drop', description: 'The first Kumachi Prints curated release.'}]} />
+        <SitemapSection title="Editorial" count={1} links={[{label: 'Opening Drop', href: '/blog/drops/opening-drop', description: 'The first Kumachi Prints curated release.'}]} />
         <SitemapSection title="Product Pages" count={productLinks.length} links={productLinks} />
         <SitemapSection title="Support Pages" count={supportPages.length} links={supportPages} />
         <SitemapSection title="Internal Tools" count={internalPages.length} links={internalPages} />

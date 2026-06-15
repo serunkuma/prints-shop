@@ -15,7 +15,7 @@ test.describe('Sitemap', () => {
     const body = await response.text();
     expect(body).toContain('Main Pages');
     expect(body).toContain('Collections');
-    expect(body).toContain('Opening Drop');
+    expect(body).toContain('Editorial');
     expect(body).toContain('Product Pages');
     expect(body).toContain('Support Pages');
     expect(body).toContain('Internal Tools');
@@ -25,10 +25,17 @@ test.describe('Sitemap', () => {
     const response = await request.get('/sitemap');
     const body = await response.text();
     expect(body).toContain('/components');
-    expect(body).toContain('/collections/all');
-    expect(body).toContain('/drops/opening-drop');
-    expect(body).toContain('/pages/about');
+    expect(body).toContain('/collection/all');
+    expect(body).toContain('/blog/drops/opening-drop');
+    expect(body).toContain('/about');
     expect(body).toContain('/products/majestic-monarch');
+  });
+
+  test('Given the HTML sitemap is generated Then it uses /blog/drops paths', async ({request}) => {
+    const response = await request.get('/sitemap');
+    const body = await response.text();
+    expect(body).toContain('/blog/drops/opening-drop');
+    expect(body).not.toContain('>Drops<');
   });
 
   test('Given the HTML sitemap is generated Then it does not emit XML tags', async ({request}) => {
@@ -54,19 +61,27 @@ test.describe('Sitemap', () => {
     const body = await response.text();
     for (const url of [
       '/',
-      '/pages/about',
+      '/about',
       '/pages/size-guide',
       '/pages/print-quality',
       '/pages/shipping-returns',
       '/pages/faq',
       '/pages/contact',
-      '/drops/opening-drop',
-      '/collections/all',
-      '/collections/drop-opening-drop',
+      '/blog/drops/opening-drop',
+      '/collection/all',
+      '/collection/drop-opening-drop',
       '/products/majestic-monarch',
     ]) {
       expect(body).toContain(url === '/' ? 'https://prints.kumachigallery.com/</loc>' : `https://prints.kumachigallery.com${url}`);
     }
+  });
+
+  test('Given the XML sitemap is generated Then it uses /blog/drops paths', async ({request}) => {
+    const response = await request.get('/sitemap.xml');
+    const body = await response.text();
+    expect(body).toContain('prints.kumachigallery.com/blog/drops/opening-drop');
+    expect(body).toContain('prints.kumachigallery.com/blog/drops');
+    expect(body).not.toContain('prints.kumachigallery.com/drops/');
   });
 
   test('Given the XML sitemap is generated Then it excludes /account routes', async ({request}) => {
@@ -88,5 +103,14 @@ test.describe('Sitemap', () => {
     const urls = locMatches.map((l) => l.replace('<loc>', '').replace('</loc>', ''));
     const uniqueUrls = new Set(urls);
     expect(uniqueUrls.size).toBe(urls.length);
+  });
+
+  test('Given the XML sitemap is generated Then it includes only the 22 opening products', async ({request}) => {
+    const response = await request.get('/sitemap.xml');
+    const body = await response.text();
+    expect(body).toContain('/products/majestic-monarch');
+    expect(body).not.toContain('/products/legacy-in-the-last-light');
+    expect(body).not.toContain('/products/skyward-carriers');
+    expect(body).not.toContain('/products/tuskers-under-a-crimson-sky');
   });
 });

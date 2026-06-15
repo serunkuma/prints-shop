@@ -9,7 +9,7 @@ import {CollectionMegaMenu, MobileCollectionSubmenu} from './CollectionMegaMenu'
 const primaryNav = [
   {label: 'Collection', to: '/collection'},
   {label: 'Create', to: '/create'},
-  {label: 'Drops', to: '/drops'},
+  {label: 'Blog', to: '/blog/drops'},
   {label: 'About', to: '/about'},
 ];
 

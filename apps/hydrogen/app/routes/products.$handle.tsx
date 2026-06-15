@@ -12,6 +12,7 @@ import {VariantSelector} from '~/components/product/VariantSelector';
 import {AddToCart} from '~/components/product/AddToCart';
 import {PortableText} from '~/components/editorial/PortableText';
 import {getFallbackProduct} from '~/lib/localFallback.server';
+import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheShort()),
@@ -39,6 +40,10 @@ export async function loader({params, context}: {params: any; context: any}) {
   const {handle} = params;
 
   if (!handle) {
+    throw new Response('Not found', {status: 404});
+  }
+
+  if (!OPENING_DROP_HANDLES.has(handle)) {
     throw new Response('Not found', {status: 404});
   }
 
@@ -108,7 +113,7 @@ export default function ProductPage() {
           <nav className="flex flex-wrap items-center gap-2 text-caption uppercase text-text-muted">
             <Link to="/">Home</Link>
             <span>/</span>
-            <Link to="/collections">Collection</Link>
+            <Link to="/collection">Collection</Link>
             <span>/</span>
             <span className="text-text-primary">{product.title}</span>
           </nav>
