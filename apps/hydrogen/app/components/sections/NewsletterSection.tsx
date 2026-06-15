@@ -1,12 +1,22 @@
-export function NewsletterSection() {
+interface NewsletterSectionProps {
+  section?: {
+    heading?: string;
+    description?: string;
+  };
+}
+
+export function NewsletterSection({section}: NewsletterSectionProps) {
+  const heading = section?.heading || 'New drops, studio notes, and print stories.';
+  const description = section?.description || 'Join the list for release notes and first looks. The real email integration comes after checkout QA.';
+
   return (
     <section className="kumachi-section" style={{backgroundColor: 'var(--color-surface-deep)', color: 'var(--color-bg-primary)'}}>
       <div className="container-gallery grid grid-cols-1 gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-end">
         <div>
           <p className="text-caption uppercase" style={{color: 'var(--color-accent-ochre)'}}>Stay close</p>
-          <h2 className="text-h2 mt-3 max-w-3xl">New drops, studio notes, and print stories.</h2>
+          <h2 className="text-h2 mt-3 max-w-3xl">{heading}</h2>
           <p className="text-body mt-5 max-w-xl" style={{color: '#d8cbb7'}}>
-            Join the list for release notes and first looks. The real email integration comes after checkout QA.
+            {description}
           </p>
         </div>
         <form className="flex flex-col gap-3 sm:flex-row" onSubmit={(event) => event.preventDefault()}>

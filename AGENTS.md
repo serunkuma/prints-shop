@@ -65,10 +65,21 @@ prints-shop/
 │   │   │   ├── EditorialBannerSection.tsx
 │   │   │   ├── ProductGridSection.tsx
 │   │   │   ├── TestimonialsSection.tsx
-│   │   │   └── NewsletterSection.tsx
-│   │   └── shared/
-│   │       ├── SanityImage.tsx       ← Sanity image with urlFor + responsive sizing
-│   │       └── Seo.tsx              ← SEO meta tag helper
+│   │   │   ├── NewsletterSection.tsx
+│   │   │   ├── TrustBar.tsx           ← Hardcoded trust signals
+│   │   │   ├── AIPrintStudioTeaser.tsx ← Hardcoded AI Studio teaser
+│   │   │   ├── CategoryTiles.tsx      ← Hardcoded category navigation
+│   │   │   ├── EditorialProductRail.tsx ← Product marquee rail
+│   │   │   ├── EditorialStorySection.tsx ← Hardcoded editorial story
+│   │   │   └── ArtistSpotlightSection.tsx ← Hardcoded artist spotlight
+│   │   ├── motion/
+│   │   │   ├── AnimatedButton.tsx     ← Animated CTA button
+│   │   │   ├── ClipRevealImage.tsx    ← Clip-path reveal image
+│   │   │   └── MarqueeRow.tsx         ← Scrolling marquee
+│   │   ├── shared/
+│   │   │   ├── SanityImage.tsx       ← Sanity image with urlFor + responsive sizing
+│   │   │   └── Seo.tsx              ← SEO meta tag helper
+│   │   └── PathwaySwitch.tsx         ← AI / Gallery pathway toggle
 │   ├── lib/
 │   │   ├── queries.ts               ← All GROQ query constants
 │   │   ├── queries/                 ← Directory for queries if they grow large
@@ -76,7 +87,12 @@ prints-shop/
 │   │   ├── sanity.server.ts         ← Sanity client setup
 │   │   ├── cart.server.ts           ← Server-side cart utilities
 │   │   ├── animations.ts           ← Framer Motion Variants (fadeUp, staggerContainer, etc.)
-│   │   └── format.ts               ← formatPrice(), formatMoney()
+│   │   ├── format.ts               ← formatPrice(), formatMoney()
+│   │   ├── context.ts              ← createHydrogenRouterContext()
+│   │   ├── session.ts              ← AppSession class
+│   │   ├── store.ts                ← Zustand useUIStore (persist key: kumachi-ui)
+│   │   ├── siteUrl.server.ts       ← getCanonicalSiteUrl() helper
+│   │   └── useRootLoaderData.ts    ← useRootLoaderData() hook
 │   ├── routes/
 │   │   ├── _index.tsx               ← Homepage
 │   │   ├── products.$handle.tsx     ← Product detail page (PDP)
@@ -97,7 +113,11 @@ prints-shop/
 │   │   ├── policies.$policyHandle.tsx   ← Store policies (privacy, ToS, refund)
 │   │   ├── sitemap.xml.tsx          ← SEO sitemap (.xml compat alias)
 │   │   ├── sitemap.tsx              ← SEO sitemap (canonical path)
-│   │   └── robots.txt.tsx           ← Crawler rules
+│   │   ├── robots.txt.tsx           ← Crawler rules
+│   │   ├── create.tsx               ← AI Studio landing page
+│   │   ├── product.$handle.tsx      ← Redirect /product/:handle → /products/:handle
+│   │   ├── chrome-devtools-json.tsx ← Chrome DevTools protocol handler
+│   │   └── api.preview.ts           ← Sanity Preview route
 │   ├── root.tsx                     ← HTML shell, global data, header, footer
 │   └── entry.server.tsx             ← Server entry (Oxygen runtime)
 ├── studio/
@@ -210,11 +230,14 @@ npm run dev
 |-----|------|--------|----------|-------|
 | `PUBLIC_STORE_DOMAIN` | string | Shopify admin → Settings → Store → Store domain | Required | Public — safe in client bundle |
 | `PUBLIC_STOREFRONT_API_TOKEN` | string | Shopify admin → Apps → Develop apps → custom app → Storefront API token | Required | Public — safe in client bundle |
+| `PUBLIC_SITE_URL` | string | Your canonical domain | Required | Public — sitemap/robots. Fallback: `https://${PUBLIC_STORE_DOMAIN}` |
 | `SESSION_SECRET` | string | Generate randomly (≥32 chars, `openssl rand -hex 32`) | Required | Server-only — rotating invalidates all sessions |
 | `SANITY_PROJECT_ID` | string | Sanity manage → project settings | Required | Server-only |
 | `SANITY_DATASET` | string | Sanity manage | Required | Default: `production` |
 | `SANITY_API_VERSION` | string | Sanity docs | Required | Default: `2024-01-01` |
 | `SANITY_API_READ_TOKEN` | string | Sanity manage → API → Tokens → add token (read-only) | Required | Server-only |
+| `SANITY_PREVIEW_TOKEN` | string | Sanity manage → API → Tokens → add token (viewer) | Optional | Used for draft/preview content in Presentation |
+| `SANITY_STUDIO_URL` | string | Your Studio host | Optional | Default: `http://localhost:3333`. Used for stega/visual editing |
 | `SANITY_PREVIEW_SECRET` | string | Generate randomly (≥16 chars) | Optional | Used for Sanity Visual Editing preview mode |
 
 ### Sanity Studio Deployment
@@ -293,7 +316,7 @@ Kumachi never touches the physical product. The Hydrogen storefront never calls 
 ### State Management Model
 
 - **Cart state** lives in the server session (Hydrogen's built-in session). Cart is fetched server-side in `root.tsx` and passed to the client via root loader data. Cart mutations use Remix fetchers (form submissions to `/cart` action). Never manage cart state in `useState` or client-side storage.
-- **UI state** (cart drawer open/closed, mobile menu, etc.) uses Zustand with persistence (`zustand/middleware/persist`). The persist key is `kumachi-cart`. This is only for UI toggles, not for cart data.
+- **UI state** (cart drawer open/closed, mobile menu, etc.) uses Zustand with persistence (`zustand/middleware/persist`). The persist key is `kumachi-ui`. This is only for UI toggles, not for cart data.
 - **No client-side cart state.** The server is the cart source of truth.
 
 ### Animation Strategy

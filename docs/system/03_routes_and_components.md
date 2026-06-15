@@ -4,18 +4,20 @@ Status: Current
 
 ## Full Route Map
 
-### Launch-Critical Routes
+### Commerce Routes
 
 | File | URL | Data Sources | Notes |
 |------|-----|-------------|-------|
 | `app/routes/_index.tsx` | `/` | Sanity sections + Shopify featured products | Homepage |
 | `app/routes/products.$handle.tsx` | `/products/:handle` | Shopify product + Sanity productSupplement | PDP |
+| `app/routes/product.$handle.tsx` | `/product/:handle` | Redirect → `/products/:handle` | Singular alias redirect |
+| `app/routes/collections._index.tsx` | `/collections` | Shopify collections | Collections listing |
 | `app/routes/collections.$handle.tsx` | `/collections/:handle` | Shopify collection + products | Collection/category page |
 | `app/routes/cart.tsx` | `/cart` | Shopify cart API | Cart page + action handlers |
 | `app/routes/search.tsx` | `/search` | Shopify Storefront Search API | Search results |
 | `app/routes/pages.$handle.tsx` | `/pages/:handle` | Sanity page documents | CMS static pages |
 
-### Pre-Launch Routes
+### Editorial Routes
 
 | File | URL | Data Sources | Notes |
 |------|-----|-------------|-------|
@@ -24,14 +26,28 @@ Status: Current
 | `app/routes/artists._index.tsx` | `/artists` | Sanity artists (all) | Artists listing |
 | `app/routes/artists.$handle.tsx` | `/artists/:handle` | Sanity artist + their products | Artist profile |
 
-### Post-Launch Routes
+### Account Routes
 
 | File | URL | Data Sources | Notes |
 |------|-----|-------------|-------|
 | `app/routes/account.tsx` | `/account` | Shopify Customer Account API | Customer portal |
+| `app/routes/account.login.tsx` | `/account/login` | Redirect → `/account` | Login entry |
+| `app/routes.account.authorize.tsx` | `/account/authorize` | Shopify OAuth | OAuth callback handler |
+| `app/routes/account.recover.tsx` | `/account/recover` | Shopify password recovery | Password reset flow |
 | `app/routes/account.orders.tsx` | `/account/orders` | Shopify orders | Order history |
-| `app/routes/sitemap.xml.tsx` | `/sitemap.xml` | Shopify + Sanity | SEO sitemap |
-| `app/routes/robots.txt.tsx` | `/robots.txt` | Static | Crawler rules |
+| `app/routes/account.orders.$orderId.tsx` | `/account/orders/:orderId` | Shopify single order | Single order detail |
+
+### Utility & Infrastructure Routes
+
+| File | URL | Data Sources | Notes |
+|------|-----|-------------|-------|
+| `app/routes/policies.$policyHandle.tsx` | `/policies/:policyHandle` | Shopify Shop policies | Privacy, ToS, refund, shipping |
+| `app/routes/sitemap.tsx` | `/sitemap` | Shopify + Sanity | Canonical SEO sitemap |
+| `app/routes/sitemap.xml.tsx` | `/sitemap.xml` | Shopify + Sanity | `.xml` compat alias (same output) |
+| `app/routes/robots.txt.tsx` | `/robots.txt` | Static (env-driven) | Crawler rules |
+| `app/routes/create.tsx` | `/create` | Static (no CMS) | AI Studio landing page |
+| `app/routes/api.preview.ts` | `/api/preview` | Sanity | Sanity Presentation preview route |
+| `app/routes/chrome-devtools-json.tsx` | `/.well-known/appspecific/com.chrome.devtools.json` | None | Returns 204 (Chrome DevTools) |
 
 ## Data Loading Pattern
 
@@ -109,10 +125,21 @@ app/components/
 │   ├── EditorialBannerSection.tsx
 │   ├── ProductGridSection.tsx
 │   ├── TestimonialsSection.tsx
-│   └── NewsletterSection.tsx
-└── shared/
-    ├── SanityImage.tsx      ← Sanity image with urlFor + responsive sizing
-    └── Seo.tsx              ← SEO meta tag helper
+│   ├── NewsletterSection.tsx
+│   ├── TrustBar.tsx           ← Hardcoded trust signals
+│   ├── AIPrintStudioTeaser.tsx ← Hardcoded AI Studio teaser
+│   ├── CategoryTiles.tsx      ← Hardcoded category navigation
+│   ├── EditorialProductRail.tsx ← Product marquee rail
+│   ├── EditorialStorySection.tsx ← Hardcoded editorial story
+│   └── ArtistSpotlightSection.tsx ← Hardcoded artist spotlight
+├── motion/
+│   ├── AnimatedButton.tsx     ← Animated CTA button
+│   ├── ClipRevealImage.tsx    ← Clip-path reveal image
+│   └── MarqueeRow.tsx         ← Scrolling marquee
+├── shared/
+│   ├── SanityImage.tsx      ← Sanity image with urlFor + responsive sizing
+│   └── Seo.tsx              ← SEO meta tag helper
+└── PathwaySwitch.tsx         ← AI / Gallery pathway toggle
 ```
 
 ## Naming Conventions
@@ -124,7 +151,7 @@ app/components/
 | Utility files | camelCase | `cart.server.ts`, `format.ts` |
 | Sanity schema files | camelCase | `productSupplement.ts` |
 | GROQ query constants | SCREAMING_SNAKE_CASE | `PRODUCT_QUERY`, `SITE_SETTINGS_QUERY` |
-| Zustand stores | camelCase | `useCartStore`, `useUIStore` |
+| Zustand stores | camelCase | `useUIStore` |
 
 ## Server vs Client Components
 
@@ -184,7 +211,7 @@ Every route should export an ErrorBoundary. Both `NotFound` and `GeneralError` c
 | Image Source | Component | Library | Props |
 |-------------|-----------|---------|-------|
 | Shopify product | `<Image>` | `@shopify/hydrogen` | `data`, `sizes`, `className` |
-| Sanity editorial | `<img>` | `@sanity/image-url` | `src={urlFor(image).width(800).auto('format').url()}`, `alt` |
+| Sanity editorial | `<img>` or `<SanityImage>` | `hydrogen-sanity` (`useImageUrl`) | `src={useImageUrl(image).width(800).auto('format').url()}`, `alt` |
 
 All `<img>` elements must have meaningful `alt` text. `alt=""` only for decorative images with zero informational content.
 

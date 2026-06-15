@@ -8,21 +8,37 @@ interface HeroSectionProps {
   section?: any;
 }
 
+function getCtaUrl(cta: any): string {
+  if (!cta) return '#';
+  return cta.url || '#';
+}
+
 export function HeroSection({section}: HeroSectionProps) {
   const title = section?.heading || 'Collect the image.\nCreate the myth.';
   const subtitle =
     section?.subheading ||
     'Buy curated African art prints for rooms with memory, or start a future AI-assisted print path and shape an idea into something personal.';
 
+  const bgImage = section?.backgroundImage;
+  const hasBg = bgImage?.asset?.url;
+
   return (
     <section
       className="relative overflow-hidden"
       style={{
-        background:
-          'radial-gradient(circle at 82% 12%, rgba(255,196,0,0.32), transparent 24%), var(--color-bg-primary)',
+        background: hasBg
+          ? 'var(--color-bg-primary)'
+          : 'radial-gradient(circle at 82% 12%, rgba(255,196,0,0.32), transparent 24%), var(--color-bg-primary)',
         paddingTop: '96px',
       }}
     >
+      {hasBg && (
+        <img
+          src={bgImage.asset.url}
+          alt={bgImage.alt || ''}
+          className="absolute inset-0 w-full h-full object-cover opacity-20"
+        />
+      )}
       <div className="container-gallery grid min-h-[calc(100vh-96px)] grid-cols-1 items-center gap-10 py-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16 lg:py-16">
         <div className="relative z-10">
           <PathwaySwitch />
@@ -64,12 +80,20 @@ export function HeroSection({section}: HeroSectionProps) {
               transition={{duration: 0.4, delay: 0.75}}
               className="mt-8 flex flex-wrap gap-3"
             >
-              <Link to="/collections" style={{textDecoration: 'none'}}>
-                <AnimatedButton>Buy Curated Collection</AnimatedButton>
-              </Link>
-              <Link to="/create" style={{textDecoration: 'none'}}>
-                <AnimatedButton variant="outline">Create Your Own</AnimatedButton>
-              </Link>
+              {section?.cta?.url ? (
+                <Link to={getCtaUrl(section.cta)} style={{textDecoration: 'none'}}>
+                  <AnimatedButton>{section.cta.label || 'Explore'}</AnimatedButton>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/collections" style={{textDecoration: 'none'}}>
+                    <AnimatedButton>Buy Curated Collection</AnimatedButton>
+                  </Link>
+                  <Link to="/create" style={{textDecoration: 'none'}}>
+                    <AnimatedButton variant="outline">Create Your Own</AnimatedButton>
+                  </Link>
+                </>
+              )}
             </motion.div>
           </div>
 

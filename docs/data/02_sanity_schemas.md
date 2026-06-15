@@ -25,7 +25,7 @@ The sections array is the page builder. Each section type is its own object type
 
 ### 2. `productSupplement`
 
-Keyed to a Shopify product handle.
+Keyed to a Shopify product handle. Adds editorial content to a product — never stores prices, variants, or inventory.
 
 ```
 Fields:
@@ -35,7 +35,13 @@ Fields:
   story: portableText
   technique: string
   inspiration: portableText
+  paper: string                # e.g. "310gsm archival matte paper"
+  ink: string                  # e.g. "Archival pigment ink"
+  edition: string              # e.g. "Open edition" or "Limited to 50"
   additionalImages: array of imageWithAlt
+  mockupImages: array of imageWithAlt   # lifestyle mockups (in-space renders)
+  roomImages: array of imageWithAlt     # room-view photos
+  videos: array of object { asset: file, poster: image, url: string }
   seriesRef: reference → series (optional)
   seo: seoFields
 ```
@@ -109,6 +115,73 @@ Main navigation structure.
 Fields:
   mainNav: array of navItem
 ```
+
+## Section Object Types (Page Builder)
+
+These object types are used exclusively within the `homepage.sections` array.
+
+### `hero`
+```
+heading: string
+subheading: string
+backgroundImage: imageWithAlt     # faded as bg behind content
+cta: object { label: string, url: url }
+```
+
+### `featuredCollection`
+```
+title: string
+description: string
+collectionHandle: string          # Shopify collection handle
+seriesRef: reference → series    # optional, links to editorial series
+maxProducts: number               # limit count
+```
+
+### `editorialBanner`
+```
+heading: string
+body: string
+image: imageWithAlt               # full-width editorial image
+cta: object { label: string, url: url }
+```
+
+### `productGrid`
+```
+title: string
+products: array of string         # Shopify product handles (optional)
+collectionHandle: string          # fallback: fetch from collection
+maxProducts: number               # limit count
+```
+
+### `testimonials`
+```
+title: string
+testimonials: array of object { quote: string, author: string }
+```
+
+### `newsletter`
+```
+heading: string
+description: string
+```
+
+### `richText`
+```
+body: portableText                # freeform rich text block
+```
+
+## Scaffold Document Types (from frontvibe/fluid)
+
+These types are inherited from the frontvibe/fluid Hydrogen scaffold and are not actively used in the storefront. They exist in the Studio schema for backward compatibility.
+
+| Type | Intended Use | Status |
+|------|-------------|--------|
+| `product` | Shopify product mirror | Not used — Shopify is source of truth |
+| `productVariant` | Shopify variant mirror | Not used — Shopify is source of truth |
+| `collection` | Shopify collection mirror | Not used — Shopify is source of truth |
+| `colorTheme` | Theme customization | Not used — Tailwind tokens used instead |
+
+**Do not remove these from the schema** — the Studio deploy will fail if the schema references a removed type. They are kept as empty shells.
 
 ## Shared Object Types
 

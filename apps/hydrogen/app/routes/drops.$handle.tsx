@@ -1,7 +1,7 @@
 import {useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
 import {type HeadersFunction} from 'react-router';
-import {PortableText} from '@portabletext/react';
 import {generateCacheControlHeader, CacheShort} from '@shopify/hydrogen';
+import {PortableText} from '~/components/editorial/PortableText';
 import {SERIES_BY_SLUG_QUERY, COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
 import {formatPrice} from '~/lib/format';
 
