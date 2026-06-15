@@ -1,5 +1,4 @@
 import {useLoaderData, type MetaFunction} from 'react-router';
-import {getCanonicalSiteUrl} from '~/lib/siteUrl.server';
 import {getFallbackProducts} from '~/lib/localFallback.server';
 
 export const meta: MetaFunction = () => [
@@ -19,9 +18,8 @@ type SitemapLink = {
 
 const mainPages: SitemapLink[] = [
   {label: 'Home', href: '/', description: 'Kumachi Prints landing page.'},
-  {label: 'All Prints', href: '/collections', description: 'Browse the full collection of curated art prints.'},
+  {label: 'Collection', href: '/collection', description: 'Browse the full collection of curated art prints.'},
   {label: 'Drops', href: '/drops', description: 'Editorial print releases and series drops.'},
-  {label: 'Artists', href: '/artists', description: 'Meet the creators behind the collection.'},
   {label: 'Search', href: '/search', description: 'Search the Kumachi Prints catalogue.'},
 ];
 

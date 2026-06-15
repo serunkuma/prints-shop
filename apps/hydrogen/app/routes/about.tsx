@@ -2,7 +2,6 @@ import {motion} from 'framer-motion';
 import {Link} from 'react-router';
 import {ArrowRight} from 'lucide-react';
 import ClipRevealImage from '~/components/motion/ClipRevealImage';
-import {fadeUp, staggerContainer} from '~/lib/animations';
 
 export const meta = () => [
   {title: 'About — Kumachi Prints'},

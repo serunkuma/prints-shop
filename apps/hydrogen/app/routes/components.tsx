@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react';
 import {useLoaderData, type MetaFunction} from 'react-router';
 import {ArrowRight} from 'lucide-react';
 import {ProductCard} from '~/components/product/ProductCard';
@@ -121,7 +122,7 @@ export default function ComponentShowcasePage() {
   );
 }
 
-function ShowcaseBlock({label, title, description, children}: {label?: string; title: string; description?: string; children: React.ReactNode}) {
+function ShowcaseBlock({label, title, description, children}: {label?: string; title: string; description?: string; children: ReactNode}) {
   return (
     <article>
       {label && <p className="text-caption uppercase mb-1" style={{color: 'var(--color-accent-clay)'}}>{label}</p>}
