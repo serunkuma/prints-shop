@@ -494,6 +494,16 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
   Impact: Hydrogen dependency tree and built server bundle no longer include `rxjs`
   or Sanity CommonJS runtime packages; root Studio remains unchanged.
   (Ernest Serunkuma + AI agent)
+
+- 2026-06 Launch product plan execution: 22-product opening-drop manifest with WooCommerce-resolved handles;
+  Sanity schema extended with mockupImages, roomImages, videos, paper, ink, edition fields;
+  Studio deployed to kumachi-prints.sanity.studio; 22 product images uploaded to Sanity CDN;
+  22 productSupplement documents synced with Sanity CDN image URLs; series document (opening-drop) created;
+  Shopify CSV generated with Sanity CDN URLs (import-ready, 0 blockers, 115 rows);
+  Hydrogen PDP updated to render mockup/room/video from Sanity supplement;
+  Created artbiz helper scripts: setup_sanity.py, generate_csv.py.
+  Impact: First-sale launch data pipeline complete — WooCommerce identities, Sanity editorial,
+  Shopify CSV, and Hydrogen PDP all aligned. (Ernest Serunkuma + AI agent)
 ```
 
 ---

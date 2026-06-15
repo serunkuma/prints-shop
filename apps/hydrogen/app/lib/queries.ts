@@ -12,8 +12,14 @@ export const HOMEPAGE_QUERY = defineQuery(`*[_type == "homepage"][0]{
 export const PRODUCT_SUPPLEMENT_QUERY = defineQuery(`*[_type == "productSupplement" && shopifyHandle == $handle][0]{
   story,
   technique,
+  paper,
+  ink,
+  edition,
   inspiration,
   additionalImages,
+  mockupImages,
+  roomImages,
+  videos,
   "artist": artistRef->{name, slug, portrait, bio, featuredQuote},
   "series": seriesRef->{title, slug}
 }`);

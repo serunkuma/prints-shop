@@ -217,8 +217,8 @@ export default function ProductPage() {
 
           {supplement?.story && (
             <div className="mt-10 pt-10 border-t border-border">
-              <h2 className="text-h3 mb-4">Story</h2>
-              <div className="text-body text-text-secondary leading-relaxed">
+              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Story</h2>
+              <div className="text-body leading-relaxed" style={{color: 'var(--color-text-secondary)'}}>
                 {supplement.story}
               </div>
             </div>
@@ -226,10 +226,60 @@ export default function ProductPage() {
 
           {supplement?.inspiration && (
             <div className="mt-8">
-              <h2 className="text-h3 mb-4">Inspiration</h2>
-              <div className="text-body text-text-secondary leading-relaxed">
+              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Inspiration</h2>
+              <div className="text-body leading-relaxed" style={{color: 'var(--color-text-secondary)'}}>
                 {supplement.inspiration}
               </div>
+            </div>
+          )}
+
+          {supplement?.mockupImages && supplement.mockupImages.length > 0 && (
+            <div className="mt-10 pt-10 border-t border-border">
+              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>In your space</h2>
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {supplement.mockupImages.map((img: any, i: number) => (
+                  <img
+                    key={img._key || i}
+                    src={img.asset?.url || img.url}
+                    alt={img.alt || `${product.title} mockup ${i + 1}`}
+                    className="h-64 w-auto shrink-0 rounded object-cover"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {supplement?.roomImages && supplement.roomImages.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Room views</h2>
+              <div className="grid grid-cols-2 gap-3">
+                {supplement.roomImages.map((img: any, i: number) => (
+                  <img
+                    key={img._key || i}
+                    src={img.asset?.url || img.url}
+                    alt={img.alt || `${product.title} room view ${i + 1}`}
+                    className="aspect-[4/3] w-full rounded object-cover"
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {supplement?.videos && supplement.videos.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Video</h2>
+              {supplement.videos.map((video: any, i: number) => (
+                <video
+                  key={video._key || i}
+                  controls
+                  className="w-full rounded"
+                  poster={video.poster?.asset?.url || undefined}
+                >
+                  <source src={video.asset?.url || video.url} type={video.asset?.mimeType || "video/mp4"} />
+                </video>
+              ))}
             </div>
           )}
 
@@ -239,7 +289,7 @@ export default function ProductPage() {
               {[
                 {label: 'Format', value: optionSummary || 'Choose size'},
                 {label: 'Paper', value: supplement?.paper || '310gsm archival matte paper'},
-                {label: 'Ink', value: supplement?.ink || 'Archival pigment'},
+                {label: 'Ink', value: supplement?.ink || 'Archival pigment ink'},
                 {label: 'Edition', value: supplement?.edition || 'Open edition'},
                 {label: 'SKU', value: selectedVariant?.sku || product.handle},
               ].map(({label, value}) => (

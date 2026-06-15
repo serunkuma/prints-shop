@@ -8,4 +8,5 @@ export default defineCliConfig({
   deployment: {
     autoUpdates: true,
   },
+  studioHost: 'kumachi-prints',
 })
