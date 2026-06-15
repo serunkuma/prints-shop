@@ -1,5 +1,6 @@
 import {useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
 import {type HeadersFunction} from 'react-router';
+import {PortableText} from '@portabletext/react';
 import {generateCacheControlHeader, CacheShort} from '@shopify/hydrogen';
 import {SERIES_BY_SLUG_QUERY, COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
 import {formatPrice} from '~/lib/format';
@@ -56,7 +57,7 @@ export default function DropPage() {
 
       {series.description && (
         <div className="max-w-3xl text-body text-text-secondary leading-relaxed mb-10">
-          {series.description}
+          <PortableText value={series.description} />
         </div>
       )}
 
