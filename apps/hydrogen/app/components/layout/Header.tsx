@@ -1,59 +1,35 @@
-import {useEffect, useState} from 'react';
-import {Link, NavLink} from 'react-router';
+import {useEffect, useState, useRef, useCallback} from 'react';
+import {Link, NavLink, useLocation} from 'react-router';
 import {AnimatePresence, motion} from 'framer-motion';
-import {Menu, Moon, Search, ShoppingBag, Sun, X} from 'lucide-react';
+import {Menu, Moon, Search, ShoppingBag, Sun, X, ChevronDown} from 'lucide-react';
 import {useUIStore} from '~/lib/store';
 import {useRootLoaderData} from '~/lib/useRootLoaderData';
+import {CollectionMegaMenu, MobileCollectionSubmenu} from './CollectionMegaMenu';
 
-type NavRoute = {label: string; to: string; external?: boolean};
-
-function navItemToRoute(item: any): NavRoute | null {
-  if (!item.label) return null;
-  switch (item.type) {
-    case 'path':
-    case 'internal':
-      return item.internalPath ? {label: item.label, to: item.internalPath} : null;
-    case 'external':
-      return item.externalUrl ? {label: item.label, to: item.externalUrl, external: true} : null;
-    case 'collection':
-      return item.collectionHandle ? {label: item.label, to: '/collections/' + item.collectionHandle} : null;
-    case 'series':
-      {
-        const slug = item.seriesRef?.slug?.current || item.seriesRef?.slug;
-        const refSlug =
-          typeof item.seriesRef?._ref === 'string'
-            ? item.seriesRef._ref.replace(/^series-/, '')
-            : null;
-        const handle = slug || refSlug;
-        return handle ? {label: item.label, to: '/drops/' + handle} : null;
-      }
-    default:
-      return null;
-  }
-}
-
-function getNavItems(rootData: any): NavRoute[] {
-  const mainNav = rootData?.navigation?.mainNav;
-  if (Array.isArray(mainNav) && mainNav.length > 0) {
-    return mainNav.map(navItemToRoute).filter(Boolean) as NavRoute[];
-  }
-  return [
-    {label: 'Home', to: '/'},
-    {label: 'About', to: '/pages/about'},
-    {label: 'Shop', to: '/collections/all'},
-    {label: 'Opening Drop', to: '/drops/opening-drop'},
-    {label: 'Contact', to: '/pages/contact'},
-  ];
-}
+const primaryNav = [
+  {label: 'Collection', to: '/collection'},
+  {label: 'Create', to: '/create'},
+  {label: 'Drops', to: '/drops'},
+  {label: 'About', to: '/about'},
+];
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [mobileCollectionOpen, setMobileCollectionOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const setCartOpen = useUIStore((state) => state.setCartOpen);
   const rootData = useRootLoaderData();
   const count = rootData?.cart?.totalQuantity || 0;
-  const nav = getNavItems(rootData);
+  const location = useLocation();
+  const collectionRef = useRef<HTMLButtonElement>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setMegaMenuOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const savedTheme = window.localStorage.getItem('kumachi-theme');
@@ -75,6 +51,21 @@ export function Header() {
     document.documentElement.classList.toggle('dark', nextTheme === 'dark');
     document.documentElement.classList.toggle('light', nextTheme !== 'dark');
   };
+
+  const openMegaMenu = useCallback(() => {
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    setMegaMenuOpen(true);
+  }, []);
+
+  const closeMegaMenu = useCallback(() => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setMegaMenuOpen(false);
+    }, 100);
+  }, []);
+
+  const cancelCloseMegaMenu = useCallback(() => {
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+  }, []);
 
   return (
     <>
@@ -99,21 +90,34 @@ export function Header() {
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex" aria-label="Primary navigation">
-            {nav.map((item) =>
-              item.external ? (
-                <a
+            {primaryNav.map((item) =>
+              item.label === 'Collection' ? (
+                <button
                   key={item.to}
-                  href={item.to}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-nav text-text-secondary transition-colors hover:text-text-primary"
+                  ref={collectionRef}
+                  type="button"
+                  onPointerEnter={openMegaMenu}
+                  onPointerLeave={closeMegaMenu}
+                  onClick={() => {
+                    window.location.href = item.to;
+                  }}
+                  className="flex items-center gap-1 text-nav transition-colors"
+                  style={{color: megaMenuOpen ? 'var(--color-text-primary)' : 'var(--color-text-secondary)'}}
+                  aria-haspopup="true"
+                  aria-expanded={megaMenuOpen}
                 >
                   {item.label}
-                </a>
+                  <ChevronDown
+                    size={14}
+                    className="transition-transform duration-200"
+                    style={{transform: megaMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)'}}
+                  />
+                </button>
               ) : (
                 <NavLink
                   key={item.to}
                   to={item.to}
+                  prefetch="intent"
                   className={({isActive}) =>
                     `text-nav transition-colors ${isActive ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'}`
                   }
@@ -166,17 +170,28 @@ export function Header() {
             <button
               type="button"
               aria-label="Open menu"
-              onClick={() => setMenuOpen(true)}
+              onClick={() => setMobileMenuOpen(true)}
               className="flex min-h-11 min-w-11 items-center justify-center text-text-primary md:hidden"
             >
               <Menu size={22} strokeWidth={1.6} />
             </button>
           </div>
         </div>
+
+        <div
+          onPointerEnter={cancelCloseMegaMenu}
+          onPointerLeave={closeMegaMenu}
+        >
+          <CollectionMegaMenu
+            isOpen={megaMenuOpen}
+            onClose={() => setMegaMenuOpen(false)}
+            triggerRef={collectionRef}
+          />
+        </div>
       </motion.header>
 
       <AnimatePresence>
-        {menuOpen && (
+        {mobileMenuOpen && (
           <>
             <motion.button
               type="button"
@@ -186,43 +201,52 @@ export function Header() {
               initial={{opacity: 0}}
               animate={{opacity: 1}}
               exit={{opacity: 0}}
-              onClick={() => setMenuOpen(false)}
+              onClick={() => setMobileMenuOpen(false)}
             />
             <motion.aside
               initial={{x: '100%'}}
               animate={{x: 0}}
               exit={{x: '100%'}}
               transition={{duration: 0.32, ease: [0.22, 1, 0.36, 1]}}
-              className="fixed bottom-0 right-0 top-0 z-[70] w-[min(88vw,360px)] p-6"
+              className="fixed bottom-0 right-0 top-0 z-[70] w-[min(88vw,360px)] p-6 overflow-y-auto"
               style={{backgroundColor: 'var(--color-surface)', borderLeft: '1px solid var(--color-border)'}}
             >
               <button
                 type="button"
                 aria-label="Close menu"
-                onClick={() => setMenuOpen(false)}
+                onClick={() => setMobileMenuOpen(false)}
                 className="ml-auto flex min-h-11 min-w-11 items-center justify-center text-text-primary"
               >
                 <X size={22} strokeWidth={1.6} />
               </button>
-              <nav className="mt-10 flex flex-col gap-6" aria-label="Mobile navigation">
-                {nav.map((item) =>
-                  item.external ? (
-                    <a
-                      key={item.to}
-                      href={item.to}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setMenuOpen(false)}
-                      className="font-display text-4xl text-text-primary no-underline"
-                    >
-                      {item.label}
-                    </a>
+              <nav className="mt-10 flex flex-col gap-4" aria-label="Mobile navigation">
+                {primaryNav.map((item) =>
+                  item.label === 'Collection' ? (
+                    <div key={item.to}>
+                      <button
+                        type="button"
+                        onClick={() => setMobileCollectionOpen(!mobileCollectionOpen)}
+                        className="flex items-center gap-2 w-full font-display text-4xl text-left"
+                        style={{color: 'var(--color-text-primary)'}}
+                      >
+                        {item.label}
+                        <ChevronDown
+                          size={20}
+                          className="transition-transform duration-200"
+                          style={{transform: mobileCollectionOpen ? 'rotate(180deg)' : 'rotate(0deg)'}}
+                        />
+                      </button>
+                      {mobileCollectionOpen && (
+                        <MobileCollectionSubmenu />
+                      )}
+                    </div>
                   ) : (
                     <Link
                       key={item.to}
                       to={item.to}
-                      onClick={() => setMenuOpen(false)}
-                      className="font-display text-4xl text-text-primary no-underline"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="font-display text-4xl"
+                      style={{color: 'var(--color-text-primary)', textDecoration: 'none'}}
                     >
                       {item.label}
                     </Link>

@@ -17,6 +17,17 @@ type Pages = {
   "/create": {
     params: {};
   };
+  "/about": {
+    params: {};
+  };
+  "/collection": {
+    params: {};
+  };
+  "/collection/:handle": {
+    params: {
+      "handle": string;
+    };
+  };
   "/product/:handle": {
     params: {
       "handle": string;
@@ -110,7 +121,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/create" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/api/preview" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap" | "/sitemap.xml" | "/components";
+    page: "/" | "/create" | "/about" | "/collection" | "/collection/:handle" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/api/preview" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap" | "/sitemap.xml" | "/components";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
@@ -119,6 +130,18 @@ type RouteFiles = {
   "routes/create.tsx": {
     id: "routes/create";
     page: "/create";
+  };
+  "routes/about.tsx": {
+    id: "routes/about";
+    page: "/about";
+  };
+  "routes/collection._index.tsx": {
+    id: "routes/collection._index";
+    page: "/collection";
+  };
+  "routes/collection.$handle.tsx": {
+    id: "routes/collection.$handle";
+    page: "/collection/:handle";
   };
   "routes/product.$handle.tsx": {
     id: "routes/product.$handle";
@@ -222,6 +245,9 @@ type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/_index": typeof import("./app/routes/_index.tsx");
   "routes/create": typeof import("./app/routes/create.tsx");
+  "routes/about": typeof import("./app/routes/about.tsx");
+  "routes/collection._index": typeof import("./app/routes/collection._index.tsx");
+  "routes/collection.$handle": typeof import("./app/routes/collection.$handle.tsx");
   "routes/product.$handle": typeof import("./app/routes/product.$handle.tsx");
   "routes/products.$handle": typeof import("./app/routes/products.$handle.tsx");
   "routes/collections._index": typeof import("./app/routes/collections._index.tsx");

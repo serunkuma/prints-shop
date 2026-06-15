@@ -657,28 +657,6 @@ export type CartLinesRemoveMutation = {
   }>;
 };
 
-export type CollectionsListQueryVariables = StorefrontAPI.Exact<{
-  [key: string]: never;
-}>;
-
-export type CollectionsListQuery = {
-  collections: {
-    nodes: Array<
-      Pick<
-        StorefrontAPI.Collection,
-        'id' | 'handle' | 'title' | 'description'
-      > & {
-        image?: StorefrontAPI.Maybe<
-          Pick<
-            StorefrontAPI.Image,
-            'id' | 'url' | 'altText' | 'width' | 'height'
-          >
-        >;
-      }
-    >;
-  };
-};
-
 export type ShopPoliciesQueryVariables = StorefrontAPI.Exact<{
   [key: string]: never;
 }>;
@@ -751,10 +729,6 @@ interface GeneratedQueryTypes {
   '#graphql\n  query CartQuery($cartId: ID!) {\n    cart(id: $cartId) {\n      id\n      checkoutUrl\n      totalQuantity\n      cost {\n        subtotalAmount { amount currencyCode }\n        totalAmount { amount currencyCode }\n      }\n      lines(first: 100) {\n        nodes {\n          id\n          quantity\n          merchandise {\n            ... on ProductVariant {\n              id\n              title\n              product {\n                handle\n                title\n                featuredImage { url altText }\n              }\n              selectedOptions { name value }\n              price { amount currencyCode }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: CartQueryQuery;
     variables: CartQueryQueryVariables;
-  };
-  '#graphql\n  query CollectionsList {\n    collections(first: 50) {\n      nodes {\n        id\n        handle\n        title\n        description\n        image {\n          id\n          url\n          altText\n          width\n          height\n        }\n      }\n    }\n  }\n': {
-    return: CollectionsListQuery;
-    variables: CollectionsListQueryVariables;
   };
   '#graphql\n  query ShopPolicies {\n    shop {\n      privacyPolicy { title body }\n      termsOfService { title body }\n      refundPolicy { title body }\n      shippingPolicy { title body }\n      subscriptionPolicy { title body }\n    }\n  }\n': {
     return: ShopPoliciesQuery;

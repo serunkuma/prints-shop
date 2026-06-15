@@ -31,7 +31,7 @@ const shopPages: SitemapLink[] = [
 ];
 
 const supportPages: SitemapLink[] = [
-  {label: 'About', href: '/pages/about', description: 'The Kumachi Prints story.'},
+  {label: 'About', href: '/about', description: 'The Kumachi Prints story.'},
   {label: 'Size Guide', href: '/pages/size-guide', description: 'Print size dimensions and framing info.'},
   {label: 'Print Quality', href: '/pages/print-quality', description: 'Materials, paper, and print standards.'},
   {label: 'Shipping & Returns', href: '/pages/shipping-returns', description: 'Delivery timelines and return policy.'},

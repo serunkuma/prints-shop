@@ -86,7 +86,7 @@ export function HeroSection({section}: HeroSectionProps) {
                 </Link>
               ) : (
                 <>
-                  <Link to="/collections" style={{textDecoration: 'none'}}>
+                  <Link to="/collection" style={{textDecoration: 'none'}}>
                     <AnimatedButton>Buy Curated Collection</AnimatedButton>
                   </Link>
                   <Link to="/create" style={{textDecoration: 'none'}}>

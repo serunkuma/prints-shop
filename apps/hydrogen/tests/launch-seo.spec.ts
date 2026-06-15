@@ -3,15 +3,14 @@ import {expect, test} from '@playwright/test';
 test.describe('Launch SEO', () => {
   for (const path of [
     '/',
-    '/pages/about',
+    '/about',
     '/pages/size-guide',
     '/pages/print-quality',
     '/pages/shipping-returns',
     '/pages/faq',
     '/pages/contact',
     '/drops/opening-drop',
-    '/collections/all',
-    '/collections/drop-opening-drop',
+    '/collection',
     '/products/majestic-monarch',
   ]) {
     test(`Given ${path} loads Then title and description are present`, async ({page}) => {

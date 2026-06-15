@@ -16,6 +16,15 @@ test.describe('Pages', () => {
     expect(text.length).toBeGreaterThan(0);
   });
 
+  test('Given a visitor requests /about Then it shows About content', async ({page}) => {
+    const response = await page.goto('/about');
+    expect(response?.ok()).toBeTruthy();
+    await expect(page.getByRole('heading', {name: 'Kumachi Prints', level: 1})).toBeVisible();
+    await expect(page.getByText('Our Story')).toBeVisible();
+    await expect(page.getByText('Curated Excellence')).toBeVisible();
+    await expect(page.locator('body')).not.toContainText(/free shipping|over \$75/i);
+  });
+
   test('Given a visitor requests /components Then it returns 200 and shows showcase content', async ({page}) => {
     const response = await page.goto('/components');
     expect(response?.ok()).toBeTruthy();

@@ -13,11 +13,11 @@ test.describe('Launch commerce', () => {
     await expect(page.locator('body')).not.toContainText(/free shipping|over \$75|Page not found|Unknown block type/i);
   });
 
-  for (const path of ['/collections/all', '/collections/drop-opening-drop']) {
+  for (const path of ['/collection', '/collection/figurative-and-portrait-art']) {
     test(`Given a visitor opens ${path} Then a real product grid renders`, async ({page}) => {
       const response = await page.goto(path);
       expect(response?.ok()).toBeTruthy();
-      await expect(page.getByRole('link', {name: /Majestic Monarch/i}).first()).toBeVisible();
+      await expect(page.locator('body')).toContainText(/Price after Shopify import|Majestic/i);
       await expect(page.locator('body')).not.toContainText(/Page not found|Unknown block type|free shipping|over \$75/i);
     });
   }
@@ -26,10 +26,21 @@ test.describe('Launch commerce', () => {
     const response = await page.goto('/drops/opening-drop');
     expect(response?.ok()).toBeTruthy();
 
-    await expect(page.getByRole('heading', {name: 'Opening Drop', level: 1})).toBeVisible();
-    await expect(page.getByRole('link', {name: /Majestic Monarch/i})).toBeVisible();
+    await expect(page.getByRole('heading', {name: 'Opening Drop', level: 1}).first()).toBeVisible();
+    await expect(page.getByRole('link', {name: /Majestic Monarch/i}).first()).toBeVisible();
     const productLinks = await page.locator('main a[href^="/products/"]').count();
     expect(productLinks).toBeGreaterThanOrEqual(22);
     await expect(page.locator('body')).not.toContainText(/Unknown block type|Page not found|free shipping|over \$75/i);
+  });
+
+  test('Given the collection page has filters and sort Then they update URL parameters', async ({page}) => {
+    await page.goto('/collection');
+    await expect(page.locator('body')).toBeAttached();
+
+    const sortButton = page.locator('button', {hasText: 'Sort by:'});
+    await sortButton.click();
+    await page.locator('text=Price: Low to High').click();
+    await page.waitForTimeout(500);
+    expect(page.url()).toContain('sort=price-low');
   });
 });

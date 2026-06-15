@@ -3,12 +3,12 @@ import {motion} from 'framer-motion';
 import {ArrowUpRight} from 'lucide-react';
 
 const categories = [
-  {label: 'New Arrivals', detail: 'Fresh releases', image: '/images/hero-lion-print.jpg', tone: 'dark', to: '/collections/new-arrivals'},
-  {label: 'Portraits', detail: 'Faces and identity', image: '/images/collection-print-02.jpg', tone: 'light', to: '/collections/portraits'},
-  {label: 'Abstract', detail: 'Gesture and color', image: '/images/collection-print-01.jpg', tone: 'light', to: '/collections/abstract'},
-  {label: 'Patterns', detail: 'Textile rhythm', image: '/images/collection-print-04.jpg', tone: 'dark', to: '/collections/patterns'},
-  {label: 'Landscape', detail: 'Atmospheric rooms', image: '/images/pdp-room-mockup-01.jpg', tone: 'light', to: '/collections/landscape'},
-  {label: 'Afrofuturism', detail: 'Future memory', image: '/images/collection-print-03.jpg', tone: 'dark', to: '/collections/afrofuturism'},
+  {label: 'New Arrivals', detail: 'Fresh releases', image: '/images/hero-lion-print.jpg', tone: 'dark', to: '/collection?sort=newest'},
+  {label: 'Portraits', detail: 'Faces and identity', image: '/images/collection-print-02.jpg', tone: 'light', to: '/collection/figurative-and-portrait-art'},
+  {label: 'Abstract', detail: 'Gesture and color', image: '/images/collection-print-01.jpg', tone: 'light', to: '/collection/abstract-art'},
+  {label: 'Patterns', detail: 'Textile rhythm', image: '/images/collection-print-04.jpg', tone: 'dark', to: '/collection/abstract-art'},
+  {label: 'Landscape', detail: 'Atmospheric rooms', image: '/images/pdp-room-mockup-01.jpg', tone: 'light', to: '/collection/landscape-and-nature'},
+  {label: 'Afrofuturism', detail: 'Future memory', image: '/images/collection-print-03.jpg', tone: 'dark', to: '/collection/contemporary-african-art'},
 ];
 
 export function CategoryTiles() {

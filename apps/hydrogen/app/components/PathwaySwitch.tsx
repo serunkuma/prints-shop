@@ -12,7 +12,7 @@ const pathways = [
     id: 'prints',
     label: 'Buy Ready-Made Prints',
     description: 'Curated editions from Kumachi Prints',
-    to: '/collections',
+    to: '/collection',
     icon: ShoppingBag,
   },
   {

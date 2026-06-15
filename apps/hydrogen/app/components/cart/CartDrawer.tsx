@@ -46,7 +46,7 @@ export function CartDrawer() {
                 <Frame size={54} strokeWidth={1.2} className="text-text-muted" />
                 <p className="mt-5 font-display text-2xl italic text-text-primary">Your wall is waiting.</p>
                 <p className="mt-2 text-sm text-text-secondary">Browse the collection and find something worth keeping.</p>
-                <Link to="/collections" onClick={() => setCartOpen(false)} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-gold">
+                <Link to="/collection" onClick={() => setCartOpen(false)} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-gold">
                   Shop prints
                 </Link>
               </div>

@@ -1,4 +1,4 @@
-import {useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
+import {redirect, useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
 import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheLong} from '@shopify/hydrogen';
 import {PAGE_QUERY} from '~/lib/queries';
@@ -12,6 +12,10 @@ export const headers: HeadersFunction = () => ({
 export async function loader({params, context}: {params: any; context: any}) {
   const {handle} = params;
   if (!handle) throw new Response('Not found', {status: 404});
+
+  if (handle === 'about') {
+    return redirect('/about', 301);
+  }
 
   const livePage = await context.sanity.fetch(PAGE_QUERY, {slug: handle}).catch(() => null);
   const page = livePage || (await getFallbackPage(handle, context.env));

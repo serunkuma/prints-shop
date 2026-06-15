@@ -15,7 +15,7 @@ test.describe('Launch pages', () => {
   });
 
   for (const {path, heading} of [
-    {path: '/pages/about', heading: 'About Kumachi Prints'},
+    {path: '/about', heading: 'Kumachi Prints'},
     {path: '/pages/size-guide', heading: 'Size Guide'},
     {path: '/pages/print-quality', heading: 'Print Quality'},
     {path: '/pages/shipping-returns', heading: 'Shipping And Returns'},

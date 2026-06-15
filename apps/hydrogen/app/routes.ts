@@ -3,6 +3,9 @@ import {type RouteConfig} from '@react-router/dev/routes';
 const routes: RouteConfig = [
   {path: '/', file: 'routes/_index.tsx'},
   {path: 'create', file: 'routes/create.tsx'},
+  {path: 'about', file: 'routes/about.tsx'},
+  {path: 'collection', file: 'routes/collection._index.tsx'},
+  {path: 'collection/:handle', file: 'routes/collection.$handle.tsx'},
   {path: 'product/:handle', file: 'routes/product.$handle.tsx'},
   {path: 'products/:handle', file: 'routes/products.$handle.tsx'},
   {path: 'collections', file: 'routes/collections._index.tsx'},

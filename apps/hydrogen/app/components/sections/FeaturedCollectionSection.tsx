@@ -16,7 +16,7 @@ export function FeaturedCollectionSection({section, products}: FeaturedCollectio
           {section.description && <p className="text-body text-text-secondary mt-4 max-w-xl">{section.description}</p>}
         </div>
         {section.collectionHandle && (
-          <a href={`/collections/${section.collectionHandle}`} className="text-gold text-body-small hover:opacity-80 transition-opacity flex-shrink-0">
+          <a href={`/collection/${section.collectionHandle}`} className="text-gold text-body-small hover:opacity-80 transition-opacity flex-shrink-0">
             View all &rarr;
           </a>
         )}

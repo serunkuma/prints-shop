@@ -14,7 +14,7 @@ function navItemToLink(item: any): FooterLink | null {
     case 'external':
       return item.externalUrl ? {label: item.label, href: item.externalUrl, external: true} : null;
     case 'collection':
-      return item.collectionHandle ? {label: item.label, href: '/collections/' + item.collectionHandle} : null;
+      return item.collectionHandle ? {label: item.label, href: '/collection/' + item.collectionHandle} : null;
     case 'series':
       {
         const slug = item.seriesRef?.slug?.current || item.seriesRef?.slug;
@@ -97,11 +97,10 @@ export function Footer() {
             <FooterColumn
               title="Shop"
               links={[
-                {label: 'All Prints', href: '/collections'},
-                {label: 'New Arrivals', href: '/collections/new-arrivals'},
-                {label: 'Limited Editions', href: '/collections/limited-editions'},
+                {label: 'All Prints', href: '/collection'},
+                {label: 'New Arrivals', href: '/collection?sort=newest'},
+                {label: 'Large Prints', href: '/collection/large-prints'},
                 {label: 'The Drops', href: '/drops'},
-                {label: 'Artists', href: '/artists'},
               ]}
             />
             <FooterColumn
