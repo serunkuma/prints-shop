@@ -10,7 +10,10 @@
     "typecheck": "react-router typegen && tsc --noEmit",
     "codegen": "shopify hydrogen codegen && react-router typegen",
     "lint": "eslint . --ext .ts,.tsx",
-    "populate:products": "node scripts/populate-products.mjs"
+    "populate:products": "node scripts/populate-products.mjs",
+    "test:e2e": "npx playwright test",
+    "test:e2e:ui": "npx playwright test --ui",
+    "test:e2e:headed": "npx playwright test --headed"
   },
   "dependencies": {
     "@portabletext/react": "^6.2.0",
@@ -35,6 +38,7 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
+    "@playwright/test": "^1.61.0",
     "@react-router/dev": "~7.16.0",
     "@shopify/cli": "^4.1.0",
     "@shopify/hydrogen-codegen": "^0.3.3",

@@ -286,3 +286,9 @@ export const SITEMAP_COLLECTIONS_QUERY = `#graphql
     }
   }
 `;
+
+export const SITEMAP_SERIES_QUERY = defineQuery(`*[_type == "series" && status == "live"]{slug, _updatedAt}`);
+
+export const SITEMAP_ARTISTS_QUERY = defineQuery(`*[_type == "artist"]{slug, _updatedAt}`);
+
+export const SITEMAP_PAGES_QUERY = defineQuery(`*[_type == "page"]{slug, _updatedAt}`);

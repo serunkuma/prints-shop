@@ -10,6 +10,7 @@ import {formatPrice} from '~/lib/format';
 import {ProductMedia} from '~/components/product/ProductMedia';
 import {VariantSelector} from '~/components/product/VariantSelector';
 import {AddToCart} from '~/components/product/AddToCart';
+import {PortableText} from '~/components/editorial/PortableText';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheShort()),
@@ -74,6 +75,8 @@ export default function ProductPage() {
   const selectedPrice = selectedVariant?.price || minPrice;
   const [shippingOpen, setShippingOpen] = useState(false);
   const optionSummary = selectedVariant?.selectedOptions?.map((option: any) => option.value).join(' / ');
+  const hasStory = Array.isArray(supplement?.story) && supplement.story.length > 0;
+  const hasInspiration = Array.isArray(supplement?.inspiration) && supplement.inspiration.length > 0;
 
   return (
     <main className="min-h-dvh pt-24 pb-28 md:pb-0" style={{backgroundColor: 'var(--color-bg-primary)'}}>
@@ -215,21 +218,17 @@ export default function ProductPage() {
             </AnimatePresence>
           </div>
 
-          {supplement?.story && (
+          {hasStory && (
             <div className="mt-10 pt-10 border-t border-border">
               <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Story</h2>
-              <div className="text-body leading-relaxed" style={{color: 'var(--color-text-secondary)'}}>
-                {supplement.story}
-              </div>
+              <PortableText value={supplement.story} />
             </div>
           )}
 
-          {supplement?.inspiration && (
+          {hasInspiration && (
             <div className="mt-8">
               <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Inspiration</h2>
-              <div className="text-body leading-relaxed" style={{color: 'var(--color-text-secondary)'}}>
-                {supplement.inspiration}
-              </div>
+              <PortableText value={supplement.inspiration} />
             </div>
           )}
 

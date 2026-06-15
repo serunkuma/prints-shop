@@ -5,13 +5,33 @@ import {Menu, Moon, Search, ShoppingBag, Sun, X} from 'lucide-react';
 import {useUIStore} from '~/lib/store';
 import {useRootLoaderData} from '~/lib/useRootLoaderData';
 
-const nav = [
-  {label: 'Collection', to: '/collections'},
-  {label: 'Create', to: '/create'},
-  {label: 'Drops', to: '/drops'},
-  {label: 'Artists', to: '/artists'},
-  {label: 'About', to: '/pages/about'},
-];
+function navItemToRoute(item: any): {label: string; to: string} | null {
+  if (!item.label) return null;
+  switch (item.type) {
+    case 'internal':
+      return {label: item.label, to: item.internalPath || '/'};
+    case 'collection':
+      return {label: item.label, to: '/collections/' + (item.collectionHandle || '')};
+    case 'series':
+      return {label: item.label, to: '/drops/' + (item.seriesRef?.slug?.current || item.seriesRef?.slug || '')};
+    default:
+      return {label: item.label, to: '/'};
+  }
+}
+
+function getNavItems(rootData: any): {label: string; to: string}[] {
+  const mainNav = rootData?.navigation?.mainNav;
+  if (Array.isArray(mainNav) && mainNav.length > 0) {
+    return mainNav.map(navItemToRoute).filter(Boolean) as {label: string; to: string}[];
+  }
+  return [
+    {label: 'Collection', to: '/collections'},
+    {label: 'Drops', to: '/drops'},
+    {label: 'Artists', to: '/artists'},
+    {label: 'AI Studio', to: '/create'},
+    {label: 'About', to: '/pages/about'},
+  ];
+}
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -20,6 +40,7 @@ export function Header() {
   const setCartOpen = useUIStore((state) => state.setCartOpen);
   const rootData = useRootLoaderData();
   const count = rootData?.cart?.totalQuantity || 0;
+  const nav = getNavItems(rootData);
 
   useEffect(() => {
     const savedTheme = window.localStorage.getItem('kumachi-theme');

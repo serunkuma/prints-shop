@@ -55,6 +55,7 @@ const CART_QUERY = `#graphql
 
 export async function loader({context}: {context: any}) {
   const cartId = context.session.get('cartId');
+  const env = context.env || {};
   const [settings, navigation, cartData] = await Promise.all([
     context?.sanity?.fetch(SITE_SETTINGS_QUERY).catch(() => null),
     context?.sanity?.fetch(NAVIGATION_QUERY).catch(() => null),
@@ -66,6 +67,10 @@ export async function loader({context}: {context: any}) {
   ]);
 
   return {
+    env: {
+      PUBLIC_SITE_URL: env.PUBLIC_SITE_URL,
+      PUBLIC_STORE_DOMAIN: env.PUBLIC_STORE_DOMAIN,
+    },
     settings,
     navigation,
     cart: cartData?.cart || null,

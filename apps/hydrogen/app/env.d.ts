@@ -30,6 +30,7 @@ export {};
 declare global {
   interface Env {
     SESSION_SECRET: string;
+    PUBLIC_SITE_URL?: string;
     PUBLIC_STORE_DOMAIN: string;
     PUBLIC_STOREFRONT_API_TOKEN: string;
     SANITY_PROJECT_ID: string;

@@ -29,6 +29,10 @@ Root `studio/` is deployable with its own `package.json` and `sanity.cli.ts`. Th
 
 Hydrogen intentionally does not import `@sanity/client` or `@sanity/image-url`. Use the small fetch-based GROQ client and local Sanity image URL helper in `apps/hydrogen/app/lib/sanity.server.ts` so MiniOxygen/Oxygen stays ESM-safe and `rxjs` stays out of the server runtime. The root Studio may keep Sanity's full authoring toolchain because it does not run inside Hydrogen.
 prints-shop/
+├── tests/                           ← Playwright BDD-style e2e tests
+│   ├── sitemap.spec.ts              ← Sitemap XML validation
+│   ├── robots.spec.ts               ← Robots.txt validation
+│   └── pages.spec.ts                ← Homepage + PDP smoke tests
 ├── .github/
 │   ├── workflows/
 │   │   └── oxygen.yml              ← GitHub Actions CI/CD — pushes main → Oxygen production deploy
@@ -68,6 +72,7 @@ prints-shop/
 │   ├── lib/
 │   │   ├── queries.ts               ← All GROQ query constants
 │   │   ├── queries/                 ← Directory for queries if they grow large
+│   │   ├── sitemap.server.ts        ← Shared buildSitemap() for /sitemap + /sitemap.xml
 │   │   ├── sanity.server.ts         ← Sanity client setup
 │   │   ├── cart.server.ts           ← Server-side cart utilities
 │   │   ├── animations.ts           ← Framer Motion Variants (fadeUp, staggerContainer, etc.)
@@ -90,7 +95,8 @@ prints-shop/
 │   │   ├── account.orders.tsx       ← Order history
 │   │   ├── account.orders.$orderId.tsx  ← Single order detail
 │   │   ├── policies.$policyHandle.tsx   ← Store policies (privacy, ToS, refund)
-│   │   ├── sitemap.xml.tsx          ← SEO sitemap
+│   │   ├── sitemap.xml.tsx          ← SEO sitemap (.xml compat alias)
+│   │   ├── sitemap.tsx              ← SEO sitemap (canonical path)
 │   │   └── robots.txt.tsx           ← Crawler rules
 │   ├── root.tsx                     ← HTML shell, global data, header, footer
 │   └── entry.server.tsx             ← Server entry (Oxygen runtime)
@@ -191,6 +197,9 @@ npm run dev
 | `cd apps/hydrogen && npm run preview` | Preview production build locally |
 | `cd apps/hydrogen && npm run typecheck` | TypeScript type check |
 | `cd apps/hydrogen && node scripts\populate-products.mjs --input C:\wamp64\www\prints-local\art-business\artifacts\exports\shopify-launch-products.json --dry-run` | Validate selected Shopify draft-product payload |
+| `cd apps/hydrogen && npm run test:e2e` | Run Playwright e2e tests (headless) |
+| `cd apps/hydrogen && npm run test:e2e:ui` | Run Playwright e2e tests (UI mode) |
+| `cd apps/hydrogen && npm run test:e2e:headed` | Run Playwright e2e tests (headed browser) |
 | `cd studio && npx sanity deploy` | Deploy Sanity Studio to production hosting |
 | `cd studio && npm run build` | Build the canonical Sanity Studio |
 | `cd studio && npm run deploy` | Deploy the canonical Sanity Studio |
@@ -504,6 +513,24 @@ The prints store is the commerce arm. The gallery is the cultural arm. They shar
   Created artbiz helper scripts: setup_sanity.py, generate_csv.py.
   Impact: First-sale launch data pipeline complete — WooCommerce identities, Sanity editorial,
   Shopify CSV, and Hydrogen PDP all aligned. (Ernest Serunkuma + AI agent)
+
+- 2026-06 Env-configured sitemap, BDD tests, Sanity content seeding.
+  Reason: SEO preparation, test coverage, and Sanity-driven content for launch.
+  Changes:
+  - Added PUBLIC_SITE_URL to .env.example and Env type (fallback: PUBLIC_STORE_DOMAIN)
+  - Refactored sitemap into shared lib/sitemap.server.ts used by /sitemap and /sitemap.xml
+  - Sitemap includes: /, /collections, /collections/{handle}, /products/{handle},
+    /drops, /drops/{slug}, /artists, /artists/{slug}, /pages/{slug}, /search
+  - Sitemap excludes: /account, /cart, /api/preview, private routes, duplicates
+  - XML-escaped URLs, includes lastmod from source data
+  - robots.txt uses PUBLIC_SITE_URL or falls back to prints.kumachigallery.com/sitemap
+  - Added @playwright/test, playwright.config.ts, BDD-style tests for sitemap, robots, pages
+  - Seeded Sanity production project (2wo9hx90) with published homepage, settings, navigation
+  - Header reads mainNav from Sanity navigation document (fallback to hardcoded)
+  - Footer reads socialLinks + siteDescription from Sanity settings (fallback to hardcoded)
+  - root.tsx passes env data (PUBLIC_SITE_URL, PUBLIC_STORE_DOMAIN) to components
+  Impact: typecheck + build pass; Sanity content live at kumachi-prints.sanity.studio.
+  (Ernest Serunkuma + AI agent)
 ```
 
 ---
