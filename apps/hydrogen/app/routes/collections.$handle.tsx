@@ -3,6 +3,7 @@ import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheShort} from '@shopify/hydrogen';
 import {COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
 import {ProductGrid} from '~/components/product/ProductGrid';
+import {getFallbackCollection} from '~/lib/localFallback.server';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheShort()),
@@ -12,6 +13,12 @@ export const meta = ({data}: any) => [
   {title: data?.collection?.title
     ? `${data.collection.title} — Kumachi Prints`
     : 'Kumachi Prints'},
+  {
+    name: 'description',
+    content:
+      data?.collection?.description ||
+      'Browse Kumachi Prints collections and African art prints by Kuma.',
+  },
 ];
 
 export async function loader({params, context}: {params: any; context: any}) {
@@ -19,10 +26,12 @@ export async function loader({params, context}: {params: any; context: any}) {
 
   if (!handle) throw new Response('Not found', {status: 404});
 
-  const {collection} = await context.storefront.query(
+  const data = await context.storefront.query(
     COLLECTION_PRODUCTS_QUERY,
     {variables: {handle}},
-  );
+  ).catch(() => null);
+  const fallbackCollection = await getFallbackCollection(handle, context.env);
+  const collection = data?.collection || fallbackCollection;
 
   if (!collection) throw new Response('Not found', {status: 404});
 

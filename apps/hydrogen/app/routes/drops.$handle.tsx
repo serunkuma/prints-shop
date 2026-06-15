@@ -4,6 +4,7 @@ import {generateCacheControlHeader, CacheShort} from '@shopify/hydrogen';
 import {PortableText} from '~/components/editorial/PortableText';
 import {SERIES_BY_SLUG_QUERY, COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
 import {formatPrice} from '~/lib/format';
+import {getFallbackCollection, getFallbackSeries} from '~/lib/localFallback.server';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheShort()),
@@ -11,13 +12,21 @@ export const headers: HeadersFunction = () => ({
 
 export const meta = ({data}: any) => [
   {title: data?.series?.title ? `${data.series.title} — Kumachi Prints` : 'Kumachi Prints'},
+  {
+    name: 'description',
+    content:
+      data?.series?.seo?.metaDescription ||
+      'Explore the Kumachi Prints Opening Drop and the stories behind Kuma art prints.',
+  },
 ];
 
 export async function loader({params, context}: {params: any; context: any}) {
   const {handle} = params;
   if (!handle) throw new Response('Not found', {status: 404});
 
-  const series = await context.sanity.fetch(SERIES_BY_SLUG_QUERY, {slug: handle});
+  const liveSeries = await context.sanity.fetch(SERIES_BY_SLUG_QUERY, {slug: handle}).catch(() => null);
+  const fallbackSeries = await getFallbackSeries(handle, context.env);
+  const series = liveSeries || fallbackSeries;
   if (!series) throw new Response('Not found', {status: 404});
 
   let collectionProducts = null;
@@ -26,6 +35,9 @@ export async function loader({params, context}: {params: any; context: any}) {
       variables: {handle: series.shopifyCollectionHandle},
     }).catch(() => null);
     collectionProducts = data?.collection;
+  }
+  if (!collectionProducts || !collectionProducts.products?.nodes?.length) {
+    collectionProducts = await getFallbackCollection(series.shopifyCollectionHandle || 'drop-opening-drop', context.env);
   }
 
   return {series, collectionProducts};
@@ -77,7 +89,9 @@ export default function DropPage() {
               )}
             </div>
             <h3 className="text-h4 mb-1">{product.title}</h3>
-            {product.priceRange?.minVariantPrice && (
+            {product._fallback ? (
+              <p className="text-body-small text-text-secondary">Price after Shopify import</p>
+            ) : product.priceRange?.minVariantPrice && (
               <p className="text-price text-gold">
                 {formatPrice(parseFloat(product.priceRange.minVariantPrice.amount) * 100)}
               </p>

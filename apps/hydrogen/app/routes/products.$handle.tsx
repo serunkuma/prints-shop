@@ -11,6 +11,7 @@ import {ProductMedia} from '~/components/product/ProductMedia';
 import {VariantSelector} from '~/components/product/VariantSelector';
 import {AddToCart} from '~/components/product/AddToCart';
 import {PortableText} from '~/components/editorial/PortableText';
+import {getFallbackProduct} from '~/lib/localFallback.server';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheShort()),
@@ -21,9 +22,9 @@ export const meta = ({data}: MetaArgs<typeof loader>) => {
   const supplement = data?.supplement;
   return [
     {
-      title: supplement?.seo?.metaTitle || product?.title
-        ? `${product.title} — Kumachi Prints`
-        : 'Kumachi Prints',
+      title:
+        supplement?.seo?.metaTitle ||
+        (product?.title ? `${product.title} — Kumachi Prints` : 'Kumachi Prints'),
     },
     {
       name: 'description',
@@ -41,18 +42,39 @@ export async function loader({params, context}: {params: any; context: any}) {
     throw new Response('Not found', {status: 404});
   }
 
-  const [productData, supplement] = await Promise.all([
-    context.storefront.query(PRODUCT_QUERY, {variables: {handle}}),
+  const [productData, supplement, fallbackProduct] = await Promise.all([
+    context.storefront.query(PRODUCT_QUERY, {variables: {handle}}).catch(() => null),
     context.sanity.fetch(PRODUCT_SUPPLEMENT_QUERY, {handle}).catch(() => null),
+    getFallbackProduct(handle, context.env),
   ]);
 
-  const product = productData?.product;
+  const product = productData?.product || fallbackProduct;
 
   if (!product) {
     throw new Response('Not found', {status: 404});
   }
 
-  return {product, supplement};
+  const fallbackSupplement =
+    !supplement && product?._fallback
+      ? {
+          story: product._source?.long_description
+            ? [
+                {
+                  _key: `${product.handle}-fallback-story`,
+                  _type: 'block',
+                  style: 'normal',
+                  children: [{_key: `${product.handle}-fallback-story-span`, _type: 'span', text: product._source.long_description}],
+                },
+              ]
+            : [],
+          paper: product._source?.print_details?.paper || product._source?.paper,
+          ink: product._source?.print_details?.ink || product._source?.ink,
+          edition: product._source?.print_details?.edition || product._source?.edition,
+          seo: product.seo,
+        }
+      : supplement;
+
+  return {product, supplement: fallbackSupplement};
 }
 
 export default function ProductPage() {
@@ -63,6 +85,7 @@ export default function ProductPage() {
   const variants = product.variants?.nodes || [];
   const images = product.images?.nodes || [];
   const allUnavailable = variants.length > 0 && variants.every((v: any) => !v.availableForSale);
+  const isFallbackProduct = Boolean(product._fallback);
   const initialVariant = useMemo(
     () => variants.find((variant: any) => variant.availableForSale) || variants[0],
     [variants],
@@ -111,22 +134,36 @@ export default function ProductPage() {
 
           <h1 className="mt-1 text-h1 font-display" style={{color: 'var(--color-text-primary)'}}>{product.title}</h1>
 
-          {selectedPrice && (
+          {(selectedPrice || isFallbackProduct) && (
             <div className="mt-4">
               <AnimatePresence mode="wait">
-                <motion.span
-                  key={`${selectedVariant?.id || 'price'}-${selectedPrice.amount}`}
-                  className="text-price"
-                  style={{color: 'var(--color-text-primary)'}}
-                  initial={{opacity: 0, y: -8}}
-                  animate={{opacity: 1, y: 0}}
-                  exit={{opacity: 0, y: 8}}
-                  transition={{duration: 0.2}}
-                >
-                  {formatPrice(parseFloat(selectedPrice.amount) * 100)}
-                  {!selectedVariant && maxPrice?.amount !== minPrice?.amount &&
-                    ` - ${formatPrice(parseFloat(maxPrice.amount) * 100)}`}
-                </motion.span>
+                {isFallbackProduct ? (
+                  <motion.span
+                    key="fallback-price"
+                    className="text-body-small uppercase tracking-wide"
+                    style={{color: 'var(--color-text-secondary)'}}
+                    initial={{opacity: 0, y: -8}}
+                    animate={{opacity: 1, y: 0}}
+                    exit={{opacity: 0, y: 8}}
+                    transition={{duration: 0.2}}
+                  >
+                    Price shown after Shopify import
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key={`${selectedVariant?.id || 'price'}-${selectedPrice.amount}`}
+                    className="text-price"
+                    style={{color: 'var(--color-text-primary)'}}
+                    initial={{opacity: 0, y: -8}}
+                    animate={{opacity: 1, y: 0}}
+                    exit={{opacity: 0, y: 8}}
+                    transition={{duration: 0.2}}
+                  >
+                    {formatPrice(parseFloat(selectedPrice.amount) * 100)}
+                    {!selectedVariant && maxPrice?.amount !== minPrice?.amount &&
+                      ` - ${formatPrice(parseFloat(maxPrice.amount) * 100)}`}
+                  </motion.span>
+                )}
               </AnimatePresence>
               {optionSummary && <p className="mt-1 text-xs" style={{color: 'var(--color-text-secondary)'}}>{optionSummary}</p>}
             </div>
@@ -148,7 +185,7 @@ export default function ProductPage() {
           )}
 
           <div className="mt-8 border-t border-border pt-8">
-            {variants.length > 0 && !allUnavailable && (
+            {variants.length > 0 && (!allUnavailable || isFallbackProduct) && (
               <VariantSelector
                 variants={variants}
                 selectedVariantId={selectedVariant?.id || null}
@@ -156,7 +193,11 @@ export default function ProductPage() {
               />
             )}
 
-            {allUnavailable ? (
+            {isFallbackProduct ? (
+              <div className="mb-6 border border-border bg-surface-mid px-6 py-4">
+                <p className="text-body text-text-muted">Available after Shopify import</p>
+              </div>
+            ) : allUnavailable ? (
               <div className="mb-6 border border-border bg-surface-mid px-6 py-4">
                 <p className="text-body text-text-muted">Sold out</p>
               </div>
@@ -171,7 +212,7 @@ export default function ProductPage() {
 
           <div className="mt-3 flex items-center gap-1.5 text-xs" style={{color: 'var(--color-text-secondary)'}}>
             <Truck size={14} />
-            <span>Estimated delivery 7-14 business days · Free over $75</span>
+            <span>Produced after ordering. Shipping is calculated at checkout.</span>
           </div>
 
           <div className="mt-6 flex items-center justify-between">
@@ -211,7 +252,7 @@ export default function ProductPage() {
                   className="overflow-hidden"
                 >
                   <p className="text-body-small pb-3" style={{color: 'var(--color-text-secondary)'}}>
-                    Prints ship within 3-5 business days. Framed prints ship within 7-10 business days. Returns are accepted on unframed prints within 30 days.
+                    Prints are produced after ordering and ship through the connected fulfillment workflow. Returns and damage handling follow the published Kumachi Prints policy.
                   </p>
                 </motion.div>
               )}
@@ -302,7 +343,7 @@ export default function ProductPage() {
         </div>
       </section>
 
-      {!allUnavailable && (
+      {!allUnavailable && !isFallbackProduct && (
         <div
           className="fixed inset-x-0 bottom-0 z-40 border-t px-4 py-3 shadow-kumachi-xl md:hidden"
           style={{

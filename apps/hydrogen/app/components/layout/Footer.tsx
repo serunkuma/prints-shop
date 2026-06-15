@@ -8,6 +8,7 @@ type FooterLink = {label: string; href: string; external?: boolean};
 function navItemToLink(item: any): FooterLink | null {
   if (!item.label) return null;
   switch (item.type) {
+    case 'path':
     case 'internal':
       return item.internalPath ? {label: item.label, href: item.internalPath} : null;
     case 'external':
@@ -17,7 +18,12 @@ function navItemToLink(item: any): FooterLink | null {
     case 'series':
       {
         const slug = item.seriesRef?.slug?.current || item.seriesRef?.slug;
-        return slug ? {label: item.label, href: '/drops/' + slug} : null;
+        const refSlug =
+          typeof item.seriesRef?._ref === 'string'
+            ? item.seriesRef._ref.replace(/^series-/, '')
+            : null;
+        const handle = slug || refSlug;
+        return handle ? {label: item.label, href: '/drops/' + handle} : null;
       }
     default:
       return null;
@@ -45,11 +51,20 @@ export function Footer() {
     document.documentElement.classList.toggle('light', nextTheme !== 'dark');
   };
 
-  const hasFooterLinks = Array.isArray(footerNav) && footerNav.length > 0;
+  const footerLinks = (Array.isArray(footerNav) ? footerNav : []).map(navItemToLink).filter(Boolean) as FooterLink[];
+  const hasFooterLinks = footerLinks.length > 0;
+  const groupedFooter = hasFooterLinks
+    ? {
+        Shop: footerLinks.filter((link) => ['Shop All', 'Opening Drop', 'Large Prints', 'Gift Guide'].includes(link.label)),
+        Learn: footerLinks.filter((link) => ['Size Guide', 'Print Quality', 'Shipping And Returns', 'FAQ'].includes(link.label)),
+        Kumachi: footerLinks.filter((link) => ['About', 'Contact', 'Tales Of Kuma'].includes(link.label)),
+        Legal: footerLinks.filter((link) => ['Privacy Policy', 'Terms Of Service', 'Refund Policy'].includes(link.label)),
+      }
+    : null;
 
   return (
     <footer style={{backgroundColor: 'var(--color-surface-deep)', color: 'var(--color-bg-primary)'}}>
-      <div className="container-gallery grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="container-gallery grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-5">
         <div>
           <Link to="/" className="inline-flex min-h-16 items-center no-underline">
             <img src="/kumachi-prints-logo.svg" alt="Kumachi Prints" className="h-20 w-auto max-w-[240px] object-contain" />
@@ -71,7 +86,12 @@ export function Footer() {
           </div>
         </div>
         {hasFooterLinks ? (
-          <FooterColumn title="Explore" links={footerNav.map(navItemToLink).filter(Boolean) as FooterLink[]} />
+          <>
+            <FooterColumn title="Shop" links={groupedFooter?.Shop || []} />
+            <FooterColumn title="Learn" links={groupedFooter?.Learn || []} />
+            <FooterColumn title="Kumachi" links={groupedFooter?.Kumachi || []} />
+            <FooterColumn title="Legal" links={groupedFooter?.Legal || []} />
+          </>
         ) : (
           <>
             <FooterColumn

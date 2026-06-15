@@ -10,6 +10,7 @@ type NavRoute = {label: string; to: string; external?: boolean};
 function navItemToRoute(item: any): NavRoute | null {
   if (!item.label) return null;
   switch (item.type) {
+    case 'path':
     case 'internal':
       return item.internalPath ? {label: item.label, to: item.internalPath} : null;
     case 'external':
@@ -19,7 +20,12 @@ function navItemToRoute(item: any): NavRoute | null {
     case 'series':
       {
         const slug = item.seriesRef?.slug?.current || item.seriesRef?.slug;
-        return slug ? {label: item.label, to: '/drops/' + slug} : null;
+        const refSlug =
+          typeof item.seriesRef?._ref === 'string'
+            ? item.seriesRef._ref.replace(/^series-/, '')
+            : null;
+        const handle = slug || refSlug;
+        return handle ? {label: item.label, to: '/drops/' + handle} : null;
       }
     default:
       return null;
@@ -32,11 +38,11 @@ function getNavItems(rootData: any): NavRoute[] {
     return mainNav.map(navItemToRoute).filter(Boolean) as NavRoute[];
   }
   return [
-    {label: 'Collection', to: '/collections'},
-    {label: 'Drops', to: '/drops'},
-    {label: 'Artists', to: '/artists'},
-    {label: 'AI Studio', to: '/create'},
+    {label: 'Home', to: '/'},
     {label: 'About', to: '/pages/about'},
+    {label: 'Shop', to: '/collections/all'},
+    {label: 'Opening Drop', to: '/drops/opening-drop'},
+    {label: 'Contact', to: '/pages/contact'},
   ];
 }
 

@@ -19,6 +19,7 @@ export function ProductCard({product, index = 0, featured = false}: ProductCardP
   const defaultVariant = product.variants?.nodes?.find((variant: any) => variant.availableForSale);
   const fetcherData = fetcher.data as {cart?: unknown; error?: string} | undefined;
   const price = product.priceRange?.minVariantPrice;
+  const isFallbackProduct = Boolean(product._fallback);
   const compareAtPrice = defaultVariant?.compareAtPrice;
   const image = product.featuredImage;
   const genre = product.productType || product.collections?.nodes?.[0]?.title || 'Fine art print';
@@ -124,7 +125,11 @@ export function ProductCard({product, index = 0, featured = false}: ProductCardP
                   {formatPrice(parseFloat(compareAtPrice.amount) * 100)}
                 </span>
               )}
-              {price && (
+              {isFallbackProduct ? (
+                <span className="text-body-small font-bold" style={{color: 'var(--color-text-primary)'}}>
+                  Price after Shopify import
+                </span>
+              ) : price && (
                 <span className="text-body-small font-bold" style={{color: compareAtPrice ? 'var(--color-accent-crimson)' : 'var(--color-text-primary)'}}>
                   {formatPrice(parseFloat(price.amount) * 100)}
                 </span>

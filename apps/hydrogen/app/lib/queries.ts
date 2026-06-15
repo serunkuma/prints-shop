@@ -1,6 +1,6 @@
 import {defineQuery} from 'groq';
 
-export const HOMEPAGE_QUERY = defineQuery(`*[_type == "homepage"][0]{
+export const HOMEPAGE_QUERY = defineQuery(`*[_type == "homepage" && _id == "homepage"][0]{
   sections[]{
     _type,
     ...,
@@ -24,16 +24,23 @@ export const PRODUCT_SUPPLEMENT_QUERY = defineQuery(`*[_type == "productSuppleme
   "series": seriesRef->{title, slug}
 }`);
 
-export const SITE_SETTINGS_QUERY = defineQuery(`*[_type == "settings"][0]{
+export const SITE_SETTINGS_QUERY = defineQuery(`*[_type == "settings" && _id == "settings"][0]{
   siteName,
   siteDescription,
   announcementBar,
-  footerNavigation,
+  footerNavigation[]{
+    label,
+    type,
+    internalPath,
+    externalUrl,
+    collectionHandle,
+    "seriesRef": seriesRef->{title, slug}
+  },
   socialLinks,
   defaultSeo
 }`);
 
-export const NAVIGATION_QUERY = defineQuery(`*[_type == "navigation"][0]{
+export const NAVIGATION_QUERY = defineQuery(`*[_type == "navigation" && _id == "navigation"][0]{
   mainNav[]{
     label,
     type,

@@ -14,7 +14,7 @@ export function CartSummary({cost, checkoutUrl}: CartSummaryProps) {
           {cost?.subtotalAmount && formatPrice(parseFloat(cost.subtotalAmount.amount) * 100)}
         </span>
       </div>
-      <p className="mt-2 text-xs text-text-muted">Free shipping on orders over $75. Shipping &amp; taxes calculated at checkout.</p>
+      <p className="mt-2 text-xs text-text-muted">Shipping and taxes are calculated at checkout.</p>
       <a
         href={checkoutUrl}
         className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-gold text-sm font-semibold uppercase tracking-wider text-void transition-opacity hover:opacity-90"

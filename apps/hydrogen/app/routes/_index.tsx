@@ -1,4 +1,3 @@
-import {PortableText} from '@portabletext/react';
 import {useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
 import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheLong} from '@shopify/hydrogen';
@@ -15,23 +14,34 @@ import {CategoryTiles} from '~/components/sections/CategoryTiles';
 import {EditorialProductRail} from '~/components/sections/EditorialProductRail';
 import {EditorialStorySection} from '~/components/sections/EditorialStorySection';
 import {ArtistSpotlightSection} from '~/components/sections/ArtistSpotlightSection';
+import {PortableText} from '~/components/editorial/PortableText';
+import {getFallbackProducts, getFallbackSiteDoc} from '~/lib/localFallback.server';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheLong()),
 });
 
-export const meta = () => [{title: 'Kumachi Prints'}];
+export const meta = () => [
+  {title: 'Kumachi Prints'},
+  {
+    name: 'description',
+    content:
+      'African art prints from Kuma, beginning with the curated Opening Drop from Kumachi Prints.',
+  },
+];
 
 export async function loader({context}: {context: any}) {
-  const [homepage, featuredProducts, allPrints] = await Promise.all([
+  const [homepage, featuredProducts, allPrints, fallbackHomepage, fallbackProducts] = await Promise.all([
     context.sanity.fetch(HOMEPAGE_QUERY).catch(() => null),
     context.storefront.query(FEATURED_PRODUCTS_QUERY).catch(() => null),
     context.storefront.query(COLLECTION_PRODUCTS_QUERY, {
       variables: {handle: 'all'},
     }).catch(() => null),
+    getFallbackSiteDoc('homepage', context.env),
+    getFallbackProducts(context.env),
   ]);
 
-  return {homepage, featuredProducts, allPrints};
+  return {homepage: homepage || fallbackHomepage, featuredProducts, allPrints, fallbackProducts};
 }
 
 function RichTextSection({section}: {section: any}) {
@@ -66,48 +76,62 @@ function sectionRenderer(section: any, index: number, products: any[]) {
   }
 }
 
+function firstSection(sections: any[], type: string) {
+  return sections.find((section) => section?._type === type);
+}
+
 export default function Homepage() {
-  const {homepage, featuredProducts, allPrints} = useLoaderData<typeof loader>();
+  const {homepage, featuredProducts, allPrints, fallbackProducts} = useLoaderData<typeof loader>();
   const sections = homepage?.sections || [];
 
-  const products = allPrints?.collection?.products?.nodes?.filter(Boolean) || [];
+  const products =
+    allPrints?.collection?.products?.nodes?.filter(Boolean) ||
+    fallbackProducts?.filter(Boolean) ||
+    [];
+  const featured =
+    featuredProducts?.products?.nodes?.filter(Boolean)?.length > 0
+      ? featuredProducts.products.nodes.filter(Boolean)
+      : products.slice(0, 4);
+
+  const heroSection = firstSection(sections, 'hero');
+  const featuredSection =
+    firstSection(sections, 'featuredCollection') || {
+      _type: 'featuredCollection',
+      title: 'Opening Drop',
+      description: 'The first Kumachi Prints release: 22 curated open-drop artworks from Kuma.',
+      collectionHandle: 'drop-opening-drop',
+    };
+  const productGridSection =
+    firstSection(sections, 'productGrid') || {
+      _type: 'productGrid',
+      title: 'Featured Prints',
+    };
+  const newsletterSection = firstSection(sections, 'newsletter');
+  const richTextSections = sections.filter((section: any) => section?._type === 'richText');
 
   return (
     <main>
-      {sections.length > 0 ? (
-        sections.map((section: any, index: number) => sectionRenderer(section, index, products))
-      ) : (
-        <>
-          <HeroSection />
-          <TrustBar />
-          <AIPrintStudioTeaser />
-          <CategoryTiles />
-          <EditorialProductRail products={products} />
+      <HeroSection section={heroSection} />
+      <TrustBar />
+      <AIPrintStudioTeaser />
+      <CategoryTiles />
+      <EditorialProductRail products={products} />
 
-          {products.length > 0 && (
-            <FeaturedCollectionSection
-              section={{
-                _type: 'featuredCollection',
-                title: 'Featured Prints',
-                description: 'Every print in the Kumachi catalogue, ready for your walls.',
-                collectionHandle: 'all',
-              }}
-              products={products}
-            />
-          )}
+      <FeaturedCollectionSection section={featuredSection} products={products.slice(0, 8)} />
+      <ProductGridSection section={productGridSection} products={featured} />
 
-          {featuredProducts?.products?.nodes?.length > 0 && (
-            <ProductGridSection
-              section={{_type: 'productGrid', title: 'Featured Prints'}}
-              products={featuredProducts.products.nodes.filter(Boolean)}
-            />
-          )}
+      {sections
+        .filter((section: any) => ['editorialBanner', 'testimonials'].includes(section?._type))
+        .map((section: any, index: number) => sectionRenderer(section, index, products))}
 
-          <EditorialStorySection />
-          <ArtistSpotlightSection />
-          <NewsletterSection />
-        </>
-      )}
+      <EditorialStorySection />
+      <ArtistSpotlightSection />
+
+      {richTextSections.map((section: any, index: number) => (
+        <RichTextSection key={section._key || index} section={section} />
+      ))}
+
+      <NewsletterSection section={newsletterSection} />
     </main>
   );
 }

@@ -2,12 +2,13 @@ import {PortableText as PortableTextRenderer, type PortableTextComponents} from 
 import {SanityImage} from '~/components/shared/SanityImage';
 
 interface PortableTextProps {
-  value?: any[];
-  blocks?: any[];
+  value?: any[] | string;
+  blocks?: any[] | string;
 }
 
 const components: PortableTextComponents = {
   block: {
+    h1: ({children}) => <h1 className="text-h1 mt-10 mb-5">{children}</h1>,
     normal: ({children}) => <p className="text-body text-text-secondary leading-relaxed mb-4">{children}</p>,
     h2: ({children}) => <h2 className="text-h2 mt-10 mb-4">{children}</h2>,
     h3: ({children}) => <h3 className="text-h3 mt-8 mb-3">{children}</h3>,
@@ -91,7 +92,16 @@ const components: PortableTextComponents = {
 
 export function PortableText({value, blocks}: PortableTextProps) {
   const portableText = value || blocks;
+  if (typeof portableText === 'string') {
+    return <p className="text-body text-text-secondary leading-relaxed mb-4">{portableText}</p>;
+  }
   if (!portableText?.length) return null;
 
-  return <PortableTextRenderer value={portableText} components={components} />;
+  const cleanBlocks = portableText.filter(
+    (block) => block && typeof block === 'object' && typeof block._type === 'string',
+  );
+
+  if (!cleanBlocks.length) return null;
+
+  return <PortableTextRenderer value={cleanBlocks} components={components} />;
 }

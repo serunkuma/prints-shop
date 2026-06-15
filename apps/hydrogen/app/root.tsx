@@ -10,6 +10,7 @@ import {Footer} from '~/components/layout/Footer';
 import {AnnouncementBar} from '~/components/layout/AnnouncementBar';
 import {CartDrawer} from '~/components/cart/CartDrawer';
 import {Toaster} from 'sonner';
+import {getFallbackSiteDoc} from '~/lib/localFallback.server';
 
 export function links() {
   return [
@@ -56,7 +57,7 @@ const CART_QUERY = `#graphql
 export async function loader({context}: {context: any}) {
   const cartId = context.session.get('cartId');
   const env = context.env || {};
-  const [settings, navigation, cartData] = await Promise.all([
+  const [settings, navigation, cartData, fallbackSettings, fallbackNavigation] = await Promise.all([
     context?.sanity?.fetch(SITE_SETTINGS_QUERY).catch(() => null),
     context?.sanity?.fetch(NAVIGATION_QUERY).catch(() => null),
     cartId
@@ -64,6 +65,8 @@ export async function loader({context}: {context: any}) {
           variables: {cartId},
         }).catch(() => ({cart: null}))
       : Promise.resolve({cart: null}),
+    getFallbackSiteDoc('settings', env),
+    getFallbackSiteDoc('navigation', env),
   ]);
 
   return {
@@ -71,8 +74,8 @@ export async function loader({context}: {context: any}) {
       PUBLIC_SITE_URL: env.PUBLIC_SITE_URL,
       PUBLIC_STORE_DOMAIN: env.PUBLIC_STORE_DOMAIN,
     },
-    settings,
-    navigation,
+    settings: settings || fallbackSettings,
+    navigation: navigation || fallbackNavigation,
     cart: cartData?.cart || null,
   };
 }
@@ -91,7 +94,9 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <Links />
       </head>
       <body className="flex flex-col min-h-screen">
-        <AnnouncementBar text={data?.settings?.announcementBar?.text} link={data?.settings?.announcementBar?.link} />
+        {data?.settings?.announcementBar?.enabled && data?.settings?.announcementBar?.kind === 'launch' ? (
+          <AnnouncementBar text={data.settings.announcementBar.text} link={data.settings.announcementBar.link} />
+        ) : null}
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
