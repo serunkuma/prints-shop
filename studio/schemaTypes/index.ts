@@ -8,7 +8,6 @@ import navigation from './navigation'
 import seoFields from './objects/seoFields'
 import imageWithAlt from './objects/imageWithAlt'
 import navItem from './objects/navItem'
-import portableText from './objects/portableText'
 import hero from './objects/hero'
 import featuredCollection from './objects/featuredCollection'
 import editorialBanner from './objects/editorialBanner'
@@ -45,6 +44,8 @@ import {linkProductType} from './objects/link/linkProductType'
 
 import {portableTextType} from './portableText/portableTextType'
 import {portableTextSimpleType} from './portableText/portableTextSimpleType'
+import {calloutType} from './objects/module/calloutType'
+import {callToActionType} from './objects/module/callToActionType'
 
 const annotations = [linkEmailType, linkExternalType, linkInternalType, linkProductType]
 
@@ -63,7 +64,7 @@ const shopifyObjects = [
   seoType,
 ]
 
-const portableTextBlocks = [portableTextType, portableTextSimpleType]
+const portableTextBlocks = [portableTextType, portableTextSimpleType, calloutType, callToActionType]
 
 const shopifyDocuments = [collectionType, colorThemeType, productType, productVariantType]
 
@@ -82,7 +83,6 @@ export const schemaTypes = [
   seoFields,
   imageWithAlt,
   navItem,
-  portableText,
   hero,
   featuredCollection,
   editorialBanner,

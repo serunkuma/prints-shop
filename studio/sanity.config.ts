@@ -9,12 +9,13 @@ import {structure} from './structure'
 import Navbar from './components/studio/Navbar'
 
 const devOnlyPlugins = [visionTool()]
+const studioEnv = import.meta.env
 
 export default defineConfig({
   name: 'kumachi-prints',
   title: 'Kumachi Prints',
-  projectId: import.meta.env.SANITY_STUDIO_PROJECT_ID || '2wo9hx90',
-  dataset: import.meta.env.SANITY_STUDIO_DATASET || 'production',
+  projectId: studioEnv?.SANITY_STUDIO_PROJECT_ID || '2wo9hx90',
+  dataset: studioEnv?.SANITY_STUDIO_DATASET || 'production',
   plugins: [
     structureTool({structure}),
     colorInput(),
