@@ -1,4 +1,5 @@
 import {SITEMAP_PRODUCTS_QUERY, SITEMAP_COLLECTIONS_QUERY, SITEMAP_SERIES_QUERY, SITEMAP_ARTISTS_QUERY, SITEMAP_PAGES_QUERY} from '~/lib/queries';
+import {getCanonicalSiteUrl} from '~/lib/siteUrl.server';
 
 function escapeXml(str: string): string {
   return str
@@ -9,17 +10,11 @@ function escapeXml(str: string): string {
     .replace(/'/g, '&apos;');
 }
 
-function getSiteUrl(env: any): string {
-  return env.PUBLIC_SITE_URL
-    ? env.PUBLIC_SITE_URL.replace(/\/+$/, '')
-    : 'https://' + env.PUBLIC_STORE_DOMAIN;
-}
-
 export async function buildSitemap(context: any): Promise<string> {
   const env = context?.env || {};
   const sanity = context?.sanity;
   const storefront = context?.storefront;
-  const siteUrl = getSiteUrl(env);
+  const siteUrl = getCanonicalSiteUrl(env);
 
   const [productsData, collectionsData, seriesData, artistsData, pagesData] = await Promise.all([
     storefront?.query(SITEMAP_PRODUCTS_QUERY).catch(() => null) || null,

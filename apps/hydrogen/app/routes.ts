@@ -27,6 +27,7 @@ const routes: RouteConfig = [
     file: 'routes/chrome-devtools-json.tsx',
   },
   {path: 'robots.txt', file: 'routes/robots.txt.tsx'},
+  {path: 'sitemap', file: 'routes/sitemap.tsx'},
   {path: 'sitemap.xml', file: 'routes/sitemap.xml.tsx'},
 ];
 

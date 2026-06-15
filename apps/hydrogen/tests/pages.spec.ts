@@ -9,10 +9,6 @@ test.describe('Pages', () => {
 
   test('Given a product page for majestic-monarch When it loads Then it shows product data', async ({page}) => {
     const response = await page.goto('/products/majestic-monarch', {timeout: 30000});
-    if (response?.status() === 404) {
-      test.skip();
-      return;
-    }
     expect(response?.ok()).toBeTruthy();
     const body = page.locator('body');
     await expect(body).toBeAttached({timeout: 10000});

@@ -5,24 +5,31 @@ import {Menu, Moon, Search, ShoppingBag, Sun, X} from 'lucide-react';
 import {useUIStore} from '~/lib/store';
 import {useRootLoaderData} from '~/lib/useRootLoaderData';
 
-function navItemToRoute(item: any): {label: string; to: string} | null {
+type NavRoute = {label: string; to: string; external?: boolean};
+
+function navItemToRoute(item: any): NavRoute | null {
   if (!item.label) return null;
   switch (item.type) {
     case 'internal':
-      return {label: item.label, to: item.internalPath || '/'};
+      return item.internalPath ? {label: item.label, to: item.internalPath} : null;
+    case 'external':
+      return item.externalUrl ? {label: item.label, to: item.externalUrl, external: true} : null;
     case 'collection':
-      return {label: item.label, to: '/collections/' + (item.collectionHandle || '')};
+      return item.collectionHandle ? {label: item.label, to: '/collections/' + item.collectionHandle} : null;
     case 'series':
-      return {label: item.label, to: '/drops/' + (item.seriesRef?.slug?.current || item.seriesRef?.slug || '')};
+      {
+        const slug = item.seriesRef?.slug?.current || item.seriesRef?.slug;
+        return slug ? {label: item.label, to: '/drops/' + slug} : null;
+      }
     default:
-      return {label: item.label, to: '/'};
+      return null;
   }
 }
 
-function getNavItems(rootData: any): {label: string; to: string}[] {
+function getNavItems(rootData: any): NavRoute[] {
   const mainNav = rootData?.navigation?.mainNav;
   if (Array.isArray(mainNav) && mainNav.length > 0) {
-    return mainNav.map(navItemToRoute).filter(Boolean) as {label: string; to: string}[];
+    return mainNav.map(navItemToRoute).filter(Boolean) as NavRoute[];
   }
   return [
     {label: 'Collection', to: '/collections'},
@@ -86,17 +93,29 @@ export function Header() {
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex" aria-label="Primary navigation">
-            {nav.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({isActive}) =>
-                  `text-nav transition-colors ${isActive ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'}`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
+            {nav.map((item) =>
+              item.external ? (
+                <a
+                  key={item.to}
+                  href={item.to}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-nav text-text-secondary transition-colors hover:text-text-primary"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({isActive}) =>
+                    `text-nav transition-colors ${isActive ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary'}`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ),
+            )}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -180,16 +199,29 @@ export function Header() {
                 <X size={22} strokeWidth={1.6} />
               </button>
               <nav className="mt-10 flex flex-col gap-6" aria-label="Mobile navigation">
-                {nav.map((item) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    onClick={() => setMenuOpen(false)}
-                    className="font-display text-4xl text-text-primary no-underline"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
+                {nav.map((item) =>
+                  item.external ? (
+                    <a
+                      key={item.to}
+                      href={item.to}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMenuOpen(false)}
+                      className="font-display text-4xl text-text-primary no-underline"
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setMenuOpen(false)}
+                      className="font-display text-4xl text-text-primary no-underline"
+                    >
+                      {item.label}
+                    </Link>
+                  ),
+                )}
               </nav>
             </motion.aside>
           </>

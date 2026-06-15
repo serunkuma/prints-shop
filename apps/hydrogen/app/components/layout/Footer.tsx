@@ -3,16 +3,24 @@ import {Link} from 'react-router';
 import {Camera, MessageCircle, Moon, Sun} from 'lucide-react';
 import {useRootLoaderData} from '~/lib/useRootLoaderData';
 
-function navItemToLink(item: any): [string, string] {
+type FooterLink = {label: string; href: string; external?: boolean};
+
+function navItemToLink(item: any): FooterLink | null {
+  if (!item.label) return null;
   switch (item.type) {
     case 'internal':
-      return [item.label || '', item.internalPath || '/'];
+      return item.internalPath ? {label: item.label, href: item.internalPath} : null;
     case 'external':
-      return [item.label || '', item.externalUrl || '/'];
+      return item.externalUrl ? {label: item.label, href: item.externalUrl, external: true} : null;
     case 'collection':
-      return [item.label || '', '/collections/' + (item.collectionHandle || '')];
+      return item.collectionHandle ? {label: item.label, href: '/collections/' + item.collectionHandle} : null;
+    case 'series':
+      {
+        const slug = item.seriesRef?.slug?.current || item.seriesRef?.slug;
+        return slug ? {label: item.label, href: '/drops/' + slug} : null;
+      }
     default:
-      return [item.label || '', '/'];
+      return null;
   }
 }
 
@@ -50,48 +58,47 @@ export function Footer() {
             {siteDescription}
           </p>
           <div className="mt-5 flex gap-3">
-            {(socialLinks.instagram || true) && (
-              <a href={socialLinks.instagram || 'https://instagram.com'} aria-label="Instagram" className="flex h-11 w-11 items-center justify-center hover:opacity-75" style={{color: '#d8cbb7'}}>
+            {socialLinks.instagram && (
+              <a href={socialLinks.instagram} aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="flex h-11 w-11 items-center justify-center hover:opacity-75" style={{color: '#d8cbb7'}}>
                 <Camera size={18} />
               </a>
             )}
-            {(socialLinks.twitter || true) && (
-              <a href={socialLinks.twitter || 'https://x.com'} aria-label="X" className="flex h-11 w-11 items-center justify-center hover:opacity-75" style={{color: '#d8cbb7'}}>
+            {socialLinks.twitter && (
+              <a href={socialLinks.twitter} aria-label="X" target="_blank" rel="noopener noreferrer" className="flex h-11 w-11 items-center justify-center hover:opacity-75" style={{color: '#d8cbb7'}}>
                 <MessageCircle size={18} />
               </a>
             )}
           </div>
         </div>
         {hasFooterLinks ? (
-          renderFooterColumns(footerNav)
+          <FooterColumn title="Explore" links={footerNav.map(navItemToLink).filter(Boolean) as FooterLink[]} />
         ) : (
           <>
             <FooterColumn
               title="Shop"
               links={[
-                ['All Prints', '/collections'],
-                ['New Arrivals', '/collections/new-arrivals'],
-                ['Limited Editions', '/collections/limited-editions'],
-                ['The Drops', '/drops'],
-                ['Artists', '/artists'],
+                {label: 'All Prints', href: '/collections'},
+                {label: 'New Arrivals', href: '/collections/new-arrivals'},
+                {label: 'Limited Editions', href: '/collections/limited-editions'},
+                {label: 'The Drops', href: '/drops'},
+                {label: 'Artists', href: '/artists'},
               ]}
             />
             <FooterColumn
               title="Kumachi"
               links={[
-                ['Kumachi Gallery', 'https://kumachigallery.com'],
-                ['Kumachi Studio', 'https://kumachistudio.com'],
-                ['About Ernest', 'https://eserunkuma.com'],
+                {label: 'Kumachi Gallery', href: 'https://kumachigallery.com', external: true},
+                {label: 'Kumachi Studio', href: 'https://kumachistudio.com', external: true},
+                {label: 'About Ernest', href: 'https://eserunkuma.com', external: true},
               ]}
-              external
             />
             <FooterColumn
               title="Help"
               links={[
-                ['Shipping & Returns', '/pages/shipping'],
-                ['FAQ', '/pages/faq'],
-                ['Contact', '/pages/contact'],
-                ['Privacy Policy', '/policies/privacyPolicy'],
+                {label: 'Shipping & Returns', href: '/pages/shipping'},
+                {label: 'FAQ', href: '/pages/faq'},
+                {label: 'Contact', href: '/pages/contact'},
+                {label: 'Privacy Policy', href: '/policies/privacyPolicy'},
               ]}
             />
           </>
@@ -111,48 +118,22 @@ export function Footer() {
   );
 }
 
-function renderFooterColumns(items: any[]) {
-  const groups: {title: string; links: [string, string][]; external: boolean}[] = [];
-  let current: {title: string; links: [string, string][]; external: boolean} | null = null;
-
-  for (const item of items) {
-    if (!item.label) continue;
-    const isGroup = item.type === 'group';
-    if (isGroup) {
-      if (current) groups.push(current);
-      current = {title: item.label, links: [], external: false};
-    } else if (current) {
-      const [label, href] = navItemToLink(item);
-      const isExternal = item.type === 'external';
-      current.links.push([label, href]);
-      if (isExternal) current.external = true;
-    }
-  }
-  if (current) groups.push(current);
-
-  if (groups.length === 0) return null;
-
-  return groups.map((g) => (
-    <FooterColumn key={g.title} title={g.title} links={g.links} external={g.external} />
-  ));
-}
-
-function FooterColumn({title, links, external}: {title: string; links: [string, string][]; external?: boolean}) {
+function FooterColumn({title, links}: {title: string; links: FooterLink[]}) {
   return (
     <div>
       <h3 className="text-caption uppercase" style={{color: 'var(--color-accent-ochre)'}}>
         {title}
       </h3>
       <ul className="mt-4 space-y-3 text-sm">
-        {links.map(([label, href]) => (
-          <li key={label}>
-            {external ? (
-              <a href={href} target="_blank" rel="noopener noreferrer" className="hover:opacity-75" style={{color: '#d8cbb7'}}>
-                {label}
+        {links.map((link) => (
+          <li key={link.label}>
+            {link.external ? (
+              <a href={link.href} target="_blank" rel="noopener noreferrer" className="hover:opacity-75" style={{color: '#d8cbb7'}}>
+                {link.label}
               </a>
             ) : (
-              <Link to={href} className="hover:opacity-75" style={{color: '#d8cbb7'}}>
-                {label}
+              <Link to={link.href} className="hover:opacity-75" style={{color: '#d8cbb7'}}>
+                {link.label}
               </Link>
             )}
           </li>

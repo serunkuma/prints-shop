@@ -1,14 +1,8 @@
-function getSiteUrl(env: any): string {
-  return env?.PUBLIC_SITE_URL
-    ? env.PUBLIC_SITE_URL.replace(/\/+$/, '')
-    : env?.PUBLIC_STORE_DOMAIN
-      ? 'https://' + env.PUBLIC_STORE_DOMAIN
-      : 'https://prints.kumachigallery.com';
-}
+import {getCanonicalSiteUrl} from '~/lib/siteUrl.server';
 
 export async function loader({context}: {context: any}) {
   const env = context?.env || {};
-  const siteUrl = getSiteUrl(env);
+  const siteUrl = getCanonicalSiteUrl(env);
 
   const robots = 'User-agent: *\nAllow: /\n\nSitemap: ' + siteUrl + '/sitemap\n';
 
