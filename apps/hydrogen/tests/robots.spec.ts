@@ -7,7 +7,7 @@ test.describe('Robots.txt', () => {
     const response = await request.get('/robots.txt');
     expect(response.ok()).toBeTruthy();
     const body = await response.text();
-    expect(body).toContain('Sitemap: ' + PUBLIC_SITE_URL + '/sitemap');
+    expect(body).toContain('Sitemap: ' + PUBLIC_SITE_URL + '/sitemap.xml');
   });
 
   test('Given a visitor requests /robots.txt Then it allows all user agents', async ({request}) => {

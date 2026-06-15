@@ -29,6 +29,7 @@ const routes: RouteConfig = [
   {path: 'robots.txt', file: 'routes/robots.txt.tsx'},
   {path: 'sitemap', file: 'routes/sitemap.tsx'},
   {path: 'sitemap.xml', file: 'routes/sitemap.xml.tsx'},
+  {path: 'components', file: 'routes/components.tsx'},
 ];
 
 export default routes;

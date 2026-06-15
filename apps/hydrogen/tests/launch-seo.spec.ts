@@ -24,7 +24,7 @@ test.describe('Launch SEO', () => {
   }
 
   test('Given the sitemap is requested Then launch URLs are included', async ({request}) => {
-    const response = await request.get('/sitemap');
+    const response = await request.get('/sitemap.xml');
     expect(response.ok()).toBeTruthy();
     const body = await response.text();
 
@@ -48,6 +48,6 @@ test.describe('Launch SEO', () => {
   test('Given robots.txt is requested Then it references the canonical sitemap', async ({request}) => {
     const response = await request.get('/robots.txt');
     expect(response.ok()).toBeTruthy();
-    await expect(response.text()).resolves.toContain('Sitemap: https://prints.kumachigallery.com/sitemap');
+    await expect(response.text()).resolves.toContain('Sitemap: https://prints.kumachigallery.com/sitemap.xml');
   });
 });

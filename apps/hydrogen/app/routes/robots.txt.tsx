@@ -4,7 +4,7 @@ export async function loader({context}: {context: any}) {
   const env = context?.env || {};
   const siteUrl = getCanonicalSiteUrl(env);
 
-  const robots = 'User-agent: *\nAllow: /\n\nSitemap: ' + siteUrl + '/sitemap\n';
+  const robots = 'User-agent: *\nAllow: /\n\nSitemap: ' + siteUrl + '/sitemap.xml\n';
 
   return new Response(robots, {
     headers: {
