@@ -25,6 +25,7 @@ const routes: RouteConfig = [
   {path: 'account/authorize', file: 'routes/account.authorize.tsx'},
   {path: 'account/orders/:orderId', file: 'routes/account.orders.$orderId.tsx'},
   {path: 'policies/:policyHandle', file: 'routes/policies.$policyHandle.tsx'},
+  {path: 'api/contact-capture', file: 'routes/api.contact-capture.ts'},
   {path: 'api/preview', file: 'routes/api.preview.ts'},
   {
     path: '.well-known/appspecific/com.chrome.devtools.json',

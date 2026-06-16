@@ -46,6 +46,7 @@ Status: Current
 | `app/routes/robots.txt.tsx` | `/robots.txt` | Static (env-driven) | Crawler rules |
 | `app/routes/create.tsx` | `/create` | Static (no CMS) | AI Studio landing page |
 | `app/routes/api.preview.ts` | `/api/preview` | Sanity | Sanity Presentation preview route |
+| `app/routes/api.contact-capture.ts` | `/api/contact-capture` | Sanity | Newsletter and AI Studio waitlist capture |
 | `app/routes/chrome-devtools-json.tsx` | `/.well-known/appspecific/com.chrome.devtools.json` | None | Returns 204 (Chrome DevTools) |
 
 ## Data Loading Pattern

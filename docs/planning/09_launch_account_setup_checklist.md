@@ -92,13 +92,13 @@ SANITY_STUDIO_DATASET=production
 
 - [ ] Add account preferences/contact capture surface if account customers need to manage email/SMS consent outside checkout
 - [ ] Add newsletter capture in footer with email field + email marketing consent checkbox
-- [ ] Add AI Studio waitlist capture on `/create` with:
+- [x] Add AI Studio waitlist capture on `/create` with:
   - Email (required)
   - Phone (optional, with note: "for SMS updates if consented")
   - Separate email marketing consent checkbox (default unchecked)
   - Separate SMS marketing consent checkbox (default unchecked, only if phone provided)
 - [ ] Record consent metadata with every opt-in: consent text shown, consentedAt (ISO timestamp), source page, IP address, user agent
-- [ ] Store captured contacts as JSON export or Sanity document collection for future Listmonk import
+- [x] Store captured contacts as Sanity `contactCapture` documents for future Listmonk import
 - [ ] Do NOT route captured contacts to any live sending system in launch scope — capture only
 
 ## Listmonk/Resend Campaigns (Post-Launch — Not a Launch Blocker)

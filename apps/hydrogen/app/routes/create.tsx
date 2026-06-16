@@ -98,6 +98,12 @@ export default function CreateRoute() {
     }
   }, [wlFetcher.data]);
 
+  useEffect(() => {
+    if (!wlPhone.trim()) {
+      setWlSmsConsent(false);
+    }
+  }, [wlPhone]);
+
   const handleWlSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (!wlEmail.includes('@') || !wlEmailConsent) return;
@@ -411,22 +417,19 @@ export default function CreateRoute() {
                 {wlConsentText}
               </span>
             </label>
-            <label className="flex items-start gap-2 text-left cursor-pointer">
-              <input
-                type="checkbox"
-                checked={wlSmsConsent}
-                onChange={(e) => setWlSmsConsent(e.target.checked)}
-                className="mt-0.5 size-3.5 shrink-0"
-                style={{accentColor: 'var(--color-accent-ochre)'}}
-              />
-              <span className="text-xs leading-relaxed" style={{color: 'var(--color-text-tertiary)'}}>
-                I agree to receive SMS updates about AI Studio and new drops.
-              </span>
-            </label>
-            {wlSmsConsent && !wlPhone.trim() && (
-              <p className="text-xs" style={{color: 'var(--color-accent-crimson, #dc2626)'}}>
-                Please enter a phone number for SMS consent.
-              </p>
+            {wlPhone.trim() && (
+              <label className="flex items-start gap-2 text-left cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={wlSmsConsent}
+                  onChange={(e) => setWlSmsConsent(e.target.checked)}
+                  className="mt-0.5 size-3.5 shrink-0"
+                  style={{accentColor: 'var(--color-accent-ochre)'}}
+                />
+                <span className="text-xs leading-relaxed" style={{color: 'var(--color-text-tertiary)'}}>
+                  I agree to receive SMS updates about AI Studio and new drops.
+                </span>
+              </label>
             )}
             {wlFetcher.data && 'error' in wlFetcher.data && wlFetcher.state === 'idle' && (
               <p className="text-xs text-center" style={{color: 'var(--color-accent-crimson, #dc2626)'}}>

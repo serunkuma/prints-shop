@@ -51,12 +51,12 @@ The Kumachi AI Studio is a creative platform layered on top of Kumachi Prints. I
 
 - [x] UI stub exists in Hydrogen at `app/routes/create.tsx`
 - [ ] Add email capture field to `/create` page (required)
-- [ ] Add phone (optional) capture field to `/create` page
-- [ ] Add separate email marketing consent checkbox (default unchecked)
-- [ ] Add separate SMS marketing consent checkbox (default unchecked, only shown if phone provided)
-- [ ] Store captured contacts in a pending queue (JSON export or Sanity doc collection) for future Listmonk import
+- [x] Add phone (optional) capture field to `/create` page
+- [x] Add separate email marketing consent checkbox (default unchecked)
+- [x] Add separate SMS marketing consent checkbox (default unchecked, only shown if phone provided)
+- [x] Store captured contacts in a pending queue (Sanity `contactCapture` documents) for future Listmonk import
 - [ ] Add AI Studio teaser section to homepage (`app/components/sections/AIPrintStudioTeaser.tsx`)
-- [ ] Wire waitlist CTA on homepage teaser → `/create` route
+- [x] Wire waitlist CTA on homepage teaser → `/create` route
 - [ ] Update homepage copy to speak about AI Studio as part of the Kumachi offer (creating AI art shaped by African heritage, culture, and the Kumachi visual language)
 - [ ] Display waitlist count on `/create` ("47 people on the waitlist")
 - [ ] Do NOT wire real generation, real ordering, or auth gating

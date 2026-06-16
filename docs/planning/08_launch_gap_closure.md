@@ -46,10 +46,10 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 - Confirm `/account/authorize` Customer Account API OAuth callback is configured in Shopify admin for local ngrok, Oxygen preview, and production domains.
 - Test Shopify-hosted customer account recovery/login assistance from the Customer Account API login flow.
 - Add account contact-preferences capture if custom consent fields are needed outside Shopify-hosted checkout/login.
-- Add newsletter signup capture section with email + consent checkboxes.
-- Add AI Studio waitlist capture on `/create` (email required, phone optional, separate consent checkboxes).
-- Verify consent audit trail captures: consent text shown at time of opt-in, timestamp, source page, IP/user agent.
-- Add AI Studio teaser section on homepage with waitlist CTA.
+- Newsletter signup capture section with email + consent checkboxes is implemented.
+- AI Studio waitlist capture on `/create` is implemented with email required, phone optional, and separate consent checkboxes.
+- Consent audit fields are implemented for consent text, timestamp, source page, IP hash, and user agent; verify with a real Sanity write before launch.
+- AI Studio teaser section on homepage links to `/create`.
 
 ### Notifications
 - Test Shopify transactional emails after test order: order confirmation, fulfillment update, shipping notification.

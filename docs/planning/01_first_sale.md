@@ -55,9 +55,9 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 - [ ] Verify `/account/orders` loads order history for signed-in customers
 - [ ] Verify `/account/orders/:orderId` loads single order detail with fulfillment status
 - [ ] Add contact-preference capture surface for account customers if needed (do not depend on Shopify-hosted login for custom consent fields)
-- [ ] Add newsletter signup form in footer with email capture + consent checkboxes
-- [ ] Add AI Studio waitlist capture surface on `/create` page (email + optional phone + consent)
-- [ ] Add AI Studio teaser section on homepage with waitlist CTA
+- [x] Add newsletter signup form in footer with email capture + consent checkboxes
+- [x] Add AI Studio waitlist capture surface on `/create` page (email + optional phone + consent)
+- [x] Add AI Studio teaser section on homepage with waitlist CTA
 - [ ] Test Shopify transactional email delivery after test order (order confirmation, fulfillment update)
 - [ ] Confirm Printful fulfillment notification writes tracking back to Shopify order
 - [ ] Verify customer receives Shopify shipping notification email

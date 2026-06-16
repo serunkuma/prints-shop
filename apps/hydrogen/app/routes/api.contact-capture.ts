@@ -18,6 +18,8 @@ const VALID_SOURCES = [
   'checkout',
 ] as const;
 
+const VALID_INTERESTS = ['opening_drop', 'ai_studio', 'tales_of_kuma', 'collectors'] as const;
+
 export async function action({request, context}: {request: Request; context: any}) {
   if (request.method !== 'POST') {
     return data({error: 'Method not allowed'}, {status: 405});
@@ -44,8 +46,20 @@ export async function action({request, context}: {request: Request; context: any
     return data({error: 'Invalid source'}, {status: 400});
   }
 
+  if (!emailConsent) {
+    return data({error: 'Email consent is required'}, {status: 400});
+  }
+
+  if (!emailConsentText?.trim()) {
+    return data({error: 'Email consent text is required'}, {status: 400});
+  }
+
   if (smsConsent && !phone) {
     return data({error: 'Phone is required for SMS consent'}, {status: 400});
+  }
+
+  if (smsConsent && !smsConsentText?.trim()) {
+    return data({error: 'SMS consent text is required'}, {status: 400});
   }
 
   const now = new Date().toISOString();
@@ -54,7 +68,14 @@ export async function action({request, context}: {request: Request; context: any
     || request.headers.get('cf-connecting-ip')
     || 'unknown';
 
-  const interests = interestsRaw ? interestsRaw.split(',').filter(Boolean) : undefined;
+  const interests = interestsRaw
+    ? interestsRaw
+      .split(',')
+      .map((interest) => interest.trim())
+      .filter((interest): interest is typeof VALID_INTERESTS[number] =>
+        VALID_INTERESTS.includes(interest as typeof VALID_INTERESTS[number]),
+      )
+    : undefined;
 
   const doc: Record<string, unknown> = {
     _type: 'contactCapture',
@@ -65,14 +86,14 @@ export async function action({request, context}: {request: Request; context: any
     source,
     interests,
     emailConsent,
-    emailConsentText: emailConsentText || '',
+    emailConsentText: emailConsentText.trim(),
     emailConsentedAt: emailConsent ? now : undefined,
     smsConsent,
-    smsConsentText: smsConsentText || '',
+    smsConsentText: smsConsent ? smsConsentText?.trim() : '',
     smsConsentedAt: smsConsent ? now : undefined,
     sourcePage: sourcePage || undefined,
     userAgent: request.headers.get('user-agent') || '',
-    ipAddress: hashIp(ipAddress),
+    ipHash: hashIp(ipAddress),
     createdAt: now,
   };
 

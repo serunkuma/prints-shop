@@ -1,13 +1,15 @@
-export default {
+import {defineArrayMember, defineField, defineType} from 'sanity'
+
+export default defineType({
   name: 'contactCapture',
   title: 'Contact Capture',
   type: 'document',
   fields: [
-    {name: 'email', type: 'string', title: 'Email', validation: (Rule: any) => Rule.required().email()},
-    {name: 'phone', type: 'string', title: 'Phone'},
-    {name: 'firstName', type: 'string', title: 'First Name'},
-    {name: 'lastName', type: 'string', title: 'Last Name'},
-    {
+    defineField({name: 'email', type: 'string', title: 'Email', validation: (Rule) => Rule.required().email()}),
+    defineField({name: 'phone', type: 'string', title: 'Phone'}),
+    defineField({name: 'firstName', type: 'string', title: 'First Name'}),
+    defineField({name: 'lastName', type: 'string', title: 'Last Name'}),
+    defineField({
       name: 'source',
       type: 'string',
       title: 'Source',
@@ -20,13 +22,13 @@ export default {
           {title: 'Checkout', value: 'checkout'},
         ],
       },
-      validation: (Rule: any) => Rule.required(),
-    },
-    {
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'interests',
       type: 'array',
       title: 'Interests',
-      of: [{type: 'string'}],
+      of: [defineArrayMember({type: 'string'})],
       options: {
         list: [
           {title: 'Opening Drop', value: 'opening_drop'},
@@ -35,18 +37,18 @@ export default {
           {title: 'Collectors', value: 'collectors'},
         ],
       },
-    },
-    {name: 'emailConsent', type: 'boolean', title: 'Email Consent', initialValue: false},
-    {name: 'emailConsentText', type: 'text', title: 'Email Consent Text'},
-    {name: 'emailConsentedAt', type: 'datetime', title: 'Email Consented At'},
-    {name: 'smsConsent', type: 'boolean', title: 'SMS Consent', initialValue: false},
-    {name: 'smsConsentText', type: 'text', title: 'SMS Consent Text'},
-    {name: 'smsConsentedAt', type: 'datetime', title: 'SMS Consented At'},
-    {name: 'sourcePage', type: 'string', title: 'Source Page'},
-    {name: 'userAgent', type: 'string', title: 'User Agent'},
-    {name: 'ipAddress', type: 'string', title: 'IP Address'},
-    {name: 'createdAt', type: 'datetime', title: 'Created At'},
-    {name: 'shopifyCustomerId', type: 'string', title: 'Shopify Customer ID'},
+    }),
+    defineField({name: 'emailConsent', type: 'boolean', title: 'Email Consent', initialValue: false}),
+    defineField({name: 'emailConsentText', type: 'text', title: 'Email Consent Text'}),
+    defineField({name: 'emailConsentedAt', type: 'datetime', title: 'Email Consented At'}),
+    defineField({name: 'smsConsent', type: 'boolean', title: 'SMS Consent', initialValue: false}),
+    defineField({name: 'smsConsentText', type: 'text', title: 'SMS Consent Text'}),
+    defineField({name: 'smsConsentedAt', type: 'datetime', title: 'SMS Consented At'}),
+    defineField({name: 'sourcePage', type: 'string', title: 'Source Page'}),
+    defineField({name: 'userAgent', type: 'string', title: 'User Agent'}),
+    defineField({name: 'ipHash', type: 'string', title: 'IP Hash'}),
+    defineField({name: 'createdAt', type: 'datetime', title: 'Created At'}),
+    defineField({name: 'shopifyCustomerId', type: 'string', title: 'Shopify Customer ID'}),
   ],
   preview: {
     select: {
@@ -61,4 +63,4 @@ export default {
       };
     },
   },
-};
+})
