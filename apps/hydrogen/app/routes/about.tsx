@@ -1,7 +1,8 @@
 import {motion} from 'framer-motion';
 import {Link} from 'react-router';
-import {ArrowRight} from 'lucide-react';
+import {ArrowRight, MapPin, Sparkles, Frame} from 'lucide-react';
 import ClipRevealImage from '~/components/motion/ClipRevealImage';
+import {InfoGrid, PageHero, PageShell} from '~/components/design/PageTemplates';
 
 export const meta = () => [
   {title: 'About — Kumachi Prints'},
@@ -14,42 +15,34 @@ export const meta = () => [
 
 const values = [
   {
-    title: 'Curated Excellence',
-    body: 'Every artist and print in our collection is carefully selected for quality, authenticity, and visual impact.',
+    title: 'Made For Recognition',
+    body: 'The work begins with images that feel placed, remembered, and ready to hold a room without shouting.',
   },
   {
-    title: 'Artist-First',
-    body: 'We work directly with artists, ensuring fair compensation and creative control over every reproduction.',
+    title: 'Built From Kampala Outward',
+    body: 'Kumachi Prints carries Kuma\'s visual world into homes across the continent, diaspora, and beyond.',
   },
   {
-    title: 'Archival Quality',
-    body: 'All prints use museum-grade materials — archival paper, pigment inks, and professional framing options.',
+    title: 'Prints With Care',
+    body: 'Launch prints are produced on archival matte paper with pigment ink and shipped unframed for collector choice.',
   },
+];
+
+const signals = [
+  {label: 'Origin', value: 'Kampala', icon: MapPin},
+  {label: 'Launch focus', value: '22 prints', icon: Sparkles},
+  {label: 'Format', value: 'Unframed archival prints', icon: Frame},
 ];
 
 export default function About() {
   return (
-    <main style={{backgroundColor: 'var(--color-bg-primary)', paddingTop: '100px', minHeight: '100vh'}}>
-      <div className="container-gallery text-center py-16 lg:py-24">
-        <motion.p
-          initial={{opacity: 0, y: 10}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.4}}
-          className="text-caption font-medium uppercase tracking-[0.08em]"
-          style={{color: 'var(--color-text-secondary)'}}
-        >
-          About
-        </motion.p>
-        <motion.h1
-          initial={{opacity: 0, y: 16}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.5, delay: 0.1}}
-          className="text-h1 font-display mt-2"
-          style={{color: 'var(--color-text-primary)'}}
-        >
-          Kumachi Prints
-        </motion.h1>
-      </div>
+    <PageShell>
+      <PageHero
+        eyebrow="About"
+        title="Kumachi Prints"
+        description="A print shop for Kuma's visual world: animals, portraits, ceremony, silence, joy, and the colors that arrive before language."
+        align="center"
+      />
 
       <div className="container-gallery pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-20">
@@ -75,43 +68,30 @@ export default function About() {
               Our Story
             </h2>
             <p className="text-body mt-6" style={{color: 'var(--color-text-secondary)'}}>
-              Kumachi Prints is a shop dedicated to contemporary African art
-              prints, room-ready editions, and future tools for personal print
-              creation. We work with artists across the continent and diaspora
-              to produce museum-quality archival prints.
+              Kumachi Prints begins with Kuma: a visual language shaped by
+              myth, witness, animal presence, portraiture, and memory. The shop
+              turns that world into archival prints for people who want art to
+              feel both personal and placed.
             </p>
             <p className="text-body mt-4" style={{color: 'var(--color-text-secondary)'}}>
-              Every print is produced on archival-grade paper with pigment inks,
-              ensuring lasting color fidelity. We believe that great art should
-              be accessible — which is why we offer prints at multiple price
-              points, from open editions to limited releases.
+              The Opening Drop is curated open, not artificially scarce. Each
+              piece was selected because it carries a specific charge: a face
+              held in thought, an animal moving like memory, a landscape that
+              feels older than the room around it.
             </p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {signals.map(({label, value, icon: Icon}) => (
+                <div key={label} className="p-4" style={{border: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface)'}}>
+                  <Icon className="h-5 w-5" style={{color: 'var(--color-accent-ochre)'}} />
+                  <p className="text-caption mt-3 uppercase" style={{color: 'var(--color-text-tertiary)'}}>{label}</p>
+                  <p className="text-body-small mt-1 font-semibold" style={{color: 'var(--color-text-primary)'}}>{value}</p>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
-          {values.map((value, i) => (
-            <motion.div
-              key={value.title}
-              initial={{opacity: 0, y: 30}}
-              whileInView={{opacity: 1, y: 0}}
-              viewport={{once: true}}
-              transition={{duration: 0.5, delay: i * 0.15}}
-              className="p-6"
-              style={{
-                backgroundColor: 'var(--color-bg-secondary)',
-                border: '1px solid var(--color-border)',
-              }}
-            >
-              <h3 className="text-h3 font-display" style={{color: 'var(--color-text-primary)'}}>
-                {value.title}
-              </h3>
-              <p className="text-body-small mt-3" style={{color: 'var(--color-text-secondary)'}}>
-                {value.body}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+        <InfoGrid items={values} />
 
         <motion.div
           initial={{opacity: 0, y: 20}}
@@ -135,6 +115,6 @@ export default function About() {
           </Link>
         </motion.div>
       </div>
-    </main>
+    </PageShell>
   );
 }

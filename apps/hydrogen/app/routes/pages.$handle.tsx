@@ -4,6 +4,7 @@ import {generateCacheControlHeader, CacheLong} from '@shopify/hydrogen';
 import {PAGE_QUERY} from '~/lib/queries';
 import {PortableText} from '~/components/editorial/PortableText';
 import {getFallbackPage} from '~/lib/localFallback.server';
+import {ContentCallout, EditorialFrame, LinkRail, PageHero, PageShell} from '~/components/design/PageTemplates';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheLong()),
@@ -50,17 +51,66 @@ function pageBodyWithoutDuplicateTitle(page: any) {
   });
 }
 
+const pageMeta: Record<string, {eyebrow: string; intro: string; callout?: {title: string; body: string}}> = {
+  contact: {
+    eyebrow: 'Collector support',
+    intro: 'A quiet place for order questions, print guidance, and custom inquiries before or after you buy.',
+    callout: {
+      title: 'For faster help',
+      body: 'Include your order number, product title, size, and any shipping details that matter.',
+    },
+  },
+  faq: {
+    eyebrow: 'Buyer questions',
+    intro: 'Clear answers for print quality, sizing, framing, shipping, returns, gifts, and the Opening Drop.',
+  },
+  'print-quality': {
+    eyebrow: 'Materials and care',
+    intro: 'How Kumachi Prints handles paper, pigment ink, production, and collector confidence.',
+    callout: {
+      title: 'Launch state',
+      body: 'Opening Drop prints ship unframed so each collector can choose the frame and room treatment.',
+    },
+  },
+  'shipping-returns': {
+    eyebrow: 'Orders and arrival',
+    intro: 'Production-before-shipping guidance, delivery expectations, damage handling, and return boundaries.',
+  },
+  'size-guide': {
+    eyebrow: 'Sizing and framing',
+    intro: 'Choose print size by wall, aspect ratio, frame confidence, and how much presence the room needs.',
+  },
+};
+
+const supportLinks = [
+  {label: 'Size Guide', href: '/pages/size-guide', description: 'Choose by ratio, wall, and frame.'},
+  {label: 'Print Quality', href: '/pages/print-quality', description: 'Paper, ink, production, and care.'},
+  {label: 'Shipping & Returns', href: '/pages/shipping-returns', description: 'Order timelines and damage support.'},
+  {label: 'FAQ', href: '/pages/faq', description: 'Common buyer questions.'},
+  {label: 'Contact', href: '/pages/contact', description: 'Collector help and inquiries.'},
+];
+
 export default function Page() {
   const {page} = useLoaderData<typeof loader>();
   const body = pageBodyWithoutDuplicateTitle(page);
+  const handle = page?.slug?.current;
+  const template = pageMeta[handle] || {
+    eyebrow: 'Kumachi guide',
+    intro: page.excerpt || 'Collector information from Kumachi Prints.',
+  };
 
   return (
-    <main className="container-gallery section-pad">
-      <h1 className="text-h1 mb-8">{page.title}</h1>
-      <div className="max-w-3xl text-body text-text-secondary leading-relaxed">
+    <PageShell>
+      <PageHero eyebrow={template.eyebrow} title={page.title} description={template.intro} />
+      <EditorialFrame
+        aside={<LinkRail title="Collector links" links={supportLinks.filter((link) => link.href !== `/pages/${handle}`)} />}
+      >
+        {template.callout ? (
+          <ContentCallout title={template.callout.title}>{template.callout.body}</ContentCallout>
+        ) : null}
         <PortableText value={body} />
-      </div>
-    </main>
+      </EditorialFrame>
+    </PageShell>
   );
 }
 

@@ -193,6 +193,30 @@
     border: 1px solid var(--color-border);
     backdrop-filter: blur(18px);
   }
+
+  .prose-kumachi {
+    color: var(--color-text-secondary);
+  }
+
+  .prose-kumachi > *:first-child {
+    margin-top: 0;
+  }
+
+  .prose-kumachi p {
+    max-width: 72ch;
+  }
+
+  .prose-kumachi a {
+    color: var(--color-accent-ochre);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .prose-kumachi h2,
+  .prose-kumachi h3,
+  .prose-kumachi h4 {
+    color: var(--color-text-primary);
+  }
 }
 
 @layer utilities {

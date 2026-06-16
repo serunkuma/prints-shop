@@ -37,11 +37,6 @@ const supportPages: SitemapLink[] = [
   {label: 'Contact', href: '/pages/contact', description: 'Get in touch with the Kumachi team.'},
 ];
 
-const internalPages: SitemapLink[] = [
-  {label: 'Component Showcase', href: '/components', description: 'Internal UI component reference.'},
-  {label: 'Create Your Own', href: '/create', description: 'AI Studio preview and waitlist.'},
-];
-
 export async function loader({context}: {context: any}) {
   const fallbackProducts = await getFallbackProducts(context?.env || {});
   const productLinks: SitemapLink[] = fallbackProducts.map((p: any) => ({
@@ -79,7 +74,6 @@ export default function SitemapPage() {
         <SitemapSection title="Editorial" count={1} links={[{label: 'Opening Drop', href: '/blog/drops/opening-drop', description: 'The first Kumachi Prints curated release.'}]} />
         <SitemapSection title="Product Pages" count={productLinks.length} links={productLinks} />
         <SitemapSection title="Support Pages" count={supportPages.length} links={supportPages} />
-        <SitemapSection title="Internal Tools" count={internalPages.length} links={internalPages} />
       </section>
 
       <section className="container-gallery pb-20">

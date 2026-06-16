@@ -6,26 +6,30 @@ import {CategoryTiles} from '~/components/sections/CategoryTiles';
 import {AIPrintStudioTeaser} from '~/components/sections/AIPrintStudioTeaser';
 import {NewsletterSection} from '~/components/sections/NewsletterSection';
 import {getFallbackProducts} from '~/lib/localFallback.server';
+import {requireInternalAccess} from '~/lib/internalAccess.server';
+import {PageHero, PageShell} from '~/components/design/PageTemplates';
 import PathwaySwitch from '~/components/PathwaySwitch';
 
 export const meta: MetaFunction = () => [
   {title: 'Component Showcase | Kumachi Prints'},
   {name: 'description', content: 'Internal component reference for Kumachi Prints.'},
+  {name: 'robots', content: 'noindex,nofollow'},
 ];
 
-export async function loader({context}: {context: any}) {
+export async function loader({request, context}: {request: Request; context: any}) {
+  requireInternalAccess(request, context?.env || {});
   const fallbackProducts = await getFallbackProducts(context?.env || {});
   return {products: fallbackProducts};
 }
 
 const colorTokens = [
-  {name: 'gold', value: 'var(--color-gold)'},
-  {name: 'void', value: 'var(--color-void)'},
+  {name: 'ochre', value: 'var(--color-accent-ochre)'},
+  {name: 'background', value: 'var(--color-bg-primary)'},
   {name: 'surface', value: 'var(--color-surface)'},
-  {name: 'grove', value: 'var(--color-grove)'},
-  {name: 'crimson', value: 'var(--color-crimson)'},
-  {name: 'teal', value: 'var(--color-teal)'},
-  {name: 'blush', value: 'var(--color-blush)'},
+  {name: 'deep surface', value: 'var(--color-surface-deep)'},
+  {name: 'clay', value: 'var(--color-accent-clay)'},
+  {name: 'crimson', value: 'var(--color-accent-crimson)'},
+  {name: 'emerald', value: 'var(--color-accent-emerald)'},
 ];
 
 function getBorderStyle(tokenName: string): string | undefined {
@@ -37,14 +41,12 @@ export default function ComponentShowcasePage() {
   const {products} = useLoaderData<typeof loader>();
 
   return (
-    <main style={{backgroundColor: 'var(--color-bg-primary)', paddingTop: '100px', minHeight: '100vh'}}>
-      <section className="container-gallery py-14">
-        <p className="text-caption uppercase" style={{color: 'var(--color-accent-clay)'}}>Internal</p>
-        <h1 className="text-h1 mt-3" style={{color: 'var(--color-text-primary)'}}>Component Showcase</h1>
-        <p className="text-body mt-5 max-w-2xl" style={{color: 'var(--color-text-secondary)'}}>
-          Live examples of the reusable Kumachi Prints commerce components.
-        </p>
-      </section>
+    <PageShell>
+      <PageHero
+        eyebrow="Internal"
+        title="Component Showcase"
+        description="Live examples of the reusable Kumachi Prints commerce components."
+      />
 
       <section className="container-gallery grid gap-8 pb-20">
 
@@ -118,7 +120,7 @@ export default function ComponentShowcasePage() {
         </ShowcaseBlock>
 
       </section>
-    </main>
+    </PageShell>
   );
 }
 

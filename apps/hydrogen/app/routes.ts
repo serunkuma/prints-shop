@@ -35,6 +35,7 @@ const routes: RouteConfig = [
   {path: 'sitemap', file: 'routes/sitemap.tsx'},
   {path: 'sitemap.xml', file: 'routes/sitemap.xml.tsx'},
   {path: 'components', file: 'routes/components.tsx'},
+  {path: 'design-system', file: 'routes/design-system.tsx'},
 ];
 
 export default routes;

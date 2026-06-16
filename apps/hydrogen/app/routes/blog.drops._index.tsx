@@ -5,7 +5,7 @@ import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheShort} from '@shopify/hydrogen';
 import {SERIES_LIST_QUERY} from '~/lib/queries';
 import {fadeUp, staggerContainer} from '~/lib/animations';
-import {PortableText} from '~/components/editorial/PortableText';
+import {LinkRail, PageHero, PageShell} from '~/components/design/PageTemplates';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheShort()),
@@ -24,22 +24,23 @@ export default function BlogDropsIndex() {
   const hasContent = series.length > 0;
 
   return (
-    <main className="min-h-dvh" style={{paddingTop: '96px', backgroundColor: 'var(--color-bg-primary)'}}>
-      <motion.section className="container-gallery pb-12 pt-8" initial="hidden" animate="show" variants={staggerContainer}>
-        <motion.p variants={fadeUp} className="text-caption uppercase" style={{color: 'var(--color-accent-clay)'}}>
-          Kumachi Prints blog
-        </motion.p>
-        <motion.h1 variants={fadeUp} className="text-h1 mt-3" style={{color: 'var(--color-text-primary)'}}>
-          Editorial drops.
-        </motion.h1>
-        <motion.p variants={fadeUp} className="text-body mt-4 max-w-xl" style={{color: 'var(--color-text-secondary)'}}>
-          Curated releases, artist features, and print stories.
-        </motion.p>
-      </motion.section>
+    <PageShell>
+      <motion.div initial="hidden" animate="show" variants={staggerContainer}>
+        <motion.div variants={fadeUp}>
+          <PageHero
+            eyebrow="Kumachi Prints blog"
+            title="Editorial drops."
+            description="Theme notes, behind-the-scenes selection, artist context, and print stories that help the collection sell without pretending the blog is the shop."
+          />
+        </motion.div>
+      </motion.div>
 
       <section className="container-gallery section-pad pt-0">
         {!hasContent ? (
-          <div className="py-16 text-center">
+          <div
+            className="mx-auto max-w-2xl p-8 text-center"
+            style={{backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)'}}
+          >
             <p className="text-body" style={{color: 'var(--color-text-tertiary)'}}>
               No blog entries yet. Opening Drop launching soon.
             </p>
@@ -52,55 +53,68 @@ export default function BlogDropsIndex() {
             </a>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {series.map((item: any, index: number) => (
-              <motion.a
-                key={item.slug?.current || index}
-                href={`/blog/drops/${item.slug?.current}`}
-                initial={{opacity: 0, y: 24}}
-                whileInView={{opacity: 1, y: 0}}
-                viewport={{once: true}}
-                transition={{duration: 0.45, delay: index * 0.08}}
-                className="group relative block overflow-hidden"
-                style={{border: '1px solid var(--color-border)'}}
-              >
-                {item.heroImage?.asset?.url ? (
-                  <div className="aspect-[16/9] overflow-hidden">
-                    <img
-                      src={item.heroImage.asset.url}
-                      alt={item.heroImage.alt || item.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-[16/9] flex items-center justify-center" style={{backgroundColor: 'var(--color-bg-secondary)'}}>
-                    <p className="text-caption" style={{color: 'var(--color-text-tertiary)'}}>{item.title}</p>
-                  </div>
-                )}
-                <div className="p-6">
-                  {item.publishDate && (
-                    <span className="text-caption block mb-2" style={{color: 'var(--color-text-tertiary)'}}>
-                      {new Date(item.publishDate).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
-                    </span>
-                  )}
-                  <h3 className="text-h3 group-hover:opacity-80 transition-opacity" style={{color: 'var(--color-text-primary)'}}>
-                    {item.title}
-                  </h3>
-                  {item.description && (
-                    <div className="text-body-small mt-2 line-clamp-2" style={{color: 'var(--color-text-secondary)'}}>
-                      {typeof item.description === 'string'
-                        ? item.description.slice(0, 160)
-                        : item.description[0]?.children?.[0]?.text?.slice(0, 160) || ''}
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {series.map((item: any, index: number) => (
+                <motion.a
+                  key={item.slug?.current || index}
+                  href={`/blog/drops/${item.slug?.current}`}
+                  initial={{opacity: 0, y: 24}}
+                  whileInView={{opacity: 1, y: 0}}
+                  viewport={{once: true}}
+                  transition={{duration: 0.45, delay: index * 0.08}}
+                  className="group relative block overflow-hidden"
+                  style={{border: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface)'}}
+                >
+                  {item.heroImage?.asset?.url ? (
+                    <div className="aspect-[16/9] overflow-hidden">
+                      <img
+                        src={item.heroImage.asset.url}
+                        alt={item.heroImage.alt || item.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-[16/9] flex items-center justify-center" style={{backgroundColor: 'var(--color-bg-secondary)'}}>
+                      <p className="text-caption" style={{color: 'var(--color-text-tertiary)'}}>{item.title}</p>
                     </div>
                   )}
-                </div>
-              </motion.a>
-            ))}
+                  <div className="p-6">
+                    <span className="text-caption block mb-2 uppercase" style={{color: 'var(--color-accent-clay)'}}>
+                      Drops
+                    </span>
+                    {item.publishDate && (
+                      <span className="text-caption block mb-2" style={{color: 'var(--color-text-tertiary)'}}>
+                        {new Date(item.publishDate).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
+                      </span>
+                    )}
+                    <h3 className="text-h3 group-hover:opacity-80 transition-opacity" style={{color: 'var(--color-text-primary)'}}>
+                      {item.title}
+                    </h3>
+                    {item.description && (
+                      <div className="text-body-small mt-2 line-clamp-3" style={{color: 'var(--color-text-secondary)'}}>
+                        {typeof item.description === 'string'
+                          ? item.description.slice(0, 180)
+                          : item.description[0]?.children?.[0]?.text?.slice(0, 180) || ''}
+                      </div>
+                    )}
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+            <LinkRail
+              title="Shop after reading"
+              links={[
+                {label: 'All Prints', href: '/collection', description: 'Browse the 22 launch pieces.'},
+                {label: 'Size Guide', href: '/pages/size-guide', description: 'Choose the right wall presence.'},
+                {label: 'Print Quality', href: '/pages/print-quality', description: 'Understand paper and ink.'},
+              ]}
+            />
           </div>
         )}
       </section>
-    </main>
+    </PageShell>
   );
 }
 

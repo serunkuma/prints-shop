@@ -124,12 +124,15 @@ type Pages = {
   "/components": {
     params: {};
   };
+  "/design-system": {
+    params: {};
+  };
 };
 
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/create" | "/about" | "/collection" | "/collection/:handle" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/blog/drops" | "/blog/drops/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/api/preview" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap" | "/sitemap.xml" | "/components";
+    page: "/" | "/create" | "/about" | "/collection" | "/collection/:handle" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/blog/drops" | "/blog/drops/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/api/preview" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap" | "/sitemap.xml" | "/components" | "/design-system";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
@@ -255,6 +258,10 @@ type RouteFiles = {
     id: "routes/components";
     page: "/components";
   };
+  "routes/design-system.tsx": {
+    id: "routes/design-system";
+    page: "/design-system";
+  };
 };
 
 type RouteModules = {
@@ -290,4 +297,5 @@ type RouteModules = {
   "routes/sitemap": typeof import("./app/routes/sitemap.tsx");
   "routes/sitemap.xml": typeof import("./app/routes/sitemap.xml.tsx");
   "routes/components": typeof import("./app/routes/components.tsx");
+  "routes/design-system": typeof import("./app/routes/design-system.tsx");
 };

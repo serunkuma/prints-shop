@@ -8,6 +8,7 @@ import {ProductGrid} from '~/components/product/ProductGrid';
 import {getFallbackProducts} from '~/lib/localFallback.server';
 import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 import {COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
+import {PageShell} from '~/components/design/PageTemplates';
 
 const sortOptions = [
   {value: 'featured', label: 'Featured'},
@@ -207,11 +208,10 @@ export default function CollectionIndex() {
   const hasMore = visibleCount < filteredProducts.length;
 
   return (
-    <main style={{backgroundColor: 'var(--color-bg-primary)', minHeight: '100vh'}}>
+    <PageShell>
       <section
         style={{
-          paddingTop: '112px',
-          background: 'linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%)',
+          backgroundColor: 'var(--color-bg-secondary)',
           borderBottom: '1px solid var(--color-border)',
         }}
       >
@@ -287,7 +287,13 @@ export default function CollectionIndex() {
           </div>
 
           <div className="relative">
-            <button onClick={() => setSortOpen(!sortOpen)} className="flex items-center gap-2 text-body-small" style={{color: 'var(--color-text-secondary)'}}>
+            <button
+              onClick={() => setSortOpen(!sortOpen)}
+              aria-haspopup="menu"
+              aria-expanded={sortOpen}
+              className="flex min-h-11 items-center gap-2 text-body-small"
+              style={{color: 'var(--color-text-secondary)'}}
+            >
               Sort by:{' '}
               <span style={{color: 'var(--color-text-primary)'}}>{sortOptions.find((o) => o.value === sortBy)?.label}</span>
               <ChevronDown size={14} />
@@ -302,11 +308,15 @@ export default function CollectionIndex() {
                     exit={{opacity: 0, y: -4}}
                     transition={{duration: 0.15}}
                     className="absolute right-0 top-full mt-2 w-[200px] z-50 py-1"
+                    role="menu"
                     style={{backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)'}}
                   >
                     {sortOptions.map((option) => (
                       <button
                         key={option.value}
+                        type="button"
+                        role="menuitem"
+                        aria-label={`Sort by ${option.label}`}
                         onClick={() => { handleSortChange(option.value); setSortOpen(false); }}
                         className="w-full text-left px-4 py-2.5 text-body-small hover:bg-[var(--color-overlay)] transition-colors"
                         style={{color: sortBy === option.value ? 'var(--color-text-primary)' : 'var(--color-text-secondary)', fontWeight: sortBy === option.value ? 500 : 400}}
@@ -442,7 +452,7 @@ export default function CollectionIndex() {
           </>
         )}
       </AnimatePresence>
-    </main>
+    </PageShell>
   );
 }
 

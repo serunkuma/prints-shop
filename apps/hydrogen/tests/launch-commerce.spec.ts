@@ -63,8 +63,7 @@ test.describe('Launch commerce', () => {
 
     const sortButton = page.locator('button', {hasText: 'Sort by:'});
     await sortButton.click();
-    await page.locator('text=Price: Low to High').click();
-    await page.waitForTimeout(500);
-    expect(page.url()).toContain('sort=price-low');
+    await page.getByRole('menuitem', {name: 'Sort by Price: Low to High'}).click();
+    await expect(page).toHaveURL(/sort=price-low/);
   });
 });

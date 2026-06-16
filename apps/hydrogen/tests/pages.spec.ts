@@ -21,12 +21,17 @@ test.describe('Pages', () => {
     expect(response?.ok()).toBeTruthy();
     await expect(page.getByRole('heading', {name: 'Kumachi Prints', level: 1})).toBeVisible();
     await expect(page.getByText('Our Story')).toBeVisible();
-    await expect(page.getByText('Curated Excellence')).toBeVisible();
+    await expect(page.getByText('Made For Recognition')).toBeVisible();
     await expect(page.locator('body')).not.toContainText(/free shipping|over \$75/i);
   });
 
-  test('Given a visitor requests /components Then it returns 200 and shows showcase content', async ({page}) => {
+  test('Given a visitor requests /components without access Then it returns 404', async ({page}) => {
     const response = await page.goto('/components');
+    expect(response?.status()).toBe(404);
+  });
+
+  test('Given an internal visitor requests /components Then it shows showcase content', async ({page}) => {
+    const response = await page.goto('/components?key=kumachi-internal');
     expect(response?.ok()).toBeTruthy();
     const body = page.locator('body');
     await expect(body).toBeAttached();
@@ -37,12 +42,19 @@ test.describe('Pages', () => {
     expect(text).toContain('Product Cards');
   });
 
-  test('Given a visitor opens /components Then it shows fallback product cards', async ({page}) => {
-    const response = await page.goto('/components');
+  test('Given an internal visitor opens /components Then it shows fallback product cards', async ({page}) => {
+    const response = await page.goto('/components?key=kumachi-internal');
     expect(response?.ok()).toBeTruthy();
     const body = page.locator('body');
     await expect(body).toBeAttached();
     await expect(body).toContainText('Price after Shopify import');
+  });
+
+  test('Given an internal visitor requests /design-system Then it shows design guidance', async ({page}) => {
+    const response = await page.goto('/design-system?key=kumachi-internal');
+    expect(response?.ok()).toBeTruthy();
+    await expect(page.getByRole('heading', {name: 'Kumachi design system.', level: 1})).toBeVisible();
+    await expect(page.getByText('Design principles')).toBeVisible();
   });
 
   test('Given a visitor requests /sitemap Then it returns 200 and shows grouped sections', async ({page}) => {
@@ -52,7 +64,7 @@ test.describe('Pages', () => {
     await expect(body).toBeAttached();
     const text = await body.innerText();
     expect(text).toContain('Main Pages');
-    expect(text).toContain('Internal Tools');
+    expect(text).not.toContain('Internal Tools');
     expect(text).toContain('Product Pages');
   });
 });

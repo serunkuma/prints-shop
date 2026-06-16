@@ -18,13 +18,14 @@ test.describe('Sitemap', () => {
     expect(body).toContain('Editorial');
     expect(body).toContain('Product Pages');
     expect(body).toContain('Support Pages');
-    expect(body).toContain('Internal Tools');
+    expect(body).not.toContain('Internal Tools');
   });
 
   test('Given the HTML sitemap is generated Then it includes key links', async ({request}) => {
     const response = await request.get('/sitemap');
     const body = await response.text();
-    expect(body).toContain('/components');
+    expect(body).not.toContain('/components');
+    expect(body).not.toContain('/design-system');
     expect(body).toContain('/collection/all');
     expect(body).toContain('/blog/drops/opening-drop');
     expect(body).toContain('/about');
