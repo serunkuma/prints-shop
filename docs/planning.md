@@ -15,8 +15,8 @@ Kumachi Prints exists to generate revenue from the Kumachi creative catalogue by
 | Item | Detail |
 |------|--------|
 | Timeline | Current sprint (weeks 1–2) |
-| Scope | Hydrogen scaffold, Sanity schemas, Shopify/Printful setup path, Vite prototype preserved |
-| Gate | Production app builds, core routes render, and Shopify/Sanity join by handle is demonstrated |
+| Scope | Hydrogen scaffold, Sanity schemas, Shopify/Printful setup path, Vite prototype preserved, customer accounts (verify/migrate existing account routes to Shopify Customer Account API/OAuth), order history and order detail pages, email/phone capture with separate consent for email and SMS marketing, AI Studio teaser and waitlist capture surface, order notification QA |
+| Gate | Production app builds, core routes render, and Shopify/Sanity join by handle is demonstrated; customer can sign in, view order history, and see order detail |
 
 ## Phase 2 — Hydrogen + Sanity Production
 
@@ -25,7 +25,7 @@ Kumachi Prints exists to generate revenue from the Kumachi creative catalogue by
 | Item | Detail |
 |------|--------|
 | Timeline | Immediately after Phase 1 foundation |
-| Scope | Hydrogen build on Oxygen, Sanity schemas, Visual Editing |
+| Scope | Hydrogen build on Oxygen, Sanity schemas, Visual Editing, account routes verified with Shopify Customer Account API/OAuth |
 | Gate | Production foundation complete and launch products ready in Shopify |
 
 ## Phase 3 — Editorial Layer
@@ -55,28 +55,30 @@ Kumachi Prints exists to generate revenue from the Kumachi creative catalogue by
 | Item | Detail |
 |------|--------|
 | Timeline | 4–8 weeks post-launch |
-| Scope | Marketing automation, reviews, dashboard |
-| Gate | Phase 1 order volume |
+| Scope | Owned email marketing stack (Listmonk on Fly.io + Resend SMTP), product reviews, retention flows, abandoned cart recovery, God Dashboard integration |
+| Gate | Phase 1 order volume; Listmonk/Resend campaign infrastructure ready |
 
-## Future — AI Studio
+## Future — AI Studio (Full Platform)
 
-**Objective:** AI print generation feature. Style-locked to Kumachi aesthetic via a fine-tuned model. Replicate + SDXL or Flux. Real-ESRGAN upscaling. Printful custom product API. Certificate of Generation.
+**Objective:** Full AI print generation platform with style-locked generation, Supabase AI accounts/galleries/tokens, GraphQL AI layer, Replicate/Flux generation, LoRA style lock, upscaling, Stripe token subscriptions, Printful custom product ordering, and Certificate of Generation.
+
+**Launch State:** Public `/create` demo page with email/phone waitlist capture. No live AI ordering. AI Studio teaser on homepage with waitlist CTA. Product attribute extraction (colour analysis, cultural context) is the only AI spillover into non-create pages; extracted attributes must be reviewed before becoming public filters.
 
 | Item | Detail |
 |------|--------|
-| Timeline | Post-Phase 3 |
-| Scope | AI Studio UI + API |
-| Gate | Phase 3 editorial layer complete |
+| Timeline | Post-launch |
+| Scope | Full AI generation platform, Supabase Auth for AI users, Stripe billing |
+| Gate | Launch waitlist demand signals; Phase 3 editorial layer complete |
 
 ## Dependency Map
 
 ```
-Phase 1 (production foundation)
-  └── Phase 2 (Hydrogen/Oxygen launch) — needs core app and data contracts working
+Phase 1 (production foundation — includes customer accounts, order management, contact/consent capture, AI Studio waitlist demo)
+  └── Phase 2 (Hydrogen/Oxygen launch — account routes verified with Shopify Customer Account API/OAuth)
         └── Phase 3 (editorial) — needs Phase 2 routes working
               ├── Phase 4 (domain) — needs domain renewal (external dependency)
-              └── Phase 5 (growth) — needs Phase 1 order volume
-                    └── AI Studio — needs Phase 3 complete + separate API work
+              └── Phase 5 (growth — Listmonk/Resend campaigns, reviews, God Dashboard) — needs Phase 1 order volume
+                    └── AI Studio (full platform — Supabase Auth, tokens, Stripe, generation) — needs launch waitlist data + Phase 3 complete
 ```
 
 ## Risks
@@ -88,5 +90,7 @@ Phase 1 (production foundation)
 | Printful quality issues | Low | High | Place test order before public launch |
 | Oxygen plan eligibility | Low | High | Verify plan type (Basic+) before starting setup |
 | Sanity API rate limits | Low | Low | Use CDN caching; Oxygen edge caching |
+| Shopify Customer Account API breaking change | Low | High | Test OAuth flow before launch; confirm /account/authorize handles callback correctly |
+| Listmonk email deliverability | Medium | Medium | Warm sending domain with Resend before campaign send |
 
-*Last updated: 2026-06*
+*Last updated: 2026-06* (Updated: customer accounts/auth in launch scope, AI Studio waitlist/demo, Listmonk/Resend growth stack)

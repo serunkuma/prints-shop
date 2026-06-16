@@ -28,6 +28,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | [04_printful_product_spec.md](data/04_printful_product_spec.md) | File requirements, size/frame spec, pixel dimensions, pricing strategy | Current |
 | [05_woocommerce_mirror_bridge.md](data/05_woocommerce_mirror_bridge.md) | Bridge data contract between local WooCommerce mirror and Vite prototype | Current |
 | [06_drops_and_releases.md](data/06_drops_and_releases.md) | Drop/release data contract across art-business, Shopify, Sanity, and Hydrogen | Current |
+| [07_customer_contact_and_consent.md](data/07_customer_contact_and_consent.md) | Contact capture fields, consent rules, audit trail, CAN-SPAM/TCPA notes | Current |
 
 ## System (How We Built It)
 
@@ -40,6 +41,8 @@ Quick reference for all documentation files. Organized by category with one-line
 | [04_operations.md](system/04_operations.md) | Daily workflow, adding products, publishing drops, troubleshooting | Current |
 | [05_deployment.md](system/05_deployment.md) | Local dev, CI/CD, Oxygen deployment, domain migration, .env.example | Current |
 | [06_selected_product_population.md](system/06_selected_product_population.md) | Populate selected Shopify draft products from the art-business launch list | Current |
+| [07_customer_accounts_and_notifications.md](system/07_customer_accounts_and_notifications.md) | Customer accounts, Shopify OAuth, order routes, notification flow, launch QA | Current |
+| [08_listmonk_resend_campaigns.md](system/08_listmonk_resend_campaigns.md) | Listmonk on Fly.io, Resend SMTP, subscriber sync, campaign flows, CAN-SPAM | Planning |
 
 ## Planning (How We're Building It)
 
@@ -52,7 +55,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | [03_editorial_layer.md](planning/03_editorial_layer.md) | Phase 3 — drops, artists, editorial pages, component library | Planning |
 | [04_domain_migration.md](planning/04_domain_migration.md) | Phase 4 — kumachiprints.com migration, 301 redirect, SEO | Planning |
 | [05_growth_systems.md](planning/05_growth_systems.md) | Phase 5 — email marketing, reviews, God Dashboard integration | Planning |
-| [06_ai_studio.md](planning/06_ai_studio.md) | Future — AI Studio, style-locked generation, Certificate of Generation | Planning |
+| [06_ai_studio.md](planning/06_ai_studio.md) | AI Studio — launch demo/waitlist (current), full platform (future) | Current |
 | [07_production_build_handoff.md](planning/07_production_build_handoff.md) | Handoff for the Hydrogen + Sanity production build | Current |
 | [08_launch_gap_closure.md](planning/08_launch_gap_closure.md) | Launch gap closure and remaining blockers | Current |
 | [09_launch_account_setup_checklist.md](planning/09_launch_account_setup_checklist.md) | External account, env, deployment, and final QA checklist | Current |
@@ -62,6 +65,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | File | Description | Status |
 |------|-------------|--------|
 | [README.md](research/README.md) | Guide to historical documentation | Current |
+| [[PLANNING]_2026-06_ai_studio_roadmap.md](research/[PLANNING]_2026-06_ai_studio_roadmap.md) | Original AI Studio product vision and technical roadmap (archived — see `docs/planning/06_ai_studio.md`) | Historical |
 
 ## Operations
 
@@ -93,6 +97,9 @@ Quick reference for all documentation files. Organized by category with one-line
 | What is a drop? | [docs/data/06_drops_and_releases.md](data/06_drops_and_releases.md) |
 | How does the God Dashboard integrate? | [docs/concepts/01_project_vision.md](concepts/01_project_vision.md) |
 | What are the Framer Motion variants? | [docs/system/01_architecture.md](system/01_architecture.md) |
+| How do customer accounts work? | [docs/system/07_customer_accounts_and_notifications.md](system/07_customer_accounts_and_notifications.md) |
+| How do we capture and consent contacts? | [docs/data/07_customer_contact_and_consent.md](data/07_customer_contact_and_consent.md) |
+| How does the email campaign stack work? | [docs/system/08_listmonk_resend_campaigns.md](system/08_listmonk_resend_campaigns.md) |
 
 ---
 

@@ -8,9 +8,9 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 
 ## Scope
 
-**In scope:** Shopify store setup, Printful product creation and sync planning, Hydrogen production scaffold, Sanity schema setup, `.env.example`, product route proof by handle, cart/checkout foundation, Umami planning, local simulator health checks, and Vite prototype build preservation.
+**In scope:** Shopify store setup, Printful product creation and sync planning, Hydrogen production scaffold, Sanity schema setup, `.env.example`, product route proof by handle, cart/checkout foundation, Umami planning, local simulator health checks, Vite prototype build preservation, customer accounts (sign-in/sign-out via Shopify Customer Account API/OAuth), order history and order detail pages, email and phone capture with separate consent for email marketing and SMS marketing, AI Studio teaser homepage section with waitlist capture, order notification QA.
 
-**Out of scope:** Netlify bridge-store deployment, custom checkout, full editorial content completion, customer accounts, real AI generation, and live Shopify/Printful/Sanity writes before dry-run review.
+**Out of scope:** Netlify bridge-store deployment, custom checkout, full editorial content completion, real AI generation, full Listmonk/Resend campaign infrastructure (capture surfaces are in scope; sending campaigns is post-launch), and live Shopify/Printful/Sanity writes before dry-run review.
 
 ## Task Checklist
 
@@ -47,6 +47,20 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 - [ ] Add domain in Shopify: Settings → Domains → Add existing domain
 - [ ] Verify SSL certificate provisions automatically
 - [ ] Install Umami tracking script in `app/root.tsx`
+- [ ] Migrate account routes from legacy customer access token flow to Shopify Customer Account API/OAuth
+- [ ] Add `PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID` and `SHOP_ID` to local `.env` and Oxygen
+- [ ] Verify `/account/login` starts Shopify Customer Account API OAuth login
+- [ ] Verify `/account/authorize` Customer Account API OAuth callback is configured in Shopify admin
+- [ ] Verify `/account/recover` password reset flow is configured (Shopify sends reset email)
+- [ ] Verify `/account/orders` loads order history for signed-in customers
+- [ ] Verify `/account/orders/:orderId` loads single order detail with fulfillment status
+- [ ] Add contact-preference capture surface for account customers if needed (do not depend on Shopify-hosted login for custom consent fields)
+- [ ] Add newsletter signup form in footer with email capture + consent checkboxes
+- [ ] Add AI Studio waitlist capture surface on `/create` page (email + optional phone + consent)
+- [ ] Add AI Studio teaser section on homepage with waitlist CTA
+- [ ] Test Shopify transactional email delivery after test order (order confirmation, fulfillment update)
+- [ ] Confirm Printful fulfillment notification writes tracking back to Shopify order
+- [ ] Verify customer receives Shopify shipping notification email
 - [ ] Verify Umami is recording page visits
 - [ ] Add Google Search Console property for `prints.kumachigallery.com`
 - [ ] Generate and submit sitemap to Search Console
@@ -68,7 +82,7 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 
 ## Acceptance Criteria
 
-A real customer can visit `Opening Drop`, browse products, add to cart, select size and frame, and complete checkout on the production Hydrogen storefront. Printful receives and processes the order. Umami records the session. The checkout completes without errors. The Vite prototype still builds locally but is not the public launch store.
+A real customer can visit `Opening Drop`, browse products, add to cart, select size and frame, and complete checkout on the production Hydrogen storefront. The customer can sign in, view order history, and see individual order detail with fulfillment status. Printful receives and processes the order. The customer receives Shopify transactional emails (order confirmation, shipping notification). Umami records the session. The checkout completes without errors. The Vite prototype still builds locally but is not the public launch store.
 
 ## Dependencies
 
@@ -77,4 +91,4 @@ A real customer can visit `Opening Drop`, browse products, add to cart, select s
 - Domain configuration for `prints.kumachigallery.com`
 - `kumachiprints.com` domain renewal status does not block this phase
 
-*Last updated: 2026-06*
+*Last updated: 2026-06* (Updated: customer accounts, order history/detail, email/phone/SMS consent capture, AI Studio waitlist, notification QA added to launch scope)

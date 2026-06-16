@@ -10,7 +10,7 @@ Build everything that differentiates Kumachi Prints from a commodity print shop.
 
 **In scope:** Drop/series listing and detail pages, artist listing and profile pages, CMS-managed static pages, editorial section components (EditorialBanner, SeriesCard, ArtistCard, PortableText), 404 error page, OG images for all key pages, component documentation.
 
-**Out of scope:** Customer accounts, order history, product reviews, email marketing, loyalty/rewards, AI Studio.
+**Out of scope:** Customer accounts and order history (handled in Phases 1–2), full AI Studio generation platform (Phases 4+), product reviews, Listmonk/Resend campaign sending, loyalty/rewards.
 
 ## Task Checklist
 

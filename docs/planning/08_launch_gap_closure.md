@@ -31,6 +31,7 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 
 ## Remaining Launch Blockers
 
+### Commerce & Infrastructure
 - Fill real Shopify/Sanity values in local `apps/hydrogen/.env` and Oxygen.
 - Use the selected-product pipeline to create reviewed Shopify draft products for `Opening Drop`, then confirm products, collection `drop-opening-drop`, and handles match the `art-business` mirror/export.
 - Create or review Sanity documents for settings, navigation, homepage, and launch product supplements.
@@ -38,6 +39,24 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 - Configure Oxygen deployment token and environment variables.
 - Place a complete test order and confirm Printful receives fulfillment.
 - Add analytics/Search Console only after the purchase flow is verified.
+
+### Customer Accounts & Contact Capture
+- Migrate `account.tsx`, `account.login.tsx`, `account.authorize.tsx`, `account.orders.tsx`, and `account.orders.$orderId.tsx` from legacy customer access token flow to Shopify Customer Account API/OAuth.
+- Add `PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID` and `SHOP_ID` to local `.env` and Oxygen.
+- Verify `account.orders.tsx` and `account.orders.$orderId.tsx` load order history and single-order detail through Customer Account API.
+- Confirm `/account/authorize` Customer Account API OAuth callback is configured in Shopify admin.
+- Test `/account/recover` password reset flow — Shopify must send the reset email.
+- Add account contact-preferences capture if custom consent fields are needed outside Shopify-hosted checkout/login.
+- Add newsletter signup capture section with email + consent checkboxes.
+- Add AI Studio waitlist capture on `/create` (email required, phone optional, separate consent checkboxes).
+- Verify consent audit trail captures: consent text shown at time of opt-in, timestamp, source page, IP/user agent.
+- Add AI Studio teaser section on homepage with waitlist CTA.
+
+### Notifications
+- Test Shopify transactional emails after test order: order confirmation, fulfillment update, shipping notification.
+- Confirm Printful writes tracking number back to Shopify order.
+- Confirm customer receives Shopify shipping notification email.
+- Confirm Listmonk/Resend campaign infrastructure is **not** a launch blocker — capture surfaces are launch scope; sending campaigns is post-launch.
 
 ## Verification Commands
 
@@ -90,4 +109,4 @@ Do not recreate the Hydrogen app. Harden `apps/hydrogen`, keep `sources/protoype
 
 See [09_launch_account_setup_checklist.md](09_launch_account_setup_checklist.md) for the external-account tasks Ernest must complete.
 
-*Last updated: 2026-06*
+*Last updated: 2026-06* (Updated: customer account/contact capture/consent blockers added; Listmonk/Resend marked as post-launch)

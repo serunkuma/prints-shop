@@ -8,9 +8,9 @@ Build the real Hydrogen stack on Shopify Oxygen. Core routes are live, Sanity sc
 
 ## Scope
 
-**In scope:** production app hardening at `apps/hydrogen`, Hydrogen deployment on Oxygen, canonical root Sanity Studio deployment, Visual Editing configuration, core route completion, product supplement documents for launch products, SEO meta functions.
+**In scope:** production app hardening at `apps/hydrogen`, Hydrogen deployment on Oxygen, canonical root Sanity Studio deployment, Visual Editing configuration, core route completion, product supplement documents for launch products, SEO meta functions, account routes verification and migration to current Shopify Customer Account API/OAuth.
 
-**Out of scope:** Editorial routes (drops, artist profiles), domain migration from subdomain, customer accounts.
+**Out of scope:** Editorial routes (drops, artist profiles), domain migration from subdomain, full Listmonk/Resend campaign sending infrastructure.
 
 ## Task Checklist
 
@@ -43,6 +43,11 @@ Build the real Hydrogen stack on Shopify Oxygen. Core routes are live, Sanity sc
 - [ ] Configure Sanity Visual Editing with preview secret
 - [ ] Create product supplement documents in Sanity for all 5+ launch products
 - [ ] Add Sanity SEO fields override pattern in all route meta functions
+- [ ] Replace legacy customer access token account flow with Shopify Customer Account API/OAuth
+- [ ] Verify account routes: `/account/login` (starts OAuth), `/account/authorize` (OAuth callback), `/account` (customer dashboard), `/account/orders` (order history), `/account/orders/:orderId` (single order detail)
+- [ ] Confirm account routes use `context.customerAccount` / Customer Account API client (no Supabase Auth for commerce accounts)
+- [ ] Test password recovery flow: `/account/recover` → Shopify sends reset email → user resets password → login works
+- [ ] Add account contact-preferences surface if custom email/SMS consent cannot be captured in Shopify-hosted customer login
 - [ ] Verify all routes work on Oxygen preview URL
 
 ## Deliverables
@@ -63,4 +68,4 @@ A developer can clone the repo, run `npm run dev`, and see the full store with S
 - Sanity project with `production` dataset
 - All 5+ launch products in Shopify with correct handles
 
-*Last updated: 2026-06*
+*Last updated: 2026-06* (Updated: account routes moved into scope; verification/migration to Shopify Customer Account API/OAuth added)
