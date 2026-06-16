@@ -9,7 +9,7 @@ import {structure} from './structure'
 import Navbar from './components/studio/Navbar'
 
 const devOnlyPlugins = [visionTool()]
-const studioEnv = import.meta.env
+const studioEnv = process.env
 
 export default defineConfig({
   name: 'kumachi-prints',

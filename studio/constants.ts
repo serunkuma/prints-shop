@@ -10,7 +10,7 @@ export const PAGE_REFERENCES = [
   {type: 'product'},
 ]
 export const SANITY_API_VERSION = '2024-01-01'
-const studioEnv = import.meta.env
+const studioEnv = process.env
 export const SHOPIFY_STORE_ID = studioEnv?.SANITY_STUDIO_SHOPIFY_STORE_ID || ''
 
 export const GROUPS = [
