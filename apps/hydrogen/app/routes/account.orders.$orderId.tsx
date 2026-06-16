@@ -11,22 +11,96 @@ export const meta = ({data}: any) => [
   {title: data?.order ? `Order #${data.order.orderNumber} — Kumachi Prints` : 'Order — Kumachi Prints'},
 ];
 
+const ORDER_BY_ID_QUERY = `
+  query OrderById($orderId: ID!) {
+    node(id: $orderId) {
+      ... on Order {
+        id
+        orderNumber
+        processedAt
+        fulfillmentStatus
+        financialStatus
+        totalPrice {
+          amount
+          currencyCode
+        }
+        subtotalPrice {
+          amount
+          currencyCode
+        }
+        totalTax {
+          amount
+          currencyCode
+        }
+        lineItems(first: 50) {
+          nodes {
+            title
+            quantity
+            variant {
+              id
+              price {
+                amount
+                currencyCode
+              }
+            }
+          }
+        }
+        shippingAddress {
+          address1
+          address2
+          city
+          province
+          zip
+          country
+        }
+      }
+    }
+  }
+`;
+
+function statusLabel(status: string): string {
+  switch (status) {
+    case 'FULFILLED':
+      return 'Fulfilled';
+    case 'IN_PROGRESS':
+      return 'In Progress';
+    case 'ON_HOLD':
+      return 'On Hold';
+    case 'PARTIALLY_FULFILLED':
+      return 'Partially Fulfilled';
+    case 'PENDING_FULFILLMENT':
+      return 'Pending Fulfillment';
+    case 'UNFULFILLED':
+      return 'Unfulfilled';
+    default:
+      return status;
+  }
+}
+
 export async function loader({params, context}: {params: any; context: any}) {
-  const customerAccessToken = context.session.get('customerAccessToken');
-  if (!customerAccessToken) {
+  if (!context.customerAccount) {
     throw new Response('Not found', {status: 404});
   }
 
-  const {orderId} = params;
-  if (!orderId) throw new Response('Not found', {status: 404});
+  const loggedIn = await context.customerAccount.isLoggedIn();
+  if (!loggedIn) {
+    throw new Response('Not found', {status: 404});
+  }
 
-  const {node: order} = await context.storefront.query(ORDER_BY_ID_QUERY, {
-    variables: {id: orderId},
-  }).catch(() => ({node: null}));
+  const rawOrderId = params.orderId;
+  if (!rawOrderId) throw new Response('Not found', {status: 404});
 
-  if (!order) throw new Response('Not found', {status: 404});
+  const orderId = decodeURIComponent(rawOrderId);
 
-  return {order};
+  const {data, errors} = await context.customerAccount.query(ORDER_BY_ID_QUERY, {
+    variables: {orderId},
+  }).catch(() => ({data: null, errors: [{message: 'Failed to load order'}]}));
+
+  if (errors || !data?.node) {
+    throw new Response('Not found', {status: 404});
+  }
+
+  return {order: data.node};
 }
 
 export default function OrderDetailPage() {
@@ -45,7 +119,7 @@ export default function OrderDetailPage() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-h4">Summary</h2>
           <p className={`text-body-small uppercase ${order.fulfillmentStatus === 'FULFILLED' ? 'text-grove' : 'text-text-muted'}`}>
-            {order.fulfillmentStatus === 'FULFILLED' ? 'Fulfilled' : order.fulfillmentStatus}
+            {statusLabel(order.fulfillmentStatus)}
           </p>
         </div>
         <div className="space-y-2 text-body text-text-secondary">
@@ -54,6 +128,20 @@ export default function OrderDetailPage() {
           <div className="flex justify-between border-t border-border pt-2 mt-2 font-medium text-text-primary"><span>Total</span><span>{formatPrice(parseFloat(order.totalPrice.amount) * 100)}</span></div>
         </div>
       </div>
+
+      {order.shippingAddress && (
+        <div className="card-surface rounded-xs p-6 mb-8">
+          <h2 className="text-h4 mb-4">Shipping Address</h2>
+          <p className="text-body text-text-secondary">
+            {order.shippingAddress.address1}
+            {order.shippingAddress.address2 && <>, {order.shippingAddress.address2}</>}
+            <br />
+            {order.shippingAddress.city}, {order.shippingAddress.province} {order.shippingAddress.zip}
+            <br />
+            {order.shippingAddress.country}
+          </p>
+        </div>
+      )}
 
       <div className="card-surface rounded-xs p-6">
         <h2 className="text-h4 mb-4">Items</h2>
@@ -75,36 +163,16 @@ export default function OrderDetailPage() {
   );
 }
 
-const ORDER_BY_ID_QUERY = `#graphql
-  query OrderById($id: ID!) {
-    node(id: $id) {
-      ... on Order {
-        id
-        orderNumber
-        processedAt
-        fulfillmentStatus
-        totalPrice { amount currencyCode }
-        subtotalPrice { amount currencyCode }
-        totalTax { amount currencyCode }
-        lineItems(first: 50) {
-          nodes {
-            title
-            quantity
-            variant {
-              id
-              price { amount currencyCode }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
 export function ErrorBoundary() {
   const error = useRouteError();
   if (isRouteErrorResponse(error) && error.status === 404) {
-    return <main className="container-gallery section-pad"><h1 className="text-h1">Order not found</h1><a href="/account/orders" className="text-gold">Back to orders</a></main>;
+    return (
+      <main className="container-gallery section-pad">
+        <h1 className="text-h1">Order not found</h1>
+        <p className="text-body text-text-secondary mb-6">This order could not be found or you may not be signed in.</p>
+        <a href="/account/orders" className="text-gold">Back to orders</a>
+      </main>
+    );
   }
   return <main className="container-gallery section-pad"><h1 className="text-h1">Error</h1><p className="text-body text-text-secondary">Something went wrong.</p></main>;
 }

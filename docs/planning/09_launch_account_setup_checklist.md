@@ -49,7 +49,7 @@ SANITY_STUDIO_DATASET=production
 - Create Storefront API token.
 - Configure payments, taxes, shipping, and store password.
 - Create collections: `all`, `new-arrivals`, and launch collection/series handles.
-- Create collection `drop-opening-drop` for `Opening Drop`.
+- Create collection `opening-drop` for `Opening Drop`.
 - Use `art-business` to generate a selected launch list, then use `apps/hydrogen/scripts/populate-products.mjs --dry-run` before any `--live` Shopify draft population.
 - Confirm Shopify product handles match the `art-business` Woo mirror/export handles.
 
@@ -119,7 +119,7 @@ SANITY_STUDIO_DATASET=production
 - Keep any write/admin token private for `art-business`.
 - Deploy Studio from root `studio/`.
 - Create/review `settings`, `navigation`, `homepage`, product supplements, artist docs, and series docs.
-- Create/review Sanity `series` document `opening-drop` with `shopifyCollectionHandle=drop-opening-drop`.
+- Create/review Sanity `series` document `opening-drop` with `shopifyCollectionHandle=opening-drop`.
 - Confirm every `productSupplement.shopifyHandle` matches Shopify exactly.
 
 ## Oxygen / GitHub Tasks

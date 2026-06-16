@@ -8,7 +8,7 @@ import {ProductGrid} from '~/components/product/ProductGrid';
 import {FilterSidebar} from '~/components/collection/FilterSidebar';
 import {getFallbackProducts} from '~/lib/localFallback.server';
 import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
-import {COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
+import {ALL_PRODUCTS_QUERY} from '~/lib/queries';
 import {PageShell} from '~/components/design/PageTemplates';
 import {slugToLabel, testPrice} from '~/lib/productFacets';
 
@@ -27,13 +27,11 @@ export const meta = () => [
 
 export async function loader({context}: {context: any}) {
   const [shopifyData, fallbackProducts] = await Promise.all([
-    context.storefront.query(COLLECTION_PRODUCTS_QUERY, {
-      variables: {handle: 'all'},
-    }).catch(() => null),
+    context.storefront.query(ALL_PRODUCTS_QUERY).catch(() => null),
     getFallbackProducts(context.env),
   ]);
 
-  const products = (shopifyData?.collection?.products?.nodes?.filter(Boolean) || fallbackProducts || [])
+  const products = (shopifyData?.products?.nodes?.filter(Boolean) || fallbackProducts || [])
     .filter((p: any) => OPENING_DROP_HANDLES.has(p.handle));
   return {products};
 }

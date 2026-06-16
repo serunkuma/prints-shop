@@ -174,6 +174,38 @@ export const COLLECTION_PRODUCTS_QUERY = `#graphql
   }
 `;
 
+export const ALL_PRODUCTS_QUERY = `#graphql
+  query AllProducts {
+    products(first: 50) {
+      nodes {
+        id
+        handle
+        title
+        description
+        featuredImage {
+          id
+          url
+          altText
+          width
+          height
+        }
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        variants(first: 1) {
+          nodes {
+            id
+            availableForSale
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const PRODUCT_QUERY = `#graphql
   query Product($handle: String!) {
     product(handle: $handle) {

@@ -94,6 +94,36 @@ export type CollectionProductsQuery = {
   >;
 };
 
+export type AllProductsQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type AllProductsQuery = {
+  products: {
+    nodes: Array<
+      Pick<StorefrontAPI.Product, 'id' | 'handle' | 'title' | 'description'> & {
+        featuredImage?: StorefrontAPI.Maybe<
+          Pick<
+            StorefrontAPI.Image,
+            'id' | 'url' | 'altText' | 'width' | 'height'
+          >
+        >;
+        priceRange: {
+          minVariantPrice: Pick<
+            StorefrontAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+        };
+        variants: {
+          nodes: Array<
+            Pick<StorefrontAPI.ProductVariant, 'id' | 'availableForSale'>
+          >;
+        };
+      }
+    >;
+  };
+};
+
 export type ProductQueryVariables = StorefrontAPI.Exact<{
   handle: StorefrontAPI.Scalars['String']['input'];
 }>;
@@ -273,117 +303,12 @@ export type CartIdQuery = {
   >;
 };
 
-export type AuthorizeMutationVariables = StorefrontAPI.Exact<{
-  input: StorefrontAPI.CustomerAccessTokenCreateInput;
-}>;
-
-export type AuthorizeMutation = {
-  customerAccessTokenCreate?: StorefrontAPI.Maybe<{
-    customerAccessToken?: StorefrontAPI.Maybe<
-      Pick<StorefrontAPI.CustomerAccessToken, 'accessToken' | 'expiresAt'>
-    >;
-    customerUserErrors: Array<
-      Pick<StorefrontAPI.CustomerUserError, 'code' | 'message'>
-    >;
-  }>;
-};
-
-export type OrderByIdQueryVariables = StorefrontAPI.Exact<{
-  id: StorefrontAPI.Scalars['ID']['input'];
-}>;
-
-export type OrderByIdQuery = {
-  node?: StorefrontAPI.Maybe<
-    Pick<
-      StorefrontAPI.Order,
-      'id' | 'orderNumber' | 'processedAt' | 'fulfillmentStatus'
-    > & {
-      totalPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-      subtotalPrice?: StorefrontAPI.Maybe<
-        Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
-      >;
-      totalTax?: StorefrontAPI.Maybe<
-        Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
-      >;
-      lineItems: {
-        nodes: Array<
-          Pick<StorefrontAPI.OrderLineItem, 'title' | 'quantity'> & {
-            variant?: StorefrontAPI.Maybe<
-              Pick<StorefrontAPI.ProductVariant, 'id'> & {
-                price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-              }
-            >;
-          }
-        >;
-      };
-    }
-  >;
-};
-
-export type OrdersQueryVariables = StorefrontAPI.Exact<{
-  customerAccessToken: StorefrontAPI.Scalars['String']['input'];
-}>;
-
-export type OrdersQuery = {
-  customer?: StorefrontAPI.Maybe<
-    Pick<StorefrontAPI.Customer, 'id'> & {
-      orders: {
-        nodes: Array<
-          Pick<
-            StorefrontAPI.Order,
-            'id' | 'orderNumber' | 'processedAt' | 'fulfillmentStatus'
-          > & {
-            totalPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-            lineItems: {
-              nodes: Array<
-                Pick<StorefrontAPI.OrderLineItem, 'title' | 'quantity'> & {
-                  variant?: StorefrontAPI.Maybe<
-                    Pick<StorefrontAPI.ProductVariant, 'id'>
-                  >;
-                }
-              >;
-            };
-          }
-        >;
-      };
-    }
-  >;
-};
-
 export type RecoverMutationVariables = StorefrontAPI.Exact<{
   email: StorefrontAPI.Scalars['String']['input'];
 }>;
 
 export type RecoverMutation = {
   customerRecover?: StorefrontAPI.Maybe<{
-    customerUserErrors: Array<
-      Pick<StorefrontAPI.CustomerUserError, 'code' | 'message'>
-    >;
-  }>;
-};
-
-export type CustomerQueryVariables = StorefrontAPI.Exact<{
-  customerAccessToken: StorefrontAPI.Scalars['String']['input'];
-}>;
-
-export type CustomerQuery = {
-  customer?: StorefrontAPI.Maybe<
-    Pick<
-      StorefrontAPI.Customer,
-      'id' | 'firstName' | 'lastName' | 'email' | 'displayName'
-    >
-  >;
-};
-
-export type LoginMutationVariables = StorefrontAPI.Exact<{
-  input: StorefrontAPI.CustomerAccessTokenCreateInput;
-}>;
-
-export type LoginMutation = {
-  customerAccessTokenCreate?: StorefrontAPI.Maybe<{
-    customerAccessToken?: StorefrontAPI.Maybe<
-      Pick<StorefrontAPI.CustomerAccessToken, 'accessToken' | 'expiresAt'>
-    >;
     customerUserErrors: Array<
       Pick<StorefrontAPI.CustomerUserError, 'code' | 'message'>
     >;
@@ -690,6 +615,10 @@ interface GeneratedQueryTypes {
     return: CollectionProductsQuery;
     variables: CollectionProductsQueryVariables;
   };
+  '#graphql\n  query AllProducts {\n    products(first: 50) {\n      nodes {\n        id\n        handle\n        title\n        description\n        featuredImage {\n          id\n          url\n          altText\n          width\n          height\n        }\n        priceRange {\n          minVariantPrice {\n            amount\n            currencyCode\n          }\n        }\n        variants(first: 1) {\n          nodes {\n            id\n            availableForSale\n          }\n        }\n      }\n    }\n  }\n': {
+    return: AllProductsQuery;
+    variables: AllProductsQueryVariables;
+  };
   '#graphql\n  query Product($handle: String!) {\n    product(handle: $handle) {\n      id\n      title\n      handle\n      description\n      descriptionHtml\n      featuredImage {\n        id\n        url\n        altText\n        width\n        height\n      }\n      images(first: 10) {\n        nodes {\n          id\n          url\n          altText\n          width\n          height\n        }\n      }\n      priceRange {\n        minVariantPrice {\n          amount\n          currencyCode\n        }\n        maxVariantPrice {\n          amount\n          currencyCode\n        }\n      }\n      variants(first: 100) {\n        nodes {\n          id\n          title\n          availableForSale\n          selectedOptions {\n            name\n            value\n          }\n          price {\n            amount\n            currencyCode\n          }\n          sku\n          compareAtPrice {\n            amount\n            currencyCode\n          }\n        }\n      }\n      seo {\n        title\n        description\n      }\n    }\n  }\n': {
     return: ProductQuery;
     variables: ProductQueryVariables;
@@ -714,18 +643,6 @@ interface GeneratedQueryTypes {
     return: CartIdQuery;
     variables: CartIdQueryVariables;
   };
-  '#graphql\n  query OrderById($id: ID!) {\n    node(id: $id) {\n      ... on Order {\n        id\n        orderNumber\n        processedAt\n        fulfillmentStatus\n        totalPrice { amount currencyCode }\n        subtotalPrice { amount currencyCode }\n        totalTax { amount currencyCode }\n        lineItems(first: 50) {\n          nodes {\n            title\n            quantity\n            variant {\n              id\n              price { amount currencyCode }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
-    return: OrderByIdQuery;
-    variables: OrderByIdQueryVariables;
-  };
-  '#graphql\n  query Orders($customerAccessToken: String!) {\n    customer(customerAccessToken: $customerAccessToken) {\n      id\n      orders(first: 50) {\n        nodes {\n          id\n          orderNumber\n          processedAt\n          totalPrice { amount currencyCode }\n          fulfillmentStatus\n          lineItems(first: 10) {\n            nodes {\n              title\n              quantity\n              variant { id }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
-    return: OrdersQuery;
-    variables: OrdersQueryVariables;
-  };
-  '#graphql\n  query Customer($customerAccessToken: String!) {\n    customer(customerAccessToken: $customerAccessToken) {\n      id\n      firstName\n      lastName\n      email\n      displayName\n    }\n  }\n': {
-    return: CustomerQuery;
-    variables: CustomerQueryVariables;
-  };
   '#graphql\n  query CartQuery($cartId: ID!) {\n    cart(id: $cartId) {\n      id\n      checkoutUrl\n      totalQuantity\n      cost {\n        subtotalAmount { amount currencyCode }\n        totalAmount { amount currencyCode }\n      }\n      lines(first: 100) {\n        nodes {\n          id\n          quantity\n          merchandise {\n            ... on ProductVariant {\n              id\n              title\n              product {\n                handle\n                title\n                featuredImage { url altText }\n              }\n              selectedOptions { name value }\n              price { amount currencyCode }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: CartQueryQuery;
     variables: CartQueryQueryVariables;
@@ -737,17 +654,9 @@ interface GeneratedQueryTypes {
 }
 
 interface GeneratedMutationTypes {
-  '#graphql\n  mutation Authorize($input: CustomerAccessTokenCreateInput!) {\n    customerAccessTokenCreate(input: $input) {\n      customerAccessToken {\n        accessToken\n        expiresAt\n      }\n      customerUserErrors {\n        code\n        message\n      }\n    }\n  }\n': {
-    return: AuthorizeMutation;
-    variables: AuthorizeMutationVariables;
-  };
   '#graphql\n  mutation Recover($email: String!) {\n    customerRecover(email: $email) {\n      customerUserErrors {\n        code\n        message\n      }\n    }\n  }\n': {
     return: RecoverMutation;
     variables: RecoverMutationVariables;
-  };
-  '#graphql\n  mutation Login($input: CustomerAccessTokenCreateInput!) {\n    customerAccessTokenCreate(input: $input) {\n      customerAccessToken {\n        accessToken\n        expiresAt\n      }\n      customerUserErrors {\n        code\n        message\n      }\n    }\n  }\n': {
-    return: LoginMutation;
-    variables: LoginMutationVariables;
   };
   '#graphql\n  mutation CartCreate($input: CartInput!) {\n    cartCreate(input: $input) {\n      cart {\n        id\n        checkoutUrl\n        totalQuantity\n        cost {\n          subtotalAmount { amount currencyCode }\n          totalAmount { amount currencyCode }\n        }\n        lines(first: 100) {\n          nodes {\n            id\n            quantity\n            merchandise {\n              ... on ProductVariant {\n                id\n                title\n                product {\n                  handle\n                  title\n                  featuredImage { url altText }\n                }\n                selectedOptions { name value }\n                price { amount currencyCode }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: CartCreateMutation;

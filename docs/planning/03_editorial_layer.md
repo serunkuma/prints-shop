@@ -32,7 +32,7 @@ Build everything that differentiates Kumachi Prints from a commodity print shop.
 - [ ] Implement staggered route transition animations
 - [ ] Add OG image generation for all editorial pages
 - [ ] Create at least 2 series documents in Sanity (retroactive drops from back catalogue)
-- [ ] Create `Opening Drop` series document linked to Shopify collection `drop-opening-drop`
+- [ ] Create `Opening Drop` series document linked to Shopify collection `opening-drop`
 - [ ] Create artist documents for all artists represented in the product catalogue
 - [ ] Link product supplements to series and artist references
 - [ ] Verify Ernest can create a new series, add products, publish, and see the drop page live

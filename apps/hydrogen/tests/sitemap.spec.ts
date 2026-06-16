@@ -26,8 +26,7 @@ test.describe('Sitemap', () => {
     const body = await response.text();
     expect(body).not.toContain('/components');
     expect(body).not.toContain('/design-system');
-    expect(body).toContain('/collection/all');
-    expect(body).toContain('/blog/drops/opening-drop');
+        expect(body).toContain('/blog/drops/opening-drop');
     expect(body).toContain('/about');
     expect(body).toContain('/products/majestic-monarch');
   });
@@ -69,8 +68,7 @@ test.describe('Sitemap', () => {
       '/pages/faq',
       '/pages/contact',
       '/blog/drops/opening-drop',
-      '/collection/all',
-      '/collection/drop-opening-drop',
+            '/collection/opening-drop',
       '/products/majestic-monarch',
     ]) {
       expect(body).toContain(url === '/' ? 'https://prints.kumachigallery.com/</loc>' : `https://prints.kumachigallery.com${url}`);

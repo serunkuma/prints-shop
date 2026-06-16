@@ -125,7 +125,7 @@ export async function getFallbackCollection(handle: string, env: any = {}) {
   const filtered =
     handle === 'all'
       ? products
-      : handle === 'drop-opening-drop'
+      : handle === 'opening-drop'
         ? products.filter((item) => OPENING_DROP_HANDLES.has(item.handle))
         : products.filter((item) => {
             const slug = (item.category_name || item.genre || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -137,7 +137,7 @@ export async function getFallbackCollection(handle: string, env: any = {}) {
   const title =
     handle === 'all'
       ? 'All Prints'
-      : handle === 'drop-opening-drop'
+      : handle === 'opening-drop'
         ? 'Opening Drop'
         : filtered[0].category_name || filtered[0].genre || 'Collection';
 
@@ -146,7 +146,7 @@ export async function getFallbackCollection(handle: string, env: any = {}) {
     handle,
     title,
     description:
-      handle === 'drop-opening-drop'
+      handle === 'opening-drop'
         ? 'The first Kumachi Prints release: 22 curated open-drop artworks from Kuma.'
         : 'African art prints from Kumachi Prints.',
     image: fallbackImage(filtered[0]),

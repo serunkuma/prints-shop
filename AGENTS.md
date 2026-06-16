@@ -15,7 +15,7 @@ The simulator also has WPGraphQL enabled for local testing at `http://localhost/
 
 For selected launch products, `art-business` can generate `artifacts/exports/shopify-launch-products.json` with `python .\scripts\artbiz.py shopify launch-list --ids ...`. The Hydrogen app owns `apps/hydrogen/scripts/populate-products.mjs`, which dry-runs or creates Shopify `DRAFT` products from that selected export. Do not treat Hydrogen as a product database, and do not use Woo credentials in the production app.
 
-A drop is a curated release event: selected art IDs, release story, Shopify collection, Sanity `series` document, and Hydrogen `/drops/:handle` page. The first sale should use `Opening Drop` as a `curated_open` drop with Shopify collection `drop-opening-drop` and Sanity slug `opening-drop`. Do not confuse drops with categories, tags, SKU collection codes, or one-off uploads.
+A drop is a curated release event: selected art IDs, release story, Shopify collection, Sanity `series` document, and Hydrogen `/drops/:handle` page. The first sale should use `Opening Drop` as a `curated_open` drop with Shopify collection `opening-drop` and Sanity slug `opening-drop`. Do not confuse drops with categories, tags, SKU collection codes, or one-off uploads.
 
 ---
 

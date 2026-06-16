@@ -36,8 +36,7 @@ test.describe('Launch SEO', () => {
       '/pages/faq',
       '/pages/contact',
       '/blog/drops/opening-drop',
-      '/collection/all',
-      '/collection/drop-opening-drop',
+            '/collection/opening-drop',
       '/products/majestic-monarch',
     ]) {
       expect(body).toContain(url === '/' ? 'https://prints.kumachigallery.com/</loc>' : `https://prints.kumachigallery.com${url}`);

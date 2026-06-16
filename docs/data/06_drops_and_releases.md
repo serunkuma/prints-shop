@@ -11,7 +11,7 @@ For the first sale, use a **Curated Open Drop**: 5-10 selected artworks, one rel
 | System | Owns | Example |
 |--------|------|---------|
 | `art-business` | Drop manifest and selected product launch list | `inputs/drops/opening-drop.json` |
-| Shopify | Purchasable products and product group | collection handle `drop-opening-drop` |
+| Shopify | Purchasable products and product group | collection handle `opening-drop` |
 | Sanity | Editorial drop story | `series` slug `opening-drop` |
 | Hydrogen | Storefront route that joins story and products | `/drops/opening-drop` |
 
@@ -23,7 +23,7 @@ Product handles join Shopify products to Sanity `productSupplement` documents. C
 title: Opening Drop
 slug: opening-drop
 mode: curated_open
-shopifyCollectionHandle: drop-opening-drop
+shopifyCollectionHandle: opening-drop
 Sanity document type: series
 Hydrogen route: /drops/opening-drop
 ```
@@ -42,8 +42,8 @@ Hydrogen route: /drops/opening-drop
 2. Generate `shopify-launch-products.json`.
 3. Dry-run `apps/hydrogen/scripts/populate-products.mjs`.
 4. Create Shopify draft products.
-5. Create Shopify collection `drop-opening-drop`.
-6. Create Sanity `series` document with `shopifyCollectionHandle=drop-opening-drop`.
+5. Create Shopify collection `opening-drop`.
+6. Create Sanity `series` document with `shopifyCollectionHandle=opening-drop`.
 7. Create/review product supplements for every selected product handle.
 8. Verify `/drops/opening-drop`, PDPs, cart, and checkout.
 9. Place one real test order before announcing.

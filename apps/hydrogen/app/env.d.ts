@@ -40,6 +40,8 @@ declare global {
     SANITY_PREVIEW_TOKEN?: string;
     SANITY_PREVIEW_SECRET?: string;
     SANITY_STUDIO_URL?: string;
+    PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID: string;
+    SHOP_ID: string;
     INTERNAL_TOOLS_SECRET?: string;
     [key: string]: string | undefined;
   }

@@ -33,7 +33,7 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 
 ### Commerce & Infrastructure
 - Fill real Shopify/Sanity values in local `apps/hydrogen/.env` and Oxygen.
-- Use the selected-product pipeline to create reviewed Shopify draft products for `Opening Drop`, then confirm products, collection `drop-opening-drop`, and handles match the `art-business` mirror/export.
+- Use the selected-product pipeline to create reviewed Shopify draft products for `Opening Drop`, then confirm products, collection `opening-drop`, and handles match the `art-business` mirror/export.
 - Create or review Sanity documents for settings, navigation, homepage, and launch product supplements.
 - Install and deploy Sanity Studio from root `studio/`.
 - Configure Oxygen deployment token and environment variables.

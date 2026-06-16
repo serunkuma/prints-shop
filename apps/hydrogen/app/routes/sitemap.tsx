@@ -24,8 +24,8 @@ const mainPages: SitemapLink[] = [
 ];
 
 const shopPages: SitemapLink[] = [
-  {label: 'All Prints', href: '/collection/all', description: 'Every print in the Kumachi catalogue.'},
-  {label: 'Opening Drop Collection', href: '/collection/drop-opening-drop', description: 'The first curated release.'},
+  {label: 'All Prints', href: '/collection', description: 'Every print in the Kumachi catalogue.'},
+  {label: 'Opening Drop Collection', href: '/collection/opening-drop', description: 'The first curated release.'},
 ];
 
 const supportPages: SitemapLink[] = [

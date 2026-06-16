@@ -40,8 +40,7 @@ export async function buildSitemap(context: any): Promise<string> {
 
   addUrl(siteUrl + '/', undefined, '1.0');
   addUrl(siteUrl + '/collection', undefined, '0.9');
-  addUrl(siteUrl + '/collection/all', undefined, '0.9');
-  addUrl(siteUrl + '/collection/drop-opening-drop', undefined, '0.9');
+  addUrl(siteUrl + '/collection/opening-drop', undefined, '0.9');
   addUrl(siteUrl + '/blog/drops', undefined, '0.9');
   addUrl(siteUrl + '/blog/drops/opening-drop', undefined, '0.9');
   addUrl(siteUrl + '/search', undefined, '0.3');

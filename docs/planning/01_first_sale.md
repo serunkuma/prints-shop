@@ -24,7 +24,7 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 - [ ] Upload minimum 5 launch print files to Printful after DPI review
 - [ ] Configure sizes (A4/A3/A2/50×70cm/70×100cm) and frame variants in Printful
 - [ ] Sync Printful products to Shopify
-- [ ] Create Shopify collection `drop-opening-drop` for `Opening Drop`
+- [ ] Create Shopify collection `opening-drop` for `Opening Drop`
 - [ ] Set retail prices in Shopify (base cost × 2.5×–4× markup)
 - [ ] Create Shopify collections (All Prints, New Arrivals)
 - [ ] Obtain Storefront API token from Shopify custom app

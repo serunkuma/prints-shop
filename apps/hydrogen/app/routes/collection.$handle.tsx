@@ -8,6 +8,7 @@ import {FilterSidebar} from '~/components/collection/FilterSidebar';
 import {getFallbackCollection} from '~/lib/localFallback.server';
 import {PageShell} from '~/components/design/PageTemplates';
 import {slugToLabel, testPrice} from '~/lib/productFacets';
+import {COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
 
 const categoryMeta = [
   {label: 'Figurative & Portrait', handle: 'figurative-and-portrait-art', description: 'Figurative and portrait art capturing the human form and identity.'},
@@ -35,11 +36,22 @@ export async function loader({params, context}: {params: any; context: any}) {
   const {handle} = params;
   if (!handle) throw new Response('Not found', {status: 404});
 
-  const category = categoryMeta.find((c) => c.handle === handle);
-  if (!category) throw new Response('Not found', {status: 404});
+  const [shopifyData, fallbackCollection] = await Promise.all([
+    context.storefront.query(COLLECTION_PRODUCTS_QUERY, {
+      variables: {handle},
+    }).catch(() => null),
+    getFallbackCollection(handle, context.env),
+  ]);
 
-  const fallbackCollection = await getFallbackCollection(handle, context.env);
-  const products = fallbackCollection?.products?.nodes || [];
+  const collection = shopifyData?.collection || fallbackCollection;
+  if (!collection) throw new Response('Not found', {status: 404});
+
+  const category = categoryMeta.find((c) => c.handle === handle) || {
+    label: collection.title || 'Collection',
+    handle,
+    description: collection.description || 'Browse curated African art prints from Kumachi Prints.',
+  };
+  const products = collection.products?.nodes?.filter(Boolean) || [];
 
   return {products, category};
 }

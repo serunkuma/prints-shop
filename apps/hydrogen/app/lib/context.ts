@@ -61,6 +61,9 @@ export async function createHydrogenRouterContext(
       session,
       i18n: {language: 'EN', country: 'US'},
       cart: {},
+      customerAccount: {
+        apiVersion: env.SHOPIFY_API_VERSION || '2026-04',
+      },
     },
     {sanity},
   );

@@ -100,9 +100,9 @@ Use this as the first-sale checklist:
 3. Generate `shopify-launch-products.json`.
 4. Dry-run `populate-products.mjs`.
 5. Run `populate-products.mjs --live` for approved products.
-6. In Shopify, create collection `drop-opening-drop` and add the selected draft products.
+6. In Shopify, create collection `opening-drop` and add the selected draft products.
 7. Set prices, verify images/variants, and publish products only when checkout is ready.
-8. In Sanity, create `series` document `opening-drop` with `shopifyCollectionHandle=drop-opening-drop`.
+8. In Sanity, create `series` document `opening-drop` with `shopifyCollectionHandle=opening-drop`.
 9. Create/review product supplements for every selected product handle.
 10. Verify `/drops/opening-drop`, product pages, cart add, and checkout redirect.
 11. Place one real test order before announcing.
