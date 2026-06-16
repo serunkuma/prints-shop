@@ -5,9 +5,9 @@ import AnimatedButton from '~/components/motion/AnimatedButton';
 
 const styles = ['Diaspora', 'Portrait', 'Textile', 'Abstract', 'Afrofuturist'];
 const prompts = [
-  'A regal portrait in ochre and indigo',
-  'Textile rhythm with sunlit geometry',
-  'Diaspora cityscape at golden hour',
+  'A Buganda lion study in ochre and indigo',
+  'Textile rhythm with ancestral geometry',
+  'A diaspora city carrying Kampala light',
 ];
 
 export function AIPrintStudioTeaser() {
@@ -19,16 +19,16 @@ export function AIPrintStudioTeaser() {
             <div>
               <span className="accent-rule" />
               <p className="text-caption mt-5 uppercase" style={{color: 'var(--color-accent-clay)'}}>Kumachi Prints AI studio</p>
-              <h2 className="text-h2 mt-4" style={{color: 'var(--color-text-primary)'}}>Start with a memory. Shape it into wall art.</h2>
+              <h2 className="text-h2 mt-4" style={{color: 'var(--color-text-primary)'}}>Start with memory. Shape it in the Kumachi language.</h2>
               <p className="text-body mt-5 max-w-[560px]" style={{color: 'var(--color-text-secondary)'}}>
-                A designed preview flow for customers who want to describe a scene, explore a visual direction, and later turn the final concept into a printed piece.
+                A public demo for creating AI art shaped by African heritage, culture, and Kuma's visual language. Live generation and ordering are not open yet; the waitlist is where the Studio begins.
               </p>
             </div>
             <div className="mt-8">
               <div className="p-4" style={{backgroundColor: 'var(--color-bg-primary)', border: '1px solid var(--color-border)'}}>
                 <p className="text-caption mb-3 uppercase" style={{color: 'var(--color-text-tertiary)'}}>Prompt idea</p>
                 <div className="min-h-[92px] text-editorial" style={{color: 'var(--color-text-primary)'}}>
-                  A family archive portrait reimagined as a bold contemporary African print...
+                  A family archive portrait reimagined through flat colour, held posture, and the quiet authority of home...
                 </div>
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -39,7 +39,7 @@ export function AIPrintStudioTeaser() {
                 ))}
               </div>
               <Link to="/create" className="mt-6 inline-flex" style={{textDecoration: 'none'}}>
-                <AnimatedButton>Create Your Own Print</AnimatedButton>
+                <AnimatedButton>Try the Demo</AnimatedButton>
               </Link>
             </div>
           </motion.div>
@@ -57,7 +57,7 @@ export function AIPrintStudioTeaser() {
             <motion.div initial={{opacity: 0, y: 20}} whileInView={{opacity: 1, y: 0}} viewport={{once: true}} className="col-span-2 flex items-center justify-between gap-4 p-5" style={{backgroundColor: 'var(--color-surface-deep)', color: 'var(--color-bg-primary)'}}>
               <div className="flex items-center gap-3">
                 <Lock size={18} color="var(--color-accent-ochre)" />
-                <p className="text-body-small">Sign in to save concepts and prepare print-ready files.</p>
+                <p className="text-body-small">Demo now. Waitlist first. Accounts, live generation, and print-ready files come later.</p>
               </div>
               <ArrowRight size={18} />
             </motion.div>

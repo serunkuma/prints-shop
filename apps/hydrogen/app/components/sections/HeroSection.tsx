@@ -14,10 +14,10 @@ function getCtaUrl(cta: any): string {
 }
 
 export function HeroSection({section}: HeroSectionProps) {
-  const title = section?.heading || 'Collect the image.\nCreate the myth.';
+  const title = section?.heading || 'Collect the print.\nShape the myth.';
   const subtitle =
     section?.subheading ||
-    'Buy curated African art prints for rooms with memory, or start a future AI-assisted print path and shape an idea into something personal.';
+    'African art prints from Kuma, rooted in heritage, culture, and the Kumachi visual language. Buy the curated work now, or enter the AI Studio demo and join the waitlist to shape your own print path.';
 
   const bgImage = section?.backgroundImage;
   const hasBg = bgImage?.asset?.url;
@@ -90,7 +90,7 @@ export function HeroSection({section}: HeroSectionProps) {
                     <AnimatedButton>Buy Curated Collection</AnimatedButton>
                   </Link>
                   <Link to="/create" style={{textDecoration: 'none'}}>
-                    <AnimatedButton variant="outline">Create Your Own</AnimatedButton>
+                    <AnimatedButton variant="outline">Try AI Studio</AnimatedButton>
                   </Link>
                 </>
               )}
@@ -101,7 +101,7 @@ export function HeroSection({section}: HeroSectionProps) {
             {[
               ['Curated', 'gallery-led edits'],
               ['Framed', 'room-ready options'],
-              ['Create', 'AI concept path'],
+              ['Create', 'demo waitlist'],
             ].map(([value, label]) => (
               <div
                 key={value}
@@ -158,10 +158,10 @@ export function HeroSection({section}: HeroSectionProps) {
             style={{backgroundColor: 'var(--color-surface-deep)', color: 'var(--color-bg-primary)', boxShadow: 'var(--shadow-strong)'}}
           >
             <p className="text-caption uppercase" style={{color: 'var(--color-accent-ochre)'}}>
-              Next: Create Your Own
+              Next: AI Studio Demo
             </p>
             <p className="text-body-small mt-2" style={{color: '#eadbc4'}}>
-              Prompt, refine, save concepts, then prepare for print when the generation pipeline arrives.
+              Describe a piece shaped by African heritage, culture, and the Kumachi visual language. Join the waitlist before live generation opens.
             </p>
           </motion.div>
         </div>

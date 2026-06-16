@@ -39,7 +39,7 @@ function Dots() {
 
 export const meta = () => [
   {title: 'AI Studio — Kumachi Prints'},
-  {name: 'description', content: 'Create your own Kumachi print. Your imagination. Kumachi\'s hand.'},
+  {name: 'description', content: 'Try the Kumachi AI Studio demo and join the waitlist for future generation access.'},
 ];
 
 export default function CreateRoute() {
@@ -70,14 +70,14 @@ export default function CreateRoute() {
     setTimeout(() => {
       setIsGenerating(false);
       setGenerated(true);
-      toast.success('Print generated successfully');
+      toast.success('Demo concept preview ready');
     }, 2500);
   }, [isGenerating, prompt]);
 
   const handleOrder = useCallback(() => {
     const size = SIZES.find((s) => s.value === printSize);
     const label = size?.label ?? printSize;
-    toast.success(`Added "${printName || 'Untitled Print'}" (${label}) to demo cart`);
+    toast.success(`Ordering is not live yet. Join the waitlist for ${printName || 'your concept'} in ${label}.`);
   }, [printName, printSize]);
 
   const [wlEmail, setWlEmail] = useState('');
@@ -130,8 +130,11 @@ export default function CreateRoute() {
             Kumachi AI Studio
           </p>
           <h1 className="mt-2 font-display text-3xl" style={{color: 'var(--color-text-primary)'}}>
-            Your imagination. Kumachi's hand.
+            Shape a print path. Join before it opens.
           </h1>
+          <p className="mt-4 text-sm leading-relaxed" style={{color: 'var(--color-text-secondary)'}}>
+            This is a demo of the future Studio: AI art shaped by African heritage, culture, and the Kumachi visual language. It does not generate live images or take print orders yet.
+          </p>
         </div>
 
         <div>
@@ -182,12 +185,12 @@ export default function CreateRoute() {
 
         <div>
           <p className="text-xs uppercase tracking-widest mb-2" style={{color: 'var(--color-text-secondary)'}}>
-            DESCRIBE YOUR PRINT
+            DESCRIBE THE PRINT YOU WANT
           </p>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="A lion at rest. Gold light from the left. Flat colour, no shadows."
+            placeholder="A lion at rest. Gold light from the left. Flat colour, no shadows. Buganda authority, not decoration."
             className="w-full min-h-[120px] p-3 text-sm resize-none rounded-md"
             style={{backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)'}}
             maxLength={200}
@@ -205,12 +208,12 @@ export default function CreateRoute() {
             style={{color: 'var(--color-text-tertiary)'}}
           >
             {advancedOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
-            + Advanced
+            + Demo controls
           </button>
           {advancedOpen && (
             <div className="pt-2 space-y-2">
               <p className="text-xs uppercase tracking-widest" style={{color: 'var(--color-text-secondary)'}}>
-                EXCLUDE FROM RESULT
+                EXCLUDE FROM FUTURE RESULT
               </p>
               <textarea
                 value={negativePrompt}
@@ -237,16 +240,16 @@ export default function CreateRoute() {
           >
             {isGenerating ? (
               <>
-                Generating<span className="inline-flex ml-1"><Dots /></span>
+                Previewing<span className="inline-flex ml-1"><Dots /></span>
               </>
             ) : generated ? (
-              'Regenerate'
+              'Preview Again'
             ) : (
-              'Generate Print'
+              'Preview Demo Concept'
             )}
           </button>
           <p className="text-xs text-center" style={{color: 'var(--color-text-tertiary)'}}>
-            Each generation is unique. Results are in the Kumachi visual style.
+            Demo only. Live AI generation, accounts, and ordering open later.
           </p>
         </div>
       </section>
@@ -269,7 +272,7 @@ export default function CreateRoute() {
                   transition={{repeat: Infinity, duration: 20, ease: 'linear'}}
                 />
                 <p className="relative z-10 font-display italic text-lg text-center px-6" style={{color: 'var(--color-text-tertiary)'}}>
-                  Your print will appear here.
+                  Your demo preview will appear here.
                 </p>
               </div>
             </motion.div>
@@ -289,7 +292,7 @@ export default function CreateRoute() {
                   transition={{repeat: Infinity, duration: 1.5, ease: 'linear'}}
                 />
                 <p className="relative z-10 font-display italic text-lg text-center px-6" style={{color: 'var(--color-text-tertiary)'}}>
-                  Generating your print
+                  Building a demo preview
                   <Dots />
                 </p>
               </div>
@@ -319,7 +322,7 @@ export default function CreateRoute() {
 
               <div className="w-full space-y-2">
                 <p className="text-xs uppercase tracking-widest" style={{color: 'var(--color-text-secondary)'}}>
-                  Name your print
+                  Name the concept
                 </p>
                 <input
                   value={printName}
@@ -362,7 +365,7 @@ export default function CreateRoute() {
                 className="w-full min-h-12 rounded-md text-sm font-semibold"
                 style={{backgroundColor: 'var(--color-accent-ochre)', color: '#15120d'}}
               >
-                Order Print
+                Ordering Opens Later
               </button>
             </motion.div>
           )}
@@ -370,13 +373,13 @@ export default function CreateRoute() {
 
         <div className="mt-8 flex items-center gap-2 rounded-md px-4 py-3 text-xs" style={{border: '1px solid var(--color-border)', color: 'var(--color-text-secondary)'}}>
           <Award className="size-4 shrink-0" style={{color: 'var(--color-accent-ochre)'}} />
-          Includes a Certificate of Generation
+          Future Studio prints will include a Certificate of Generation
         </div>
 
         {wlSubmitted ? (
           <div className="mt-6 w-full max-w-sm rounded-md px-4 py-3 text-center" style={{border: '1px solid var(--color-border)'}}>
             <p className="text-xs" style={{color: 'var(--color-text-secondary)'}}>
-              You are on the AI Studio waitlist. We will notify you when generation opens.
+              You are on the AI Studio waitlist. We will notify you when live generation opens.
             </p>
           </div>
         ) : (
