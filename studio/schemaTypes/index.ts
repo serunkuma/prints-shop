@@ -1,3 +1,4 @@
+import contactCapture from './contactCapture'
 import homepage from './homepage'
 import productSupplement from './productSupplement'
 import artist from './artist'
@@ -74,6 +75,7 @@ export const schemaTypes = [
   ...shopifyDocuments,
   ...portableTextBlocks,
   homepage,
+  contactCapture,
   productSupplement,
   artist,
   series,

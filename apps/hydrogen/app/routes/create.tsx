@@ -1,7 +1,8 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useState, useEffect} from 'react';
 import type {Easing} from 'framer-motion';
 import {motion, AnimatePresence} from 'framer-motion';
 import {Award, ChevronDown, ChevronUp} from 'lucide-react';
+import {useFetcher} from 'react-router';
 import {toast} from 'sonner';
 import {formatPrice} from '~/lib/format';
 
@@ -78,6 +79,42 @@ export default function CreateRoute() {
     const label = size?.label ?? printSize;
     toast.success(`Added "${printName || 'Untitled Print'}" (${label}) to demo cart`);
   }, [printName, printSize]);
+
+  const [wlEmail, setWlEmail] = useState('');
+  const [wlPhone, setWlPhone] = useState('');
+  const [wlEmailConsent, setWlEmailConsent] = useState(false);
+  const [wlSmsConsent, setWlSmsConsent] = useState(false);
+  const [wlSubmitted, setWlSubmitted] = useState(false);
+  const wlFetcher = useFetcher();
+  const wlConsentText = 'I agree to receive emails about AI Studio updates, early access, and new releases.';
+
+  useEffect(() => {
+    if (wlFetcher.data && 'success' in wlFetcher.data) {
+      setWlSubmitted(true);
+      setWlEmail('');
+      setWlPhone('');
+      setWlEmailConsent(false);
+      setWlSmsConsent(false);
+    }
+  }, [wlFetcher.data]);
+
+  const handleWlSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (!wlEmail.includes('@') || !wlEmailConsent) return;
+    if (wlSmsConsent && !wlPhone.trim()) return;
+
+    const fd = new FormData();
+    fd.append('email', wlEmail);
+    if (wlPhone) fd.append('phone', wlPhone);
+    fd.append('source', 'ai_studio_waitlist');
+    fd.append('interests', 'ai_studio');
+    fd.append('emailConsent', String(wlEmailConsent));
+    fd.append('emailConsentText', wlConsentText);
+    fd.append('smsConsent', String(wlSmsConsent));
+    fd.append('smsConsentText', 'I agree to receive SMS updates about AI Studio and new drops.');
+    fd.append('sourcePage', '/create');
+    wlFetcher.submit(fd, {method: 'POST', action: '/api/contact-capture'});
+  }, [wlEmail, wlPhone, wlEmailConsent, wlSmsConsent, wlFetcher]);
 
   return (
     <main className="grid grid-cols-1 md:grid-cols-[480px_1fr] gap-0 min-h-screen" style={{paddingTop: '80px'}}>
@@ -330,9 +367,82 @@ export default function CreateRoute() {
           Includes a Certificate of Generation
         </div>
 
-        <p className="mt-4 text-xs text-center" style={{color: 'var(--color-text-tertiary)'}}>
-          47 people on the waitlist
-        </p>
+        {wlSubmitted ? (
+          <div className="mt-6 w-full max-w-sm rounded-md px-4 py-3 text-center" style={{border: '1px solid var(--color-border)'}}>
+            <p className="text-xs" style={{color: 'var(--color-text-secondary)'}}>
+              You are on the AI Studio waitlist. We will notify you when generation opens.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleWlSubmit} className="mt-6 w-full max-w-sm space-y-3">
+            <p className="text-xs uppercase tracking-widest text-center" style={{color: 'var(--color-text-tertiary)'}}>
+              Join the AI Studio waitlist
+            </p>
+            <div>
+              <input
+                type="email"
+                placeholder="Email *"
+                value={wlEmail}
+                onChange={(e) => setWlEmail(e.target.value)}
+                required
+                className="w-full px-3 py-2 text-sm rounded-md"
+                style={{backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)'}}
+              />
+            </div>
+            <div>
+              <input
+                type="tel"
+                placeholder="Phone (optional)"
+                value={wlPhone}
+                onChange={(e) => setWlPhone(e.target.value)}
+                className="w-full px-3 py-2 text-sm rounded-md"
+                style={{backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)'}}
+              />
+            </div>
+            <label className="flex items-start gap-2 text-left cursor-pointer">
+              <input
+                type="checkbox"
+                checked={wlEmailConsent}
+                onChange={(e) => setWlEmailConsent(e.target.checked)}
+                className="mt-0.5 size-3.5 shrink-0"
+                style={{accentColor: 'var(--color-accent-ochre)'}}
+              />
+              <span className="text-xs leading-relaxed" style={{color: 'var(--color-text-tertiary)'}}>
+                {wlConsentText}
+              </span>
+            </label>
+            <label className="flex items-start gap-2 text-left cursor-pointer">
+              <input
+                type="checkbox"
+                checked={wlSmsConsent}
+                onChange={(e) => setWlSmsConsent(e.target.checked)}
+                className="mt-0.5 size-3.5 shrink-0"
+                style={{accentColor: 'var(--color-accent-ochre)'}}
+              />
+              <span className="text-xs leading-relaxed" style={{color: 'var(--color-text-tertiary)'}}>
+                I agree to receive SMS updates about AI Studio and new drops.
+              </span>
+            </label>
+            {wlSmsConsent && !wlPhone.trim() && (
+              <p className="text-xs" style={{color: 'var(--color-accent-crimson, #dc2626)'}}>
+                Please enter a phone number for SMS consent.
+              </p>
+            )}
+            {wlFetcher.data && 'error' in wlFetcher.data && wlFetcher.state === 'idle' && (
+              <p className="text-xs text-center" style={{color: 'var(--color-accent-crimson, #dc2626)'}}>
+                {wlFetcher.data.error as string}
+              </p>
+            )}
+            <button
+              type="submit"
+              disabled={wlFetcher.state !== 'idle'}
+              className="w-full min-h-10 rounded-md text-xs font-semibold uppercase tracking-widest transition-opacity disabled:opacity-40"
+              style={{backgroundColor: 'var(--color-accent-ochre)', color: '#15120d'}}
+            >
+              {wlFetcher.state !== 'idle' ? 'Joining…' : 'Join Waitlist'}
+            </button>
+          </form>
+        )}
       </section>
     </main>
   );
