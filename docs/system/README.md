@@ -27,5 +27,8 @@ This directory answers the "how" questions about Kumachi Prints. Every document 
 | `04_operations.md` | Daily/weekly development workflow, adding products, publishing drops |
 | `05_deployment.md` | Local dev, CI/CD, Oxygen deployment, domain migration, rollback |
 | `06_selected_product_population.md` | Selected Woo mirror products to Shopify draft products through Hydrogen script |
+| `07_customer_accounts_and_notifications.md` | Customer Account API OAuth flow, account routes, notification architecture |
+| `08_listmonk_resend_campaigns.md` | Post-launch email campaign infrastructure with Listmonk + Resend |
+| `09_notification_qa_runbook.md` | Step-by-step verification runbook for Shopify + Printful transactional notifications |
 
 *Last updated: 2026-06*

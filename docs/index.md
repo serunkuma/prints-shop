@@ -43,6 +43,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | [06_selected_product_population.md](system/06_selected_product_population.md) | Populate selected Shopify draft products from the art-business launch list | Current |
 | [07_customer_accounts_and_notifications.md](system/07_customer_accounts_and_notifications.md) | Customer accounts, Shopify OAuth, order routes, notification flow, launch QA | Current |
 | [08_listmonk_resend_campaigns.md](system/08_listmonk_resend_campaigns.md) | Listmonk on Fly.io, Resend SMTP, subscriber sync, campaign flows, CAN-SPAM | Planning |
+| [09_notification_qa_runbook.md](system/09_notification_qa_runbook.md) | Shopify + Printful transactional notification QA runbook | Current |
 
 ## Planning (How We're Building It)
 
@@ -100,6 +101,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | How do customer accounts work? | [docs/system/07_customer_accounts_and_notifications.md](system/07_customer_accounts_and_notifications.md) |
 | How do we capture and consent contacts? | [docs/data/07_customer_contact_and_consent.md](data/07_customer_contact_and_consent.md) |
 | How does the email campaign stack work? | [docs/system/08_listmonk_resend_campaigns.md](system/08_listmonk_resend_campaigns.md) |
+| How do we test Shopify and Printful transactional notifications? | [docs/system/09_notification_qa_runbook.md](system/09_notification_qa_runbook.md) |
 
 ---
 
