@@ -1,10 +1,11 @@
 import type {ReactNode} from 'react';
 import {useLoaderData, type MetaFunction} from 'react-router';
-import {ArrowRight} from 'lucide-react';
+import {ArrowRight, SlidersHorizontal} from 'lucide-react';
 import {ProductCard} from '~/components/product/ProductCard';
 import {CategoryTiles} from '~/components/sections/CategoryTiles';
 import {AIPrintStudioTeaser} from '~/components/sections/AIPrintStudioTeaser';
 import {NewsletterSection} from '~/components/sections/NewsletterSection';
+import {FilterSidebar} from '~/components/collection/FilterSidebar';
 import {getFallbackProducts} from '~/lib/localFallback.server';
 import {requireInternalAccess} from '~/lib/internalAccess.server';
 import {PageHero, PageShell} from '~/components/design/PageTemplates';
@@ -117,6 +118,39 @@ export default function ComponentShowcasePage() {
 
         <ShowcaseBlock title="Newsletter Signup">
           <NewsletterSection />
+        </ShowcaseBlock>
+
+        <ShowcaseBlock title="Filter Sidebar (Desktop)"
+          description="Collapsible Color, Region, Genre, Price groups with swatch-style color selectors and checkbox controls.">
+          <div className="flex gap-8">
+            <div className="w-[240px] shrink-0">
+              <FilterSidebar
+                products={products}
+                activeFilters={{}}
+                onFilterChange={() => {}}
+                onClearAll={() => {}}
+                isMobileOpen={false}
+                onMobileClose={() => {}}
+                showGenre={true}
+                showPrice={true}
+              />
+            </div>
+            <div className="flex-1 p-8 flex items-center justify-center" style={{backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)'}}>
+              <p className="text-body-small" style={{color: 'var(--color-text-tertiary)'}}>Product grid appears here →</p>
+            </div>
+          </div>
+        </ShowcaseBlock>
+
+        <ShowcaseBlock title="Filter Sidebar (Mobile)"
+          description="Bottom-sheet panel triggered on small screens. Shows same groups with close and clear-all actions.">
+          <div className="flex items-center gap-4">
+            <span className="text-body-small px-3 py-1.5" style={{color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)'}}>
+              <SlidersHorizontal size={14} className="inline mr-1" />Filters
+            </span>
+            <p className="text-body-small" style={{color: 'var(--color-text-tertiary)'}}>
+              Tap to open mobile sheet — active filter count badge shown when applicable.
+            </p>
+          </div>
         </ShowcaseBlock>
 
       </section>

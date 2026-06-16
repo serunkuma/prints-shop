@@ -1,6 +1,7 @@
 import storefrontExport from '~/data/local-fallback/storefront-products.json';
 import siteContentExport from '~/data/local-fallback/sanity-site-content.ndjson?raw';
 import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
+import {genreToSlug, regionToSlug} from '~/lib/productFacets';
 
 let storefrontCache: any[] | null = null;
 let siteContentCache: Record<string, any> | null = null;
@@ -94,6 +95,12 @@ export function toHydrogenProduct(product: any) {
     seo: {
       title: product.title ? `${product.title} | Kumachi Prints` : 'Kumachi Prints',
       description: product.short_description || product.description || '',
+    },
+    facets: {
+      colors: product.colors || [],
+      region: product.region ? regionToSlug(product.region) : undefined,
+      genre: genreToSlug(product.category_name || product.genre || ''),
+      priceBand: null,
     },
     _fallback: true,
     _source: product,

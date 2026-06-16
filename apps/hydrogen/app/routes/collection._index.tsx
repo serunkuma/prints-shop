@@ -5,10 +5,12 @@ import {useLoaderData, useSearchParams, useRouteError, isRouteErrorResponse} fro
 import PathwaySwitch from '~/components/PathwaySwitch';
 import {CategoryTiles} from '~/components/sections/CategoryTiles';
 import {ProductGrid} from '~/components/product/ProductGrid';
+import {FilterSidebar} from '~/components/collection/FilterSidebar';
 import {getFallbackProducts} from '~/lib/localFallback.server';
 import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 import {COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
 import {PageShell} from '~/components/design/PageTemplates';
+import {slugToLabel, testPrice} from '~/lib/productFacets';
 
 const sortOptions = [
   {value: 'featured', label: 'Featured'},
@@ -17,37 +19,6 @@ const sortOptions = [
   {value: 'price-high', label: 'Price: High to Low'},
   {value: 'popular', label: 'Most Popular'},
 ];
-
-const filterMeta = {
-  color: [
-    {value: 'gold', label: 'Gold'},
-    {value: 'red', label: 'Red'},
-    {value: 'teal', label: 'Teal'},
-    {value: 'blue', label: 'Blue'},
-    {value: 'green', label: 'Green'},
-    {value: 'neutral', label: 'Neutral'},
-  ],
-  region: [
-    {value: 'East Africa', label: 'East Africa'},
-    {value: 'West Africa', label: 'West Africa'},
-    {value: 'Southern Africa', label: 'Southern Africa'},
-    {value: 'Diaspora', label: 'Diaspora'},
-  ],
-  genre: [
-    {value: 'figurative', label: 'Figurative'},
-    {value: 'landscape', label: 'Landscape'},
-    {value: 'abstract', label: 'Abstract'},
-    {value: 'portrait', label: 'Portrait'},
-    {value: 'cultural', label: 'Cultural'},
-    {value: 'wildlife', label: 'Wildlife'},
-  ],
-  price: [
-    {value: 'under-100', label: 'Under $100'},
-    {value: '100-200', label: '$100 - $200'},
-    {value: '200-500', label: '$200 - $500'},
-    {value: 'over-500', label: 'Over $500'},
-  ],
-};
 
 export const meta = () => [
   {title: 'Collection — Kumachi Prints'},
@@ -87,38 +58,27 @@ export default function CollectionIndex() {
     let result = [...products];
 
     if (activeFilters.color.length > 0) {
-      result = result.filter((p: any) =>
-        (p.tags || []).some((t: string) =>
-          activeFilters.color.some((c) => t.toLowerCase().includes(c)),
-        ),
-      );
+      result = result.filter((p: any) => {
+        const productColors = p.facets?.colors || [];
+        return activeFilters.color.some((c) => productColors.includes(c));
+      });
     }
     if (activeFilters.region.length > 0) {
-      result = result.filter((p: any) =>
-        activeFilters.region.some((r) =>
-          (p.description || p.productType || '').toLowerCase().includes(r.toLowerCase()),
-        ),
-      );
+      result = result.filter((p: any) => {
+        const productRegion = p.facets?.region;
+        return productRegion && activeFilters.region.includes(productRegion);
+      });
     }
     if (activeFilters.genre.length > 0) {
-      result = result.filter((p: any) =>
-        activeFilters.genre.some((g) =>
-          (p.productType || '').toLowerCase().includes(g),
-        ),
-      );
+      result = result.filter((p: any) => {
+        const productGenre = p.facets?.genre;
+        return productGenre && activeFilters.genre.includes(productGenre);
+      });
     }
     if (activeFilters.price.length > 0) {
       result = result.filter((p: any) => {
-        const price = p.priceRange?.minVariantPrice ? parseFloat(p.priceRange.minVariantPrice.amount) : 0;
-        return activeFilters.price.some((range) => {
-          switch (range) {
-            case 'under-100': return price < 100;
-            case '100-200': return price >= 100 && price <= 200;
-            case '200-500': return price > 200 && price <= 500;
-            case 'over-500': return price > 500;
-            default: return true;
-          }
-        });
+        const amount = p.priceRange?.minVariantPrice ? parseFloat(p.priceRange.minVariantPrice.amount) : 0;
+        return activeFilters.price.some((range) => testPrice(range, amount));
       });
     }
 
@@ -151,57 +111,55 @@ export default function CollectionIndex() {
 
   const activeFilterCount = Object.values(activeFilters).reduce((sum, arr) => sum + arr.length, 0);
 
-  const activeFilterPills: {key: string; label: string; value: string; category: keyof typeof activeFilters}[] = [];
+  const activeFilterPills: {key: string; label: string; value: string; category: string}[] = [];
   for (const [cat, values] of Object.entries(activeFilters)) {
-    const meta = filterMeta[cat as keyof typeof filterMeta];
     for (const v of values) {
-      const opt = meta.find((m) => m.value === v);
-      if (opt) activeFilterPills.push({key: `${cat}-${v}`, label: opt.label, value: v, category: cat as keyof typeof activeFilters});
+      const label = slugToLabel(v, cat);
+      if (label) activeFilterPills.push({key: `${cat}-${v}`, label, value: v, category: cat});
     }
   }
 
-  const handleFilterChange = useCallback((filters: typeof activeFilters) => {
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
-      for (const [key, values] of Object.entries(filters)) {
-        if (values.length > 0) params.set(key, values.join(','));
-        else params.delete(key);
-      }
-      return params;
-    }, {replace: true});
+  function replaceUrlParams(params: URLSearchParams) {
+    const qs = params.toString();
+    const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+    window.history.replaceState(null, '', url);
+    setSearchParams(params, {replace: true});
+  }
+
+  const handleFilterChange = useCallback((filters: Record<string, string[]>) => {
+    const params = new URLSearchParams(window.location.search);
+    for (const [key, values] of Object.entries(filters)) {
+      if (values.length > 0) params.set(key, values.join(','));
+      else params.delete(key);
+    }
+    replaceUrlParams(params);
   }, [setSearchParams]);
 
   const removeFilter = useCallback((category: string, value: string) => {
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
-      const current = params.get(category);
-      if (current) {
-        const values = current.split(',').filter((v) => v !== value);
-        if (values.length > 0) params.set(category, values.join(','));
-        else params.delete(category);
-      }
-      return params;
-    }, {replace: true});
+    const params = new URLSearchParams(window.location.search);
+    const current = params.get(category);
+    if (current) {
+      const values = current.split(',').filter((v) => v !== value);
+      if (values.length > 0) params.set(category, values.join(','));
+      else params.delete(category);
+    }
+    replaceUrlParams(params);
   }, [setSearchParams]);
 
   const clearAllFilters = useCallback(() => {
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
-      params.delete('color');
-      params.delete('region');
-      params.delete('genre');
-      params.delete('price');
-      return params;
-    }, {replace: true});
+    const params = new URLSearchParams(window.location.search);
+    params.delete('color');
+    params.delete('region');
+    params.delete('genre');
+    params.delete('price');
+    replaceUrlParams(params);
   }, [setSearchParams]);
 
   const handleSortChange = useCallback((value: string) => {
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
-      if (value === 'featured') params.delete('sort');
-      else params.set('sort', value);
-      return params;
-    }, {replace: true});
+    const params = new URLSearchParams(window.location.search);
+    if (value === 'featured') params.delete('sort');
+    else params.set('sort', value);
+    replaceUrlParams(params);
   }, [setSearchParams]);
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
@@ -336,35 +294,16 @@ export default function CollectionIndex() {
         </div>
 
         <div className="flex gap-8">
-          <div className="hidden lg:block w-[240px] shrink-0 space-y-8">
-            {Object.entries(filterMeta).map(([category, options]) => (
-              <div key={category}>
-                <p className="text-caption uppercase mb-3" style={{color: 'var(--color-text-secondary)'}}>{category}</p>
-                <div className="space-y-2">
-                  {options.map((opt) => {
-                    const isActive = activeFilters[category as keyof typeof activeFilters].includes(opt.value);
-                    return (
-                      <button
-                        key={opt.value}
-                        onClick={() => {
-                          const current = activeFilters[category as keyof typeof activeFilters];
-                          const next = isActive ? current.filter((v) => v !== opt.value) : [...current, opt.value];
-                          handleFilterChange({...activeFilters, [category]: next});
-                        }}
-                        className="block w-full text-left px-3 py-1.5 text-body-small transition-colors"
-                        style={{
-                          backgroundColor: isActive ? 'var(--color-bg-secondary)' : 'transparent',
-                          color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-                        }}
-                      >
-                        {opt.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
+          <FilterSidebar
+            products={products}
+            activeFilters={activeFilters}
+            onFilterChange={handleFilterChange}
+            onClearAll={clearAllFilters}
+            isMobileOpen={mobileFiltersOpen}
+            onMobileClose={() => setMobileFiltersOpen(false)}
+            showGenre={true}
+            showPrice={true}
+          />
 
           <div className="flex-1 min-w-0">
             {filteredProducts.length === 0 ? (
@@ -395,63 +334,6 @@ export default function CollectionIndex() {
           </div>
         </div>
       </div>
-
-      <AnimatePresence>
-        {mobileFiltersOpen && (
-          <>
-            <motion.div
-              initial={{opacity: 0}}
-              animate={{opacity: 1}}
-              exit={{opacity: 0}}
-              className="fixed inset-0 z-[60]"
-              style={{backgroundColor: 'rgba(0,0,0,0.3)'}}
-              onClick={() => setMobileFiltersOpen(false)}
-            />
-            <motion.aside
-              initial={{x: '100%'}}
-              animate={{x: 0}}
-              exit={{x: '100%'}}
-              transition={{duration: 0.32, ease: [0.22, 1, 0.36, 1]}}
-              className="fixed bottom-0 right-0 top-0 z-[70] w-[min(88vw,360px)] p-6 overflow-y-auto"
-              style={{backgroundColor: 'var(--color-surface)', borderLeft: '1px solid var(--color-border)'}}
-            >
-              <div className="flex items-center justify-between mb-8">
-                <p className="text-h4" style={{color: 'var(--color-text-primary)'}}>Filters</p>
-                <button onClick={() => setMobileFiltersOpen(false)} className="flex min-h-11 min-w-11 items-center justify-center text-text-primary">
-                  <X size={20} strokeWidth={1.6} />
-                </button>
-              </div>
-              {Object.entries(filterMeta).map(([category, options]) => (
-                <div key={category} className="mb-6">
-                  <p className="text-caption uppercase mb-3" style={{color: 'var(--color-text-secondary)'}}>{category}</p>
-                  <div className="space-y-2">
-                    {options.map((opt) => {
-                      const isActive = activeFilters[category as keyof typeof activeFilters].includes(opt.value);
-                      return (
-                        <button
-                          key={opt.value}
-                          onClick={() => {
-                            const current = activeFilters[category as keyof typeof activeFilters];
-                            const next = isActive ? current.filter((v) => v !== opt.value) : [...current, opt.value];
-                            handleFilterChange({...activeFilters, [category]: next});
-                          }}
-                          className="block w-full text-left px-3 py-2 text-body-small transition-colors"
-                          style={{
-                            backgroundColor: isActive ? 'var(--color-bg-secondary)' : 'transparent',
-                            color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-                          }}
-                        >
-                          {opt.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
     </PageShell>
   );
 }
