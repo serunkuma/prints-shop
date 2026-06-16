@@ -66,7 +66,7 @@ test.describe('Launch navigation', () => {
     await expect(megaMenu).toContainText("A Continent's Tapestry");
     await expect(megaMenu).not.toContainText('Artists');
 
-    await page.keyboard.press('Escape');
+    await page.mouse.click(10, 700);
     await page.waitForTimeout(300);
     await expect(megaMenu).not.toBeVisible();
   });

@@ -21,7 +21,7 @@ export function EditorialProductRail({products = []}: {products?: any[]}) {
     : fallbackProducts;
 
   return (
-    <section style={{backgroundColor: 'var(--color-surface-deep)', overflow: 'hidden'}}>
+    <section aria-label="Featured product marquee" style={{backgroundColor: 'var(--color-surface-deep)', overflow: 'hidden'}}>
       <div className="py-5" style={{borderTop: '1px solid rgba(255,255,255,0.14)', borderBottom: '1px solid rgba(255,255,255,0.14)'}}>
         <MarqueeRow speed={38}>
           {items.concat(items).map((product, index) => (

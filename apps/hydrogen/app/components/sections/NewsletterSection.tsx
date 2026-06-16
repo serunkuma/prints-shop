@@ -1,3 +1,5 @@
+import {useId} from 'react';
+
 interface NewsletterSectionProps {
   section?: {
     heading?: string;
@@ -6,24 +8,58 @@ interface NewsletterSectionProps {
 }
 
 export function NewsletterSection({section}: NewsletterSectionProps) {
-  const heading = section?.heading || 'New drops, studio notes, and print stories.';
-  const description = section?.description || 'Join the list for release notes and first looks. The real email integration comes after checkout QA.';
+  const generatedId = useId();
+  const emailId = `newsletter-email-${generatedId.replace(/:/g, '')}`;
+  const headingId = `newsletter-heading-${generatedId.replace(/:/g, '')}`;
+  const heading = section?.heading || 'Stay with Kumachi Prints';
+  const description = section?.description || 'Release notes, studio signals, and the first look at what enters the shop next.';
 
   return (
-    <section className="kumachi-section" style={{backgroundColor: 'var(--color-surface-deep)', color: 'var(--color-bg-primary)'}}>
-      <div className="container-gallery grid grid-cols-1 gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-end">
-        <div>
-          <p className="text-caption uppercase" style={{color: 'var(--color-accent-ochre)'}}>Stay close</p>
-          <h2 className="text-h2 mt-3 max-w-3xl">{heading}</h2>
-          <p className="text-body mt-5 max-w-xl" style={{color: '#d8cbb7'}}>
+    <section
+      aria-label="Newsletter signup"
+      className="kumachi-section"
+      style={{
+        backgroundColor: 'var(--color-bg-primary)',
+        borderTop: '1px solid var(--color-border)',
+      }}
+    >
+      <div className="container-gallery">
+        <div className="mx-auto max-w-[640px] text-center">
+          <span className="accent-rule" />
+          <p className="text-caption mt-5 uppercase" style={{color: 'var(--color-accent-clay)'}}>Stay close</p>
+          <h2 id={headingId} className="text-h2 mt-3" style={{color: 'var(--color-text-primary)'}}>
+            {heading}
+          </h2>
+          <p className="text-body mx-auto mt-5 max-w-[520px]" style={{color: 'var(--color-text-secondary)'}}>
             {description}
           </p>
+          <form className="mx-auto mt-8 flex max-w-[520px] flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-end" onSubmit={(event) => event.preventDefault()}>
+            <div className="min-w-0 flex-1 text-left">
+              <label className="text-caption uppercase" htmlFor={emailId} style={{color: 'var(--color-text-tertiary)'}}>
+                Email address
+              </label>
+              <input
+                id={emailId}
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                className="mt-2 min-h-12 w-full bg-transparent px-0 text-body"
+                style={{
+                  borderBottom: '1px solid var(--color-border)',
+                  color: 'var(--color-text-primary)',
+                }}
+              />
+            </div>
+            <button
+              type="submit"
+              className="min-h-12 px-6 text-button uppercase transition-opacity hover:opacity-85"
+              style={{backgroundColor: 'var(--color-accent-ochre)', color: '#15120d'}}
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
-        <form className="flex flex-col gap-3 sm:flex-row" onSubmit={(event) => event.preventDefault()}>
-          <label className="sr-only" htmlFor="newsletter-email">Email address</label>
-          <input id="newsletter-email" type="email" placeholder="you@example.com" className="min-h-12 flex-1 border border-white/20 bg-white/10 px-4 text-sm text-white placeholder:text-white/60" />
-          <button type="submit" className="min-h-12 bg-gold px-6 text-button uppercase text-void">Notify me</button>
-        </form>
       </div>
     </section>
   );

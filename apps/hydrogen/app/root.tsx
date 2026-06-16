@@ -9,6 +9,7 @@ import {Header} from '~/components/layout/Header';
 import {Footer} from '~/components/layout/Footer';
 import {AnnouncementBar} from '~/components/layout/AnnouncementBar';
 import {CartDrawer} from '~/components/cart/CartDrawer';
+import {NewsletterSection} from '~/components/sections/NewsletterSection';
 import {Toaster} from 'sonner';
 import {getFallbackSiteDoc} from '~/lib/localFallback.server';
 
@@ -99,6 +100,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
         ) : null}
         <Header />
         <main className="flex-1">{children}</main>
+        <NewsletterSection />
         <Footer />
         <CartDrawer />
         <Toaster richColors position="bottom-right" />

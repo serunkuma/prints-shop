@@ -32,6 +32,19 @@ export function Header() {
   }, [location.pathname]);
 
   useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+      setMegaMenuOpen(false);
+      setMobileMenuOpen(false);
+      collectionRef.current?.focus();
+    };
+
+    window.addEventListener('keydown', onKeyDown, {capture: true});
+    return () => window.removeEventListener('keydown', onKeyDown, {capture: true});
+  }, []);
+
+  useEffect(() => {
     const savedTheme = window.localStorage.getItem('kumachi-theme');
     const nextTheme = savedTheme === 'dark' ? 'dark' : 'light';
     setTheme(nextTheme);
