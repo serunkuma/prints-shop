@@ -18,7 +18,7 @@ export function AIPrintStudioTeaser() {
           <motion.div initial={{opacity: 0, y: 24}} whileInView={{opacity: 1, y: 0}} viewport={{once: true}} transition={{duration: 0.55}} className="kumachi-card flex flex-col justify-between p-6 sm:p-8 lg:p-10">
             <div>
               <span className="accent-rule" />
-              <p className="text-caption mt-5 uppercase" style={{color: 'var(--color-accent-clay)'}}>Kumachi Prints AI studio</p>
+              <p className="text-caption mt-5 uppercase" style={{color: 'var(--color-accent-clay)'}}>Kumachi Prints AI Studio</p>
               <h2 className="text-h2 mt-4" style={{color: 'var(--color-text-primary)'}}>Start with memory. Shape it in the Kumachi language.</h2>
               <p className="text-body mt-5 max-w-[560px]" style={{color: 'var(--color-text-secondary)'}}>
                 A public demo for creating AI art shaped by African heritage, culture, and Kuma's visual language. Live generation and ordering are not open yet; the waitlist is where the Studio begins.
@@ -39,7 +39,7 @@ export function AIPrintStudioTeaser() {
                 ))}
               </div>
               <Link to="/create" className="mt-6 inline-flex" style={{textDecoration: 'none'}}>
-                <AnimatedButton>Try the Demo</AnimatedButton>
+                <AnimatedButton>Enter the Demo</AnimatedButton>
               </Link>
             </div>
           </motion.div>

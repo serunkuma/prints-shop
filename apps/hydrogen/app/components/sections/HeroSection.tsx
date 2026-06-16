@@ -87,10 +87,10 @@ export function HeroSection({section}: HeroSectionProps) {
               ) : (
                 <>
                   <Link to="/collection" style={{textDecoration: 'none'}}>
-                    <AnimatedButton>Buy Curated Collection</AnimatedButton>
+                    <AnimatedButton>See the Drop</AnimatedButton>
                   </Link>
                   <Link to="/create" style={{textDecoration: 'none'}}>
-                    <AnimatedButton variant="outline">Try AI Studio</AnimatedButton>
+                    <AnimatedButton variant="outline">Enter AI Studio</AnimatedButton>
                   </Link>
                 </>
               )}

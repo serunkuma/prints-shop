@@ -97,7 +97,7 @@ export async function action({request, context}: {request: Request; context: any
     smsConsentedAt: smsConsent ? now : undefined,
     sourcePage: sourcePage || undefined,
     userAgent: request.headers.get('user-agent') || '',
-    ipAddress: hashIp(ipAddress),
+    ipHash: hashIp(ipAddress),
     createdAt: now,
   };
 

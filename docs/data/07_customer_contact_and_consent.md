@@ -38,7 +38,7 @@ Every contact capture should collect (at minimum):
 | `smsConsentText` | string (text) | Yes (if sms checked) | The exact consent text shown at time of SMS opt-in |
 | `smsConsentedAt` | datetime | Yes (if sms checked) | ISO 8601 timestamp |
 | `sourcePage` | string | Yes | URL path where capture occurred |
-| `ipAddress` | string | Yes | Captured server-side, not exposed to client |
+| `ipHash` | string | Yes | One-way hash of request IP captured server-side; raw IP is never stored |
 | `userAgent` | string | Yes | Captured server-side, not exposed to client |
 | `createdAt` | datetime | Yes | Auto-recorded on capture |
 | `shopifyCustomerId` | string | No | Set if contact is linked to a Shopify customer record |
