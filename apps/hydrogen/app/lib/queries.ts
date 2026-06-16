@@ -16,10 +16,44 @@ export const PRODUCT_SUPPLEMENT_QUERY = defineQuery(`*[_type == "productSuppleme
   ink,
   edition,
   inspiration,
+  galleryImages[]{
+    _key,
+    role,
+    caption,
+    alt,
+    "url": asset->url,
+    "asset": asset->{url, mimeType}
+  },
   additionalImages,
   mockupImages,
   roomImages,
-  videos,
+  roomMockups[]{
+    _key,
+    roomType,
+    placementNote,
+    caption,
+    alt,
+    "url": asset->url,
+    "asset": asset->{url, mimeType}
+  },
+  videos[]{
+    _key,
+    caption,
+    duration,
+    "url": asset->url,
+    "asset": asset->{url, mimeType},
+    "poster": poster{asset->{url}}
+  },
+  sizeGuidance,
+  placementSuggestions,
+  trustNotes,
+  productFaq,
+  printDetails,
+  relatedProductHandles,
+  relatedLinks,
+  shippingNote,
+  returnsNote,
+  seo,
   "artist": artistRef->{name, slug, portrait, bio, featuredQuote},
   "series": seriesRef->{title, slug}
 }`);
@@ -187,6 +221,7 @@ export const PRODUCT_QUERY = `#graphql
             amount
             currencyCode
           }
+          sku
           compareAtPrice {
             amount
             currencyCode

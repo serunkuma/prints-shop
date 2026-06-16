@@ -123,7 +123,7 @@ export type ProductQuery = {
         nodes: Array<
           Pick<
             StorefrontAPI.ProductVariant,
-            'id' | 'title' | 'availableForSale'
+            'id' | 'title' | 'availableForSale' | 'sku'
           > & {
             selectedOptions: Array<
               Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>
@@ -690,7 +690,7 @@ interface GeneratedQueryTypes {
     return: CollectionProductsQuery;
     variables: CollectionProductsQueryVariables;
   };
-  '#graphql\n  query Product($handle: String!) {\n    product(handle: $handle) {\n      id\n      title\n      handle\n      description\n      descriptionHtml\n      featuredImage {\n        id\n        url\n        altText\n        width\n        height\n      }\n      images(first: 10) {\n        nodes {\n          id\n          url\n          altText\n          width\n          height\n        }\n      }\n      priceRange {\n        minVariantPrice {\n          amount\n          currencyCode\n        }\n        maxVariantPrice {\n          amount\n          currencyCode\n        }\n      }\n      variants(first: 100) {\n        nodes {\n          id\n          title\n          availableForSale\n          selectedOptions {\n            name\n            value\n          }\n          price {\n            amount\n            currencyCode\n          }\n          compareAtPrice {\n            amount\n            currencyCode\n          }\n        }\n      }\n      seo {\n        title\n        description\n      }\n    }\n  }\n': {
+  '#graphql\n  query Product($handle: String!) {\n    product(handle: $handle) {\n      id\n      title\n      handle\n      description\n      descriptionHtml\n      featuredImage {\n        id\n        url\n        altText\n        width\n        height\n      }\n      images(first: 10) {\n        nodes {\n          id\n          url\n          altText\n          width\n          height\n        }\n      }\n      priceRange {\n        minVariantPrice {\n          amount\n          currencyCode\n        }\n        maxVariantPrice {\n          amount\n          currencyCode\n        }\n      }\n      variants(first: 100) {\n        nodes {\n          id\n          title\n          availableForSale\n          selectedOptions {\n            name\n            value\n          }\n          price {\n            amount\n            currencyCode\n          }\n          sku\n          compareAtPrice {\n            amount\n            currencyCode\n          }\n        }\n      }\n      seo {\n        title\n        description\n      }\n    }\n  }\n': {
     return: ProductQuery;
     variables: ProductQueryVariables;
   };

@@ -7,9 +7,24 @@ test.describe('Launch commerce', () => {
 
     await expect(page.getByRole('heading', {name: 'Majestic Monarch', level: 1})).toBeVisible();
     await expect(page.getByText(/Price shown after Shopify import|Add to Cart|Unavailable/i).first()).toBeVisible();
+    await expect(page.getByLabel('Product media gallery')).toBeVisible();
     await expect(page.getByText(/Story/i).first()).toBeVisible();
     await expect(page.getByText(/Print Details/i)).toBeVisible();
+    await expect(page.getByText(/In Your Space/i).first()).toBeVisible();
+    await expect(page.getByText(/Size & Placement/i)).toBeVisible();
+    await expect(page.getByText(/Shipping & Returns/i).first()).toBeVisible();
     await expect(page.getByText(/Size|Format/i).first()).toBeVisible();
+    await expect(page.getByLabel('Related Prints')).toBeVisible();
+    await expect(page.locator('body')).not.toContainText(/free shipping|over \$75|Page not found|Unknown block type/i);
+  });
+
+  test('Given a mobile visitor scrolls the PDP Then the sticky purchase bar appears', async ({page}) => {
+    await page.setViewportSize({width: 375, height: 720});
+    const response = await page.goto('/products/majestic-monarch');
+    expect(response?.ok()).toBeTruthy();
+
+    await page.mouse.wheel(0, 1600);
+    await expect(page.getByRole('region', {name: 'Product purchase summary'})).toBeVisible();
     await expect(page.locator('body')).not.toContainText(/free shipping|over \$75|Page not found|Unknown block type/i);
   });
 

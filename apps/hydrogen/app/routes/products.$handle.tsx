@@ -1,18 +1,16 @@
-import {useMemo, useState} from 'react';
-import {Link, useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
-import type {MetaArgs} from 'react-router';
-import {type HeadersFunction} from 'react-router';
-import {generateCacheControlHeader, CacheShort} from '@shopify/hydrogen';
-import {ChevronDown, Lock, RefreshCw, Truck} from 'lucide-react';
-import {AnimatePresence, motion} from 'framer-motion';
+import {useMemo, useRef, useState} from 'react';
+import {Link, isRouteErrorResponse, useLoaderData, useRouteError} from 'react-router';
+import type {HeadersFunction, MetaArgs} from 'react-router';
+import {CacheShort, generateCacheControlHeader} from '@shopify/hydrogen';
 import {PRODUCT_QUERY, PRODUCT_SUPPLEMENT_QUERY} from '~/lib/queries';
-import {formatPrice} from '~/lib/format';
-import {ProductMedia} from '~/components/product/ProductMedia';
-import {VariantSelector} from '~/components/product/VariantSelector';
-import {AddToCart} from '~/components/product/AddToCart';
-import {PortableText} from '~/components/editorial/PortableText';
-import {getFallbackProduct} from '~/lib/localFallback.server';
 import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
+import {getFallbackProduct, getFallbackProducts} from '~/lib/localFallback.server';
+import {ProductGallery} from '~/components/product/ProductGallery';
+import {ProductPurchasePanel} from '~/components/product/ProductPurchasePanel';
+import {ProductStorySections} from '~/components/product/ProductStorySections';
+import {ProductStickyMobileBar} from '~/components/product/ProductStickyMobileBar';
+import {RelatedProductsRail} from '~/components/product/RelatedProductsRail';
+import {RoomPlacementGallery} from '~/components/product/RoomPlacementGallery';
 
 export const headers: HeadersFunction = () => ({
   'Cache-Control': generateCacheControlHeader(CacheShort()),
@@ -31,26 +29,165 @@ export const meta = ({data}: MetaArgs<typeof loader>) => {
       name: 'description',
       content:
         supplement?.seo?.metaDescription ||
-        product?.description?.slice(0, 160),
+        product?.description?.slice(0, 160) ||
+        'Archival art prints from Kumachi Prints.',
     },
   ];
 };
 
+function portableStory(product: any) {
+  if (!product._source?.long_description) return [];
+  return [
+    {
+      _key: `${product.handle}-fallback-story`,
+      _type: 'block',
+      style: 'normal',
+      children: [
+        {
+          _key: `${product.handle}-fallback-story-span`,
+          _type: 'span',
+          text: product._source.long_description,
+        },
+      ],
+    },
+  ];
+}
+
+function roomMockups(product: any) {
+  return (product._source?.room_mockups || []).map((url: string, index: number) => ({
+    _key: `${product.handle}-room-${index}`,
+    url,
+    alt: `${product.title} shown in a styled room`,
+    roomType: index === 0 ? 'Living room' : index === 1 ? 'Study' : 'Gallery wall',
+    placementNote:
+      index === 0
+        ? 'A larger size gives the composition room to hold the wall.'
+        : index === 1
+          ? 'Works as a focused piece near books, desks, or consoles.'
+          : 'Pair with quiet spacing so the print keeps its edge.',
+  }));
+}
+
+function placementSuggestions(product: any) {
+  const category = `${product._source?.category_name || product.productType || ''}`.toLowerCase();
+  if (category.includes('landscape') || category.includes('nature')) {
+    return ['Living room', 'Above console', 'Office'];
+  }
+  if (category.includes('abstract')) {
+    return ['Gallery wall', 'Reading corner', 'Entryway'];
+  }
+  if (category.includes('portrait') || category.includes('figurative')) {
+    return ['Study', 'Hallway', 'Bedroom'];
+  }
+  return ['Living room', 'Study', 'Hallway'];
+}
+
+function buildFallbackSupplement(product: any) {
+  const source = product._source || {};
+  const mockups = roomMockups(product);
+  const printDetails = source.print_details || {};
+
+  return {
+    story: portableStory(product),
+    technique: source.technique || source.medium || 'Digital archival print',
+    paper: printDetails.paper || source.paper,
+    ink: printDetails.ink || source.ink,
+    edition: printDetails.edition || source.edition || 'Open edition',
+    printDetails,
+    galleryImages: [],
+    mockupImages: mockups,
+    roomMockups: mockups,
+    roomImages: [],
+    videos: [],
+    sizeGuidance:
+      source.product_faq ||
+      (source.default_size
+        ? `The default ${source.default_size} format is a strong starting point; go larger when the wall needs a single anchor.`
+        : 'Choose a size that gives the composition enough breathing room for the wall.'),
+    placementSuggestions: placementSuggestions(product),
+    trustNotes: source.trust_notes || ['Archival paper', 'Pigment ink', 'Produced after ordering'],
+    productFaq: source.product_faq,
+    relatedLinks: source.related_links || [],
+    shippingNote: source.shipping_note,
+    returnsNote: source.returns_note,
+    artist: source.artist
+      ? {
+          name: source.artist.name || 'Kuma',
+          bio: source.artist.bio,
+          featuredQuote: source.artist.featured_quote,
+        }
+      : {
+          name: 'Kuma',
+          bio: 'Kumachi Prints translates Kuma’s visual world into considered archival prints for homes, studios, and thoughtful collections.',
+        },
+    series: source.series ? {title: source.series} : {title: 'Opening Drop'},
+    seo: product.seo,
+  };
+}
+
+function normalizeSupplement(supplement: any, product: any, fallbackProduct?: any) {
+  const fallbackSupplement = product?._fallback
+    ? buildFallbackSupplement(product)
+    : fallbackProduct
+      ? buildFallbackSupplement(fallbackProduct)
+      : null;
+  if (supplement && fallbackSupplement) {
+    return {
+      ...fallbackSupplement,
+      ...supplement,
+      printDetails: supplement.printDetails || fallbackSupplement.printDetails,
+      galleryImages: supplement.galleryImages?.length ? supplement.galleryImages : fallbackSupplement.galleryImages,
+      mockupImages: supplement.mockupImages?.length ? supplement.mockupImages : fallbackSupplement.mockupImages,
+      roomMockups: supplement.roomMockups?.length ? supplement.roomMockups : fallbackSupplement.roomMockups,
+      roomImages: supplement.roomImages?.length ? supplement.roomImages : fallbackSupplement.roomImages,
+      videos: supplement.videos?.length ? supplement.videos : fallbackSupplement.videos,
+      placementSuggestions: supplement.placementSuggestions?.length
+        ? supplement.placementSuggestions
+        : fallbackSupplement.placementSuggestions,
+      trustNotes: supplement.trustNotes?.length ? supplement.trustNotes : fallbackSupplement.trustNotes,
+      relatedLinks: supplement.relatedLinks?.length ? supplement.relatedLinks : fallbackSupplement.relatedLinks,
+      artist: supplement.artist || fallbackSupplement.artist,
+      series: supplement.series || fallbackSupplement.series,
+      shippingNote: supplement.shippingNote || fallbackSupplement.shippingNote,
+      returnsNote: supplement.returnsNote || fallbackSupplement.returnsNote,
+      productFaq: supplement.productFaq || fallbackSupplement.productFaq,
+      sizeGuidance: supplement.sizeGuidance || fallbackSupplement.sizeGuidance,
+    };
+  }
+  if (supplement) return supplement;
+  if (fallbackSupplement) return fallbackSupplement;
+  return null;
+}
+
+function relatedFallbackProducts(currentProduct: any, products: any[]) {
+  if (!products?.length) return [];
+  const currentCategory = currentProduct._source?.category_name || currentProduct.productType;
+  const currentColors = new Set(currentProduct._source?.colors || []);
+
+  const scored = products
+    .filter((product) => product.handle !== currentProduct.handle)
+    .map((product) => {
+      const sameCategory = (product._source?.category_name || product.productType) === currentCategory;
+      const colorOverlap = (product._source?.colors || []).some((color: string) => currentColors.has(color));
+      return {product, score: Number(sameCategory) * 2 + Number(colorOverlap)};
+    })
+    .sort((a, b) => b.score - a.score || a.product.title.localeCompare(b.product.title));
+
+  return scored.slice(0, 4).map((item) => item.product);
+}
+
 export async function loader({params, context}: {params: any; context: any}) {
   const {handle} = params;
 
-  if (!handle) {
+  if (!handle || !OPENING_DROP_HANDLES.has(handle)) {
     throw new Response('Not found', {status: 404});
   }
 
-  if (!OPENING_DROP_HANDLES.has(handle)) {
-    throw new Response('Not found', {status: 404});
-  }
-
-  const [productData, supplement, fallbackProduct] = await Promise.all([
+  const [productData, supplementData, fallbackProduct, fallbackProducts] = await Promise.all([
     context.storefront.query(PRODUCT_QUERY, {variables: {handle}}).catch(() => null),
     context.sanity.fetch(PRODUCT_SUPPLEMENT_QUERY, {handle}).catch(() => null),
     getFallbackProduct(handle, context.env),
+    getFallbackProducts(context.env),
   ]);
 
   const product = productData?.product || fallbackProduct;
@@ -59,37 +196,21 @@ export async function loader({params, context}: {params: any; context: any}) {
     throw new Response('Not found', {status: 404});
   }
 
-  const fallbackSupplement =
-    !supplement && product?._fallback
-      ? {
-          story: product._source?.long_description
-            ? [
-                {
-                  _key: `${product.handle}-fallback-story`,
-                  _type: 'block',
-                  style: 'normal',
-                  children: [{_key: `${product.handle}-fallback-story-span`, _type: 'span', text: product._source.long_description}],
-                },
-              ]
-            : [],
-          paper: product._source?.print_details?.paper || product._source?.paper,
-          ink: product._source?.print_details?.ink || product._source?.ink,
-          edition: product._source?.print_details?.edition || product._source?.edition,
-          seo: product.seo,
-        }
-      : supplement;
+  const supplement = normalizeSupplement(supplementData, product, fallbackProduct);
+  const relatedProducts = relatedFallbackProducts(fallbackProduct || product, fallbackProducts);
 
-  return {product, supplement: fallbackSupplement};
+  return {product, supplement, relatedProducts};
 }
 
 export default function ProductPage() {
-  const {product, supplement} = useLoaderData<typeof loader>();
+  const {product, supplement, relatedProducts} = useLoaderData<typeof loader>();
+  const purchaseRef = useRef<HTMLDivElement | null>(null);
+  const [quantity, setQuantity] = useState(1);
 
   const minPrice = product.priceRange?.minVariantPrice;
   const maxPrice = product.priceRange?.maxVariantPrice;
   const variants = product.variants?.nodes || [];
-  const images = product.images?.nodes || [];
-  const allUnavailable = variants.length > 0 && variants.every((v: any) => !v.availableForSale);
+  const allUnavailable = variants.length > 0 && variants.every((variant: any) => !variant.availableForSale);
   const isFallbackProduct = Boolean(product._fallback);
   const initialVariant = useMemo(
     () => variants.find((variant: any) => variant.availableForSale) || variants[0],
@@ -101,279 +222,74 @@ export default function ProductPage() {
   const selectedVariant =
     variants.find((variant: any) => variant.id === selectedVariantId) || initialVariant;
   const selectedPrice = selectedVariant?.price || minPrice;
-  const [shippingOpen, setShippingOpen] = useState(false);
-  const optionSummary = selectedVariant?.selectedOptions?.map((option: any) => option.value).join(' / ');
-  const hasStory = Array.isArray(supplement?.story) && supplement.story.length > 0;
-  const hasInspiration = Array.isArray(supplement?.inspiration) && supplement.inspiration.length > 0;
+  const optionSummary = selectedVariant?.selectedOptions
+    ?.map((option: any) => option.value)
+    .join(' / ');
+  const roomImages = [
+    ...(supplement?.roomMockups || []),
+    ...(supplement?.mockupImages || []),
+    ...(supplement?.roomImages || []),
+  ];
 
   return (
-    <main className="min-h-dvh pt-24 pb-28 md:pb-0" style={{backgroundColor: 'var(--color-bg-primary)'}}>
-      <section className="container-gallery grid grid-cols-1 gap-10 py-8 lg:grid-cols-[60%_40%] lg:gap-14">
-        <div className="lg:col-span-2">
-          <nav className="flex flex-wrap items-center gap-2 text-caption uppercase text-text-muted">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <Link to="/collection">Collection</Link>
-            <span>/</span>
-            <span className="text-text-primary">{product.title}</span>
-          </nav>
-        </div>
+    <main className="min-h-dvh pb-28 pt-24 md:pb-0" style={{backgroundColor: 'var(--color-bg-primary)'}}>
+      <section className="container-gallery py-8">
+        <nav className="flex flex-wrap items-center gap-2 text-caption uppercase text-text-muted">
+          <Link to="/">Home</Link>
+          <span>/</span>
+          <Link to="/collection">Collection</Link>
+          <span>/</span>
+          <span className="text-text-primary">{product.title}</span>
+        </nav>
 
-        <div className="lg:sticky lg:top-24 lg:self-start">
-          <ProductMedia
-            featuredImage={product.featuredImage}
-            images={images}
-            title={product.title}
+        <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[58%_42%] lg:gap-14">
+          <ProductGallery product={product} supplement={supplement} />
+
+          <ProductPurchasePanel
+            product={product}
+            supplement={supplement}
+            variants={variants}
+            selectedVariant={selectedVariant}
+            selectedVariantId={selectedVariant?.id || selectedVariantId}
+            onVariantSelect={setSelectedVariantId}
+            selectedPrice={selectedPrice}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            optionSummary={optionSummary}
+            quantity={quantity}
+            setQuantity={setQuantity}
+            isFallbackProduct={isFallbackProduct}
+            allUnavailable={allUnavailable}
+            purchaseRef={purchaseRef}
           />
-        </div>
-
-        <div className="pb-8">
-          {supplement?.series?.title && (
-            <p className="text-caption uppercase" style={{color: 'var(--color-accent-clay)'}}>{supplement.series.title}</p>
-          )}
-          {supplement?.artist?.name && (
-            <Link to={`/artists/${supplement.artist.slug?.current || supplement.artist.slug || ''}`} className="text-h4 font-display hover:underline" style={{color: 'var(--color-text-secondary)'}}>
-              {supplement.artist.name}
-            </Link>
-          )}
-
-          <h1 className="mt-1 text-h1 font-display" style={{color: 'var(--color-text-primary)'}}>{product.title}</h1>
-
-          {(selectedPrice || isFallbackProduct) && (
-            <div className="mt-4">
-              <AnimatePresence mode="wait">
-                {isFallbackProduct ? (
-                  <motion.span
-                    key="fallback-price"
-                    className="text-body-small uppercase tracking-wide"
-                    style={{color: 'var(--color-text-secondary)'}}
-                    initial={{opacity: 0, y: -8}}
-                    animate={{opacity: 1, y: 0}}
-                    exit={{opacity: 0, y: 8}}
-                    transition={{duration: 0.2}}
-                  >
-                    Price shown after Shopify import
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key={`${selectedVariant?.id || 'price'}-${selectedPrice.amount}`}
-                    className="text-price"
-                    style={{color: 'var(--color-text-primary)'}}
-                    initial={{opacity: 0, y: -8}}
-                    animate={{opacity: 1, y: 0}}
-                    exit={{opacity: 0, y: 8}}
-                    transition={{duration: 0.2}}
-                  >
-                    {formatPrice(parseFloat(selectedPrice.amount) * 100)}
-                    {!selectedVariant && maxPrice?.amount !== minPrice?.amount &&
-                      ` - ${formatPrice(parseFloat(maxPrice.amount) * 100)}`}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-              {optionSummary && <p className="mt-1 text-xs" style={{color: 'var(--color-text-secondary)'}}>{optionSummary}</p>}
-            </div>
-          )}
-
-          {supplement?.technique && (
-            <p className="mt-4 text-body text-text-secondary">
-              Technique:{' '}
-              <span className="text-text-primary">
-                {supplement.technique}
-              </span>
-            </p>
-          )}
-
-          {product.description && (
-            <div className="text-body mt-6 max-w-[440px] leading-relaxed" style={{color: 'var(--color-text-secondary)'}}>
-              {product.description}
-            </div>
-          )}
-
-          <div className="mt-8 border-t border-border pt-8">
-            {variants.length > 0 && (!allUnavailable || isFallbackProduct) && (
-              <VariantSelector
-                variants={variants}
-                selectedVariantId={selectedVariant?.id || null}
-                onSelect={setSelectedVariantId}
-              />
-            )}
-
-            {isFallbackProduct ? (
-              <div className="mb-6 border border-border bg-surface-mid px-6 py-4">
-                <p className="text-body text-text-muted">Available after Shopify import</p>
-              </div>
-            ) : allUnavailable ? (
-              <div className="mb-6 border border-border bg-surface-mid px-6 py-4">
-                <p className="text-body text-text-muted">Sold out</p>
-              </div>
-            ) : (
-              <AddToCart
-                variantId={selectedVariant?.id || null}
-                disabled={!selectedVariant?.availableForSale}
-                label={selectedVariant?.availableForSale ? 'Add to Cart' : 'Unavailable'}
-              />
-            )}
-          </div>
-
-          <div className="mt-3 flex items-center gap-1.5 text-xs" style={{color: 'var(--color-text-secondary)'}}>
-            <Truck size={14} />
-            <span>Produced after ordering. Shipping is calculated at checkout.</span>
-          </div>
-
-          <div className="mt-6 flex items-center justify-between">
-            {[
-              {icon: Lock, label: 'Secure Checkout'},
-              {icon: Truck, label: 'Careful Shipping'},
-              {icon: RefreshCw, label: '30-Day Returns'},
-            ].map(({icon: Icon, label}) => (
-              <div key={label} className="flex flex-col items-center gap-1">
-                <Icon size={18} strokeWidth={1.5} style={{color: 'var(--color-text-tertiary)'}} />
-                <span className="text-caption text-center" style={{color: 'var(--color-text-tertiary)'}}>{label}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6">
-            <button
-              type="button"
-              onClick={() => setShippingOpen(!shippingOpen)}
-              className="flex w-full items-center justify-between py-3"
-              style={{borderTop: '1px solid var(--color-border)'}}
-            >
-              <span className="text-body-small font-medium" style={{color: 'var(--color-text-primary)'}}>
-                Shipping & Returns
-              </span>
-              <motion.div animate={{rotate: shippingOpen ? 180 : 0}} transition={{duration: 0.2}}>
-                <ChevronDown size={18} style={{color: 'var(--color-text-secondary)'}} />
-              </motion.div>
-            </button>
-            <AnimatePresence>
-              {shippingOpen && (
-                <motion.div
-                  initial={{height: 0, opacity: 0}}
-                  animate={{height: 'auto', opacity: 1}}
-                  exit={{height: 0, opacity: 0}}
-                  transition={{duration: 0.3}}
-                  className="overflow-hidden"
-                >
-                  <p className="text-body-small pb-3" style={{color: 'var(--color-text-secondary)'}}>
-                    Prints are produced after ordering and ship through the connected fulfillment workflow. Returns and damage handling follow the published Kumachi Prints policy.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {hasStory && (
-            <div className="mt-10 pt-10 border-t border-border">
-              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Story</h2>
-              <PortableText value={supplement.story} />
-            </div>
-          )}
-
-          {hasInspiration && (
-            <div className="mt-8">
-              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Inspiration</h2>
-              <PortableText value={supplement.inspiration} />
-            </div>
-          )}
-
-          {supplement?.mockupImages && supplement.mockupImages.length > 0 && (
-            <div className="mt-10 pt-10 border-t border-border">
-              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>In your space</h2>
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {supplement.mockupImages.map((img: any, i: number) => (
-                  <img
-                    key={img._key || i}
-                    src={img.asset?.url || img.url}
-                    alt={img.alt || `${product.title} mockup ${i + 1}`}
-                    className="h-64 w-auto shrink-0 rounded object-cover"
-                    loading="lazy"
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {supplement?.roomImages && supplement.roomImages.length > 0 && (
-            <div className="mt-8">
-              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Room views</h2>
-              <div className="grid grid-cols-2 gap-3">
-                {supplement.roomImages.map((img: any, i: number) => (
-                  <img
-                    key={img._key || i}
-                    src={img.asset?.url || img.url}
-                    alt={img.alt || `${product.title} room view ${i + 1}`}
-                    className="aspect-[4/3] w-full rounded object-cover"
-                    loading="lazy"
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {supplement?.videos && supplement.videos.length > 0 && (
-            <div className="mt-8">
-              <h2 className="text-h3 mb-4" style={{color: 'var(--color-text-primary)'}}>Video</h2>
-              {supplement.videos.map((video: any, i: number) => (
-                <video
-                  key={video._key || i}
-                  controls
-                  className="w-full rounded"
-                  poster={video.poster?.asset?.url || undefined}
-                >
-                  <source src={video.asset?.url || video.url} type={video.asset?.mimeType || "video/mp4"} />
-                </video>
-              ))}
-            </div>
-          )}
-
-          <div className="mt-10 border-t border-border pt-8">
-            <h3 className="text-h3 font-display" style={{color: 'var(--color-text-primary)'}}>Print Details</h3>
-            <div className="mt-4 space-y-3">
-              {[
-                {label: 'Format', value: optionSummary || 'Choose size'},
-                {label: 'Paper', value: supplement?.paper || '310gsm archival matte paper'},
-                {label: 'Ink', value: supplement?.ink || 'Archival pigment ink'},
-                {label: 'Edition', value: supplement?.edition || 'Open edition'},
-                {label: 'SKU', value: selectedVariant?.sku || product.handle},
-              ].map(({label, value}) => (
-                <div key={label} className="flex">
-                  <span className="w-28 flex-shrink-0 text-caption font-medium" style={{color: 'var(--color-text-secondary)'}}>{label}</span>
-                  <span className="text-body-small" style={{color: 'var(--color-text-primary)'}}>{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
-      {!allUnavailable && !isFallbackProduct && (
-        <div
-          className="fixed inset-x-0 bottom-0 z-40 border-t px-4 py-3 shadow-kumachi-xl md:hidden"
-          style={{
-            backgroundColor: 'rgba(255, 251, 245, 0.96)',
-            borderColor: 'var(--color-border)',
-            backdropFilter: 'blur(18px)',
-          }}
-        >
-          <div className="mx-auto flex max-w-screen-sm items-center gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-display text-base" style={{color: 'var(--color-text-primary)'}}>{product.title}</p>
-              {optionSummary && (
-                <p className="truncate text-xs" style={{color: 'var(--color-text-secondary)'}}>{optionSummary}</p>
-              )}
-            </div>
-            <div className="w-36 flex-shrink-0">
-              <AddToCart
-                variantId={selectedVariant?.id || null}
-                disabled={!selectedVariant?.availableForSale}
-                label="Add"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <RoomPlacementGallery
+        title={product.title}
+        images={roomImages}
+        sizeGuidance={supplement?.sizeGuidance}
+        placementSuggestions={supplement?.placementSuggestions}
+      />
+
+      <ProductStorySections
+        product={product}
+        supplement={supplement}
+        optionSummary={optionSummary}
+        selectedVariant={selectedVariant}
+      />
+
+      <RelatedProductsRail products={relatedProducts} />
+
+      <ProductStickyMobileBar
+        product={product}
+        optionSummary={optionSummary}
+        selectedVariant={selectedVariant}
+        quantity={quantity}
+        isFallbackProduct={isFallbackProduct}
+        allUnavailable={allUnavailable}
+        purchaseRef={purchaseRef}
+      />
     </main>
   );
 }
@@ -381,7 +297,17 @@ export default function ProductPage() {
 export function ErrorBoundary() {
   const error = useRouteError();
   if (isRouteErrorResponse(error) && error.status === 404) {
-    return <main className="container-gallery section-pad"><h1 className="text-h1">Product not found</h1><a href="/" className="text-gold">Return home</a></main>;
+    return (
+      <main className="container-gallery section-pad">
+        <h1 className="text-h1">Product not found</h1>
+        <a href="/" className="text-gold">Return home</a>
+      </main>
+    );
   }
-  return <main className="container-gallery section-pad"><h1 className="text-h1">Error</h1><p className="text-body text-text-secondary">Something went wrong loading this product.</p></main>;
+  return (
+    <main className="container-gallery section-pad">
+      <h1 className="text-h1">Error</h1>
+      <p className="text-body text-text-secondary">Something went wrong loading this product.</p>
+    </main>
+  );
 }

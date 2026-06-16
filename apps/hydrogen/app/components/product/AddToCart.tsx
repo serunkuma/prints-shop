@@ -7,9 +7,17 @@ interface AddToCartProps {
   variantId: string | null;
   disabled?: boolean;
   label?: string;
+  quantity?: number;
+  compact?: boolean;
 }
 
-export function AddToCart({variantId, disabled, label}: AddToCartProps) {
+export function AddToCart({
+  variantId,
+  disabled,
+  label,
+  quantity = 1,
+  compact = false,
+}: AddToCartProps) {
   const fetcher = useFetcher();
   const setCartOpen = useUIStore((s) => s.setCartOpen);
   const adding = fetcher.state !== 'idle';
@@ -26,11 +34,13 @@ export function AddToCart({variantId, disabled, label}: AddToCartProps) {
     <fetcher.Form method="post" action="/cart">
       <input type="hidden" name="intent" value="add" />
       <input type="hidden" name="variantId" value={variantId || ''} />
-      <input type="hidden" name="quantity" value="1" />
+      <input type="hidden" name="quantity" value={String(Math.max(1, quantity))} />
       <button
         type="submit"
         disabled={!variantId || disabled || adding}
-        className="flex h-[52px] w-full items-center justify-center gap-2 bg-gold px-8 text-button text-void transition-all duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+        className={`flex w-full items-center justify-center gap-2 bg-gold px-8 text-button text-void transition-all duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 ${
+          compact ? 'h-11 px-5 text-xs' : 'h-[52px]'
+        }`}
       >
         {adding ? 'Adding...' : !variantId ? 'Select a size' : label || 'Add to Cart'}
       </button>
