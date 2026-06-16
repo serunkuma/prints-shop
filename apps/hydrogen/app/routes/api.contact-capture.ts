@@ -1,5 +1,9 @@
 import {data} from 'react-router';
 
+export async function loader() {
+  return data({error: 'Use POST to submit contact capture'}, {status: 405});
+}
+
 function hashIp(ip: string): string {
   let hash = 0;
   for (let i = 0; i < ip.length; i++) {
@@ -93,7 +97,7 @@ export async function action({request, context}: {request: Request; context: any
     smsConsentedAt: smsConsent ? now : undefined,
     sourcePage: sourcePage || undefined,
     userAgent: request.headers.get('user-agent') || '',
-    ipHash: hashIp(ipAddress),
+    ipAddress: hashIp(ipAddress),
     createdAt: now,
   };
 
