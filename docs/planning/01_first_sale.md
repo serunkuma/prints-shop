@@ -47,11 +47,11 @@ Build the final production foundation for Kumachi Prints before launch: Hydrogen
 - [ ] Add domain in Shopify: Settings → Domains → Add existing domain
 - [ ] Verify SSL certificate provisions automatically
 - [ ] Install Umami tracking script in `app/root.tsx`
-- [ ] Migrate account routes from legacy customer access token flow to Shopify Customer Account API/OAuth
+- [x] Migrate account routes from legacy customer access token flow to Shopify Customer Account API/OAuth
 - [ ] Add `PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID` and `SHOP_ID` to local `.env` and Oxygen
 - [ ] Verify `/account/login` starts Shopify Customer Account API OAuth login
 - [ ] Verify `/account/authorize` Customer Account API OAuth callback is configured in Shopify admin
-- [ ] Verify `/account/recover` password reset flow is configured (Shopify sends reset email)
+- [ ] Verify Shopify-hosted customer account recovery/login assistance works from the Customer Account API login flow
 - [ ] Verify `/account/orders` loads order history for signed-in customers
 - [ ] Verify `/account/orders/:orderId` loads single order detail with fulfillment status
 - [ ] Add contact-preference capture surface for account customers if needed (do not depend on Shopify-hosted login for custom consent fields)

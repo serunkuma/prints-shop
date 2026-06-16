@@ -98,9 +98,6 @@ type Pages = {
       "orderId": string;
     };
   };
-  "/account/recover": {
-    params: {};
-  };
   "/policies/:policyHandle": {
     params: {
       "policyHandle": string;
@@ -132,7 +129,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/create" | "/about" | "/collection" | "/collection/:handle" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/blog/drops" | "/blog/drops/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/account/recover" | "/policies/:policyHandle" | "/api/preview" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap" | "/sitemap.xml" | "/components" | "/design-system";
+    page: "/" | "/create" | "/about" | "/collection" | "/collection/:handle" | "/product/:handle" | "/products/:handle" | "/collections" | "/collections/:handle" | "/cart" | "/search" | "/pages/:handle" | "/drops" | "/drops/:handle" | "/artists" | "/artists/:handle" | "/blog/drops" | "/blog/drops/:handle" | "/account" | "/account/login" | "/account/orders" | "/account/authorize" | "/account/orders/:orderId" | "/policies/:policyHandle" | "/api/preview" | "/.well-known/appspecific/com.chrome.devtools.json" | "/robots.txt" | "/sitemap" | "/sitemap.xml" | "/components" | "/design-system";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
@@ -226,10 +223,6 @@ type RouteFiles = {
     id: "routes/account.orders.$orderId";
     page: "/account/orders/:orderId";
   };
-  "routes/account.recover.tsx": {
-    id: "routes/account.recover";
-    page: "/account/recover";
-  };
   "routes/policies.$policyHandle.tsx": {
     id: "routes/policies.$policyHandle";
     page: "/policies/:policyHandle";
@@ -289,7 +282,6 @@ type RouteModules = {
   "routes/account.orders": typeof import("./app/routes/account.orders.tsx");
   "routes/account.authorize": typeof import("./app/routes/account.authorize.tsx");
   "routes/account.orders.$orderId": typeof import("./app/routes/account.orders.$orderId.tsx");
-  "routes/account.recover": typeof import("./app/routes/account.recover.tsx");
   "routes/policies.$policyHandle": typeof import("./app/routes/policies.$policyHandle.tsx");
   "routes/api.preview": typeof import("./app/routes/api.preview.ts");
   "routes/chrome-devtools-json": typeof import("./app/routes/chrome-devtools-json.tsx");

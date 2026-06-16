@@ -69,7 +69,7 @@ SANITY_STUDIO_DATASET=production
   - Verify fulfillment notification email template is active
   - Verify shipping update email template is active
   - Verify customer account invite/welcome email is configured
-  - Verify password reset email is configured
+  - Verify Shopify-hosted customer account recovery/login assistance messaging is configured
 - [ ] Configure Shopify marketing consent fields: Shopify captures email marketing consent at checkout; custom consent should be captured through checkout, newsletter, `/create`, or a separate account preferences surface, not assumed inside Shopify-hosted login
 - [ ] Test complete customer flow end-to-end:
   1. Customer starts login via `/account/login`
@@ -77,7 +77,7 @@ SANITY_STUDIO_DATASET=production
   3. Customer returns through `/account/authorize`
   4. Customer can view order history at `/account/orders`
   5. Customer can view single order detail at `/account/orders/:orderId`
-  6. Customer can reset password via `/account/recover`
+  6. Customer can access Shopify-hosted recovery/login assistance from the Customer Account API login flow
 - [ ] Verify consent audit: Shopify customer records and local waitlist/contact records should show marketing consent status with timestamps where applicable
 
 ## Printful Tasks
@@ -135,7 +135,7 @@ SANITY_STUDIO_DATASET=production
 - Test desktop and mobile.
 - Test homepage, collections, product page, search, cart drawer, cart page.
 - Test variant selection, add/update/remove cart item, and checkout redirect.
-- **Test customer account flow:** register, sign in, order history, order detail, password reset.
+- **Test customer account flow:** register/sign in through Shopify-hosted customer accounts, order history, order detail, recovery/login assistance.
 - **Test consent capture:** email consent checkbox persists, SMS consent checkbox only shows with phone, consent metadata is recorded.
 - **Test AI Studio waitlist:** submit on `/create` with email only, with email + phone, with both consents, with no consents.
 - Place one real test order.

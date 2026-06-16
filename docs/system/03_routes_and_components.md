@@ -31,11 +31,10 @@ Status: Current
 | File | URL | Data Sources | Notes |
 |------|-----|-------------|-------|
 | `app/routes/account.tsx` | `/account` | Shopify Customer Account API | Customer portal |
-| `app/routes/account.login.tsx` | `/account/login` | Redirect → `/account` | Login entry |
-| `app/routes.account.authorize.tsx` | `/account/authorize` | Shopify OAuth | OAuth callback handler |
-| `app/routes/account.recover.tsx` | `/account/recover` | Shopify password recovery | Password reset flow |
-| `app/routes/account.orders.tsx` | `/account/orders` | Shopify orders | Order history |
-| `app/routes/account.orders.$orderId.tsx` | `/account/orders/:orderId` | Shopify single order | Single order detail |
+| `app/routes/account.login.tsx` | `/account/login` | Shopify Customer Account API | Starts OAuth login |
+| `app/routes.account.authorize.tsx` | `/account/authorize` | Shopify Customer Account API | OAuth callback handler |
+| `app/routes/account.orders.tsx` | `/account/orders` | Shopify Customer Account API | Order history |
+| `app/routes/account.orders.$orderId.tsx` | `/account/orders/:orderId` | Shopify Customer Account API | Single order detail |
 
 ### Utility & Infrastructure Routes
 

@@ -15,7 +15,7 @@ const ORDERS_QUERY = `
       orders(first: 50, sortKey: PROCESSED_AT, reverse: true) {
         nodes {
           id
-          orderNumber
+          number
           processedAt
           fulfillmentStatus
           totalPrice {
@@ -106,7 +106,7 @@ export default function OrdersPage() {
             >
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <p className="text-body font-medium">Order #{order.orderNumber}</p>
+                  <p className="text-body font-medium">Order #{order.number}</p>
                   <p className="text-body-small text-text-muted">
                     {new Date(order.processedAt).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
                   </p>
@@ -121,7 +121,7 @@ export default function OrdersPage() {
               {order.lineItems?.nodes?.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-border">
                   {order.lineItems.nodes.map((item: any) => (
-                    <p key={item.variant?.id || item.title} className="text-body-small text-text-secondary">
+                    <p key={item.id || item.title} className="text-body-small text-text-secondary">
                       {item.title} &times; {item.quantity}
                     </p>
                   ))}

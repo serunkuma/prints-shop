@@ -8,51 +8,47 @@ export const headers: HeadersFunction = () => ({
 });
 
 export const meta = ({data}: any) => [
-  {title: data?.order ? `Order #${data.order.orderNumber} — Kumachi Prints` : 'Order — Kumachi Prints'},
+  {title: data?.order ? `Order #${data.order.number} — Kumachi Prints` : 'Order — Kumachi Prints'},
 ];
 
 const ORDER_BY_ID_QUERY = `
   query OrderById($orderId: ID!) {
-    node(id: $orderId) {
-      ... on Order {
-        id
-        orderNumber
-        processedAt
-        fulfillmentStatus
-        financialStatus
-        totalPrice {
-          amount
-          currencyCode
-        }
-        subtotalPrice {
-          amount
-          currencyCode
-        }
-        totalTax {
-          amount
-          currencyCode
-        }
-        lineItems(first: 50) {
-          nodes {
-            title
-            quantity
-            variant {
-              id
-              price {
-                amount
-                currencyCode
-              }
-            }
+    order(id: $orderId) {
+      id
+      number
+      processedAt
+      fulfillmentStatus
+      financialStatus
+      totalPrice {
+        amount
+        currencyCode
+      }
+      subtotal {
+        amount
+        currencyCode
+      }
+      totalTax {
+        amount
+        currencyCode
+      }
+      lineItems(first: 50) {
+        nodes {
+          id
+          title
+          quantity
+          price {
+            amount
+            currencyCode
           }
         }
-        shippingAddress {
-          address1
-          address2
-          city
-          province
-          zip
-          country
-        }
+      }
+      shippingAddress {
+        address1
+        address2
+        city
+        province
+        zip
+        country
       }
     }
   }
@@ -96,11 +92,11 @@ export async function loader({params, context}: {params: any; context: any}) {
     variables: {orderId},
   }).catch(() => ({data: null, errors: [{message: 'Failed to load order'}]}));
 
-  if (errors || !data?.node) {
+  if (errors || !data?.order) {
     throw new Response('Not found', {status: 404});
   }
 
-  return {order: data.node};
+  return {order: data.order};
 }
 
 export default function OrderDetailPage() {
@@ -110,7 +106,7 @@ export default function OrderDetailPage() {
     <main className="container-gallery section-pad max-w-3xl">
       <a href="/account/orders" className="text-gold text-body-small mb-8 inline-block">&larr; All Orders</a>
 
-      <h1 className="text-h1 mb-2">Order #{order.orderNumber}</h1>
+      <h1 className="text-h1 mb-2">Order #{order.number}</h1>
       <p className="text-body-small text-text-muted mb-8">
         Placed {new Date(order.processedAt).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
       </p>
@@ -123,7 +119,7 @@ export default function OrderDetailPage() {
           </p>
         </div>
         <div className="space-y-2 text-body text-text-secondary">
-          <div className="flex justify-between"><span>Subtotal</span><span>{formatPrice(parseFloat(order.subtotalPrice.amount) * 100)}</span></div>
+          <div className="flex justify-between"><span>Subtotal</span><span>{formatPrice(parseFloat(order.subtotal.amount) * 100)}</span></div>
           {order.totalTax && <div className="flex justify-between"><span>Tax</span><span>{formatPrice(parseFloat(order.totalTax.amount) * 100)}</span></div>}
           <div className="flex justify-between border-t border-border pt-2 mt-2 font-medium text-text-primary"><span>Total</span><span>{formatPrice(parseFloat(order.totalPrice.amount) * 100)}</span></div>
         </div>
@@ -147,13 +143,13 @@ export default function OrderDetailPage() {
         <h2 className="text-h4 mb-4">Items</h2>
         <div className="space-y-4">
           {order.lineItems?.nodes?.map((item: any) => (
-            <div key={item.variant?.id || item.title} className="flex justify-between py-2 border-b border-border last:border-0">
+            <div key={item.id || item.title} className="flex justify-between py-2 border-b border-border last:border-0">
               <div>
                 <p className="text-body font-medium">{item.title}</p>
                 <p className="text-body-small text-text-muted">Qty: {item.quantity}</p>
               </div>
-              {item.variant?.price && (
-                <p className="text-price">{formatPrice(parseFloat(item.variant.price.amount) * 100)}</p>
+              {item.price && (
+                <p className="text-price">{formatPrice(parseFloat(item.price.amount) * 100)}</p>
               )}
             </div>
           ))}

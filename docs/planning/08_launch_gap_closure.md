@@ -41,11 +41,10 @@ Root `studio/` is the canonical Sanity Studio. No duplicate `apps/hydrogen/studi
 - Add analytics/Search Console only after the purchase flow is verified.
 
 ### Customer Accounts & Contact Capture
-- Migrate `account.tsx`, `account.login.tsx`, `account.authorize.tsx`, `account.orders.tsx`, and `account.orders.$orderId.tsx` from legacy customer access token flow to Shopify Customer Account API/OAuth.
-- Add `PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID` and `SHOP_ID` to local `.env` and Oxygen.
-- Verify `account.orders.tsx` and `account.orders.$orderId.tsx` load order history and single-order detail through Customer Account API.
-- Confirm `/account/authorize` Customer Account API OAuth callback is configured in Shopify admin.
-- Test `/account/recover` password reset flow — Shopify must send the reset email.
+- Verify `PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID` and `SHOP_ID` exist in local `.env` and Oxygen.
+- Verify `account.orders.tsx` and `account.orders.$orderId.tsx` load order history and single-order detail through Customer Account API using a real test customer.
+- Confirm `/account/authorize` Customer Account API OAuth callback is configured in Shopify admin for local ngrok, Oxygen preview, and production domains.
+- Test Shopify-hosted customer account recovery/login assistance from the Customer Account API login flow.
 - Add account contact-preferences capture if custom consent fields are needed outside Shopify-hosted checkout/login.
 - Add newsletter signup capture section with email + consent checkboxes.
 - Add AI Studio waitlist capture on `/create` (email required, phone optional, separate consent checkboxes).

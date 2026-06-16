@@ -303,18 +303,6 @@ export type CartIdQuery = {
   >;
 };
 
-export type RecoverMutationVariables = StorefrontAPI.Exact<{
-  email: StorefrontAPI.Scalars['String']['input'];
-}>;
-
-export type RecoverMutation = {
-  customerRecover?: StorefrontAPI.Maybe<{
-    customerUserErrors: Array<
-      Pick<StorefrontAPI.CustomerUserError, 'code' | 'message'>
-    >;
-  }>;
-};
-
 export type CartQueryQueryVariables = StorefrontAPI.Exact<{
   cartId: StorefrontAPI.Scalars['ID']['input'];
 }>;
@@ -654,10 +642,6 @@ interface GeneratedQueryTypes {
 }
 
 interface GeneratedMutationTypes {
-  '#graphql\n  mutation Recover($email: String!) {\n    customerRecover(email: $email) {\n      customerUserErrors {\n        code\n        message\n      }\n    }\n  }\n': {
-    return: RecoverMutation;
-    variables: RecoverMutationVariables;
-  };
   '#graphql\n  mutation CartCreate($input: CartInput!) {\n    cartCreate(input: $input) {\n      cart {\n        id\n        checkoutUrl\n        totalQuantity\n        cost {\n          subtotalAmount { amount currencyCode }\n          totalAmount { amount currencyCode }\n        }\n        lines(first: 100) {\n          nodes {\n            id\n            quantity\n            merchandise {\n              ... on ProductVariant {\n                id\n                title\n                product {\n                  handle\n                  title\n                  featuredImage { url altText }\n                }\n                selectedOptions { name value }\n                price { amount currencyCode }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: CartCreateMutation;
     variables: CartCreateMutationVariables;

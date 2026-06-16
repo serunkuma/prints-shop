@@ -13,8 +13,9 @@ const CUSTOMER_QUERY = `
     customer {
       firstName
       lastName
-      email
-      acceptsMarketing
+      emailAddress {
+        emailAddress
+      }
       createdAt
     }
   }
@@ -64,9 +65,6 @@ export default function AccountPage() {
         >
           Sign In
         </a>
-        <p className="text-body-small text-text-muted mt-6 text-center">
-          <a href="/account/recover" className="text-gold">Forgot password?</a>
-        </p>
       </main>
     );
   }
@@ -86,7 +84,7 @@ export default function AccountPage() {
         Welcome, {customer.firstName || 'valued customer'}.
       </p>
       <p className="text-body-small text-text-muted mb-8">
-        {customer.email}
+        {customer.emailAddress?.emailAddress}
       </p>
       <div className="space-y-4">
         <a href="/account/orders" className="block p-4 card-surface rounded-xs hover:border-gold transition-colors">

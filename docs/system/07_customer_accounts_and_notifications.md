@@ -34,18 +34,17 @@ Hydrogen server/context
 
 | Route | File | Purpose | Status |
 |-------|------|---------|--------|
-| `/account` | `app/routes/account.tsx` | Account dashboard if authenticated; otherwise link/button into Shopify-hosted login | Existing implementation uses legacy customer access token flow — must migrate before launch |
-| `/account/login` | `app/routes/account.login.tsx` | Starts Customer Account API login/OAuth redirect | Existing redirect is placeholder — must migrate before launch |
-| `/account/authorize` | `app/routes/account.authorize.tsx` | Customer Account API OAuth callback handler | Existing implementation uses legacy `customerAccessTokenCreate` incorrectly — must migrate before launch |
-| `/account/recover` | `app/routes/account.recover.tsx` | Password recovery/account access support | Verify against selected Shopify customer account mode |
-| `/account/orders` | `app/routes/account.orders.tsx` | Order history list | Existing implementation queries legacy customer token — must migrate before launch |
-| `/account/orders/:orderId` | `app/routes/account.orders.$orderId.tsx` | Single order detail | Existing implementation queries legacy customer token — must migrate before launch |
+| `/account` | `app/routes/account.tsx` | Account dashboard if authenticated; otherwise link/button into Shopify-hosted login | Implemented with Customer Account API |
+| `/account/login` | `app/routes/account.login.tsx` | Starts Customer Account API login/OAuth redirect | Implemented |
+| `/account/authorize` | `app/routes/account.authorize.tsx` | Customer Account API OAuth callback handler | Implemented |
+| `/account/orders` | `app/routes/account.orders.tsx` | Order history list | Implemented with Customer Account API |
+| `/account/orders/:orderId` | `app/routes/account.orders.$orderId.tsx` | Single order detail | Implemented with Customer Account API |
 
 ### Account Route Verification
 
 Before launch, migrate or verify each account route against the current Customer Account API flow:
 
-1. **Customer Account API client:** Add `createCustomerAccountClient()` to Hydrogen server/context and pass `customerAccount` into route context.
+1. **Customer Account API client:** Hydrogen context passes `customerAccount` into route context through `createHydrogenContext()`.
 2. **Environment:** Add `PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID` and `SHOP_ID` locally and in Oxygen.
 3. **Shopify admin:** In the Hydrogen sales channel Customer Account API settings, configure callback URI `https://<your-domain>/account/authorize`, JavaScript origin, and logout URI.
 4. **`/account/login`:** Start the Customer Account API login/OAuth redirect.
@@ -59,7 +58,7 @@ Before launch, migrate or verify each account route against the current Customer
 
 - **Localhost callback:** Customer Account API OAuth does not support plain localhost callbacks; use an HTTPS tunnel such as ngrok for local testing.
 - **Missing env:** `PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID` and `SHOP_ID` must be present in local `.env` and Oxygen.
-- **Wrong route shape:** Existing `customerAccessTokenCreate` code is the legacy flow and should not be treated as the launch implementation.
+- **Wrong route shape:** Do not reintroduce `customerAccessTokenCreate`, `customerRecover`, or local password reset routes; those belong to the legacy customer account flow.
 - **Checkout context:** A customer may authenticate or opt into marketing during checkout. Ensure consent capture and welcome flows handle this case.
 
 ## Notifications
@@ -74,7 +73,7 @@ Shopify handles transactional notifications for the launch phase. These are conf
 | Fulfillment update | Printful fulfills order | Email (Shopify) | Yes — test before launch |
 | Shipping update | Tracking number added | Email (Shopify) | Yes — test before launch |
 | Delivery confirmation | Order marked delivered | Email (Shopify) | Nice to have |
-| Password reset | User requests reset | Email (Shopify) | Yes — test before launch |
+| Customer account recovery/login assistance | User requests help from Shopify-hosted login | Email/hosted flow (Shopify) | Yes — test before launch |
 | Account invite | Customer created manually | Email (Shopify) | Nice to have |
 
 **Important:** These are separate from Listmonk marketing campaigns. Do not route transactional emails through Listmonk.
@@ -97,7 +96,7 @@ Shopify handles transactional notifications for the launch phase. These are conf
 - [ ] Confirm Printful fulfillment writes tracking to Shopify order
 - [ ] Confirm Shopify sends fulfillment/shipping notification to customer
 - [ ] Verify email content: order number, items, shipping address, tracking link
-- [ ] Test password reset flow: `/account/recover` → email arrives → reset works
+- [ ] Test Shopify-hosted customer account recovery/login assistance from the Customer Account API login flow
 - [ ] Test with multiple email providers (Gmail, Outlook, Proton) to verify deliverability
 
 ### Listmonk/Resend Campaigns (Post-Launch)
@@ -105,7 +104,7 @@ Shopify handles transactional notifications for the launch phase. These are conf
 See `docs/system/08_listmonk_resend_campaigns.md` for the campaign infrastructure.
 
 Campaign emails are distinct from transactional emails:
-- **Transactional:** order confirmation, fulfillment, shipping, password reset, account notifications
+- **Transactional:** order confirmation, fulfillment, shipping, customer account recovery/login assistance, account notifications
 - **Campaign:** newsletters, promotional emails, welcome sequences, abandoned cart recovery, AI Studio launch announcement
 
 Shopify transactional emails remain separate from Listmonk marketing campaigns.

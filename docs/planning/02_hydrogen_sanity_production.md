@@ -43,10 +43,10 @@ Build the real Hydrogen stack on Shopify Oxygen. Core routes are live, Sanity sc
 - [ ] Configure Sanity Visual Editing with preview secret
 - [ ] Create product supplement documents in Sanity for all 5+ launch products
 - [ ] Add Sanity SEO fields override pattern in all route meta functions
-- [ ] Replace legacy customer access token account flow with Shopify Customer Account API/OAuth
-- [ ] Verify account routes: `/account/login` (starts OAuth), `/account/authorize` (OAuth callback), `/account` (customer dashboard), `/account/orders` (order history), `/account/orders/:orderId` (single order detail)
-- [ ] Confirm account routes use `context.customerAccount` / Customer Account API client (no Supabase Auth for commerce accounts)
-- [ ] Test password recovery flow: `/account/recover` → Shopify sends reset email → user resets password → login works
+- [x] Replace legacy customer access token account flow with Shopify Customer Account API/OAuth
+- [x] Verify account route implementation: `/account/login` starts OAuth, `/account/authorize` handles callback, `/account` shows customer dashboard/login CTA, `/account/orders` loads order history, `/account/orders/:orderId` loads single order detail
+- [x] Confirm account routes use `context.customerAccount` / Customer Account API client (no Supabase Auth for commerce accounts)
+- [ ] Test Shopify-hosted customer account recovery/login assistance from the Customer Account API login flow
 - [ ] Add account contact-preferences surface if custom email/SMS consent cannot be captured in Shopify-hosted customer login
 - [ ] Verify all routes work on Oxygen preview URL
 
