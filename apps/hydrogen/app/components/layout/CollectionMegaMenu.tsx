@@ -10,17 +10,16 @@ const columns = [
       {label: 'All Prints', to: '/collection'},
       {label: 'Opening Drop', to: '/blog/drops/opening-drop'},
       {label: 'New Arrivals', to: '/collection?sort=newest'},
-      {label: 'Large Prints', to: '/collection/large-prints'},
     ],
   },
   {
     title: 'By Subject',
     links: [
-      {label: 'Figurative & Portrait', to: '/collection/figurative-and-portrait-art'},
-      {label: 'Narrative & Storytelling', to: '/collection/narrative-and-storytelling-art'},
-      {label: 'Landscape & Nature', to: '/collection/landscape-and-nature'},
-      {label: 'Abstract', to: '/collection/abstract-art'},
-      {label: 'Contemporary African Art', to: '/collection/contemporary-african-art'},
+      {label: 'Figurative & Portrait', to: '/collection?genre=figurative-and-portrait-art'},
+      {label: 'Narrative & Storytelling', to: '/collection?genre=narrative-and-storytelling-art'},
+      {label: 'Landscape & Nature', to: '/collection?genre=landscape-and-nature'},
+      {label: 'Abstract', to: '/collection?genre=abstract-art'},
+      {label: 'Contemporary African Art', to: '/collection?genre=contemporary-african-art'},
     ],
   },
   {

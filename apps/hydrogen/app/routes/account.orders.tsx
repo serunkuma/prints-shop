@@ -55,12 +55,12 @@ function statusLabel(status: string): string {
 
 export async function loader({context}: {context: any}) {
   if (!context.customerAccount) {
-    throw new Response('Not found', {status: 404});
+    return {orders: [], error: null, needsSignIn: true};
   }
 
   const loggedIn = await context.customerAccount.isLoggedIn();
   if (!loggedIn) {
-    throw new Response('Not found', {status: 404});
+    return {orders: [], error: null, needsSignIn: true};
   }
 
   const {data, errors} = await context.customerAccount.query(ORDERS_QUERY).catch(() => ({
@@ -69,21 +69,27 @@ export async function loader({context}: {context: any}) {
   }));
 
   if (errors || !data) {
-    return {orders: [], error: errors?.[0]?.message || 'Failed to load orders'};
+    return {orders: [], error: errors?.[0]?.message || 'Failed to load orders', needsSignIn: false};
   }
 
-  return {orders: data.customer?.orders?.nodes || [], error: null};
+  return {orders: data.customer?.orders?.nodes || [], error: null, needsSignIn: false};
 }
 
 export default function OrdersPage() {
-  const {orders, error} = useLoaderData<typeof loader>();
+  const {orders, error, needsSignIn} = useLoaderData<typeof loader>();
 
   return (
     <main className="container-gallery section-pad">
       <h1 className="text-h1 mb-2">Order History</h1>
       <a href="/account" className="text-gold text-body-small mb-8 inline-block">&larr; Back to Account</a>
 
-      {error && !orders.length ? (
+      {needsSignIn ? (
+        <div className="card-surface rounded-xs p-6">
+          <p className="text-body text-text-secondary mb-2">Sign in to view your order history.</p>
+          <p className="text-body-small text-text-muted">Orders appear here after checkout with the same email address.</p>
+          <a href="/account/login" className="text-gold text-body-small mt-4 inline-block">Sign in</a>
+        </div>
+      ) : error && !orders.length ? (
         <div className="card-surface rounded-xs p-6">
           <p className="text-body text-crimson mb-2">Unable to load orders</p>
           <p className="text-body-small text-text-muted">{error}</p>

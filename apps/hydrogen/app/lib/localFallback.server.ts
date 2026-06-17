@@ -2,6 +2,7 @@ import storefrontExport from '~/data/local-fallback/storefront-products.json';
 import siteContentExport from '~/data/local-fallback/sanity-site-content.ndjson?raw';
 import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 import {genreToSlug, regionToSlug} from '~/lib/productFacets';
+import {enrichLaunchProduct} from '~/lib/launchProductMeta';
 
 let storefrontCache: any[] | null = null;
 let siteContentCache: Record<string, any> | null = null;
@@ -115,7 +116,7 @@ export async function getFallbackProduct(handle: string, env: any = {}) {
 
 export async function getFallbackProducts(env: any = {}) {
   const products = await readStorefrontProducts(env);
-  return products.filter((p) => OPENING_DROP_HANDLES.has(p.handle)).map(toHydrogenProduct);
+  return products.filter((p) => OPENING_DROP_HANDLES.has(p.handle)).map(toHydrogenProduct).map(enrichLaunchProduct);
 }
 
 export async function getFallbackCollection(handle: string, env: any = {}) {
@@ -150,7 +151,7 @@ export async function getFallbackCollection(handle: string, env: any = {}) {
         ? 'The first Kumachi Prints release: 22 curated open-drop artworks from Kuma.'
         : 'African art prints from Kumachi Prints.',
     image: fallbackImage(filtered[0]),
-    products: {nodes: filtered.map(toHydrogenProduct)},
+    products: {nodes: filtered.map(toHydrogenProduct).map(enrichLaunchProduct)},
     _fallback: true,
   };
 }

@@ -7,6 +7,7 @@ import {CategoryTiles} from '~/components/sections/CategoryTiles';
 import {ProductGrid} from '~/components/product/ProductGrid';
 import {FilterSidebar} from '~/components/collection/FilterSidebar';
 import {getFallbackProducts} from '~/lib/localFallback.server';
+import {enrichLaunchProduct} from '~/lib/launchProductMeta';
 import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 import {ALL_PRODUCTS_QUERY} from '~/lib/queries';
 import {PageShell} from '~/components/design/PageTemplates';
@@ -32,7 +33,8 @@ export async function loader({context}: {context: any}) {
   ]);
 
   const products = (shopifyData?.products?.nodes?.filter(Boolean) || fallbackProducts || [])
-    .filter((p: any) => OPENING_DROP_HANDLES.has(p.handle));
+    .filter((p: any) => OPENING_DROP_HANDLES.has(p.handle))
+    .map(enrichLaunchProduct);
   return {products};
 }
 

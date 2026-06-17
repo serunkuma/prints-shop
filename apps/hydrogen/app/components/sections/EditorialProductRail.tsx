@@ -2,23 +2,16 @@ import {Link} from 'react-router';
 import {ArrowRight} from 'lucide-react';
 import MarqueeRow from '~/components/motion/MarqueeRow';
 
-const fallbackProducts = [
-  {id: 'lion', handle: 'lion-of-judah', title: 'Lion of Judah', artist: 'Kumachi Prints', image: '/images/hero-lion-print.jpg'},
-  {id: 'figures', handle: 'three-sisters', title: 'Three Sisters', artist: 'Kumachi Prints', image: '/images/hero-figures-print.jpg'},
-  {id: 'abstract', handle: 'abstract-rhythm', title: 'Abstract Rhythm', artist: 'Kumachi Prints', image: '/images/collection-print-01.jpg'},
-  {id: 'portrait', handle: 'portrait-study', title: 'Portrait Study', artist: 'Kumachi Prints', image: '/images/collection-print-02.jpg'},
-];
-
 export function EditorialProductRail({products = []}: {products?: any[]}) {
-  const items = products.length
-    ? products.map((product: any) => ({
-        id: product.id,
-        handle: product.handle,
-        title: product.title,
-        artist: product.vendor || 'Kumachi Prints',
-        image: product.featuredImage?.url || '/images/hero-lion-print.jpg',
-      }))
-    : fallbackProducts;
+  if (!products.length) return null;
+
+  const items = products.map((product: any) => ({
+    id: product.id,
+    handle: product.handle,
+    title: product.title,
+    artist: product.vendor || 'Kumachi Prints',
+    image: product.featuredImage?.url || '/images/hero-lion-print.jpg',
+  }));
 
   return (
     <section aria-label="Featured product marquee" style={{backgroundColor: 'var(--color-surface-deep)', overflow: 'hidden'}}>

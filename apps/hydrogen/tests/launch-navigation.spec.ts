@@ -32,8 +32,8 @@ test.describe('Launch navigation', () => {
     expect(page.url()).toContain('/collection');
 
     await page.goto('/collections/abstract-art');
-    await page.waitForURL('/collection/abstract-art');
-    expect(page.url()).toContain('/collection/abstract-art');
+    await page.waitForURL(/\/collection\?genre=abstract-art/);
+    expect(page.url()).toContain('/collection?genre=abstract-art');
 
     await page.goto('/pages/about');
     await page.waitForURL('/about');

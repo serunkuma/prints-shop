@@ -14,6 +14,8 @@ function navItemToLink(item: any): FooterLink | null {
     case 'external':
       return item.externalUrl ? {label: item.label, href: item.externalUrl, external: true} : null;
     case 'collection':
+      if (item.collectionHandle === 'all') return {label: item.label, href: '/collection'};
+      if (item.collectionHandle === 'opening-drop') return {label: item.label, href: '/collection/opening-drop'};
       return item.collectionHandle ? {label: item.label, href: '/collection/' + item.collectionHandle} : null;
     case 'series':
       {
@@ -99,7 +101,6 @@ export function Footer() {
               links={[
                 {label: 'All Prints', href: '/collection'},
                 {label: 'New Arrivals', href: '/collection?sort=newest'},
-                {label: 'Large Prints', href: '/collection/large-prints'},
                 {label: 'Blog', href: '/blog/drops'},
               ]}
             />
@@ -114,10 +115,10 @@ export function Footer() {
             <FooterColumn
               title="Help"
               links={[
-                {label: 'Shipping & Returns', href: '/pages/shipping'},
+                {label: 'Shipping & Returns', href: '/pages/shipping-returns'},
                 {label: 'FAQ', href: '/pages/faq'},
                 {label: 'Contact', href: '/pages/contact'},
-                {label: 'Privacy Policy', href: '/policies/privacyPolicy'},
+                {label: 'Privacy Policy', href: '/pages/privacy'},
               ]}
             />
           </>

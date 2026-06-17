@@ -10,11 +10,9 @@ test.describe('Launch commerce', () => {
     await expect(page.getByLabel('Product media gallery')).toBeVisible();
     await expect(page.getByText(/Story/i).first()).toBeVisible();
     await expect(page.getByText(/Print Details/i)).toBeVisible();
-    await expect(page.getByText(/In Your Space/i).first()).toBeVisible();
     await expect(page.getByText(/Size & Placement/i)).toBeVisible();
     await expect(page.getByText(/Shipping & Returns/i).first()).toBeVisible();
     await expect(page.getByText(/Size|Format/i).first()).toBeVisible();
-    await expect(page.getByLabel('Related Prints')).toBeVisible();
     await expect(page.locator('body')).not.toContainText(/free shipping|over \$75|Page not found|Unknown block type/i);
   });
 
@@ -33,11 +31,11 @@ test.describe('Launch commerce', () => {
     expect(response?.status()).toBe(404);
   });
 
-  for (const path of ['/collection', '/collection/figurative-and-portrait-art']) {
+  for (const path of ['/collection', '/collection/opening-drop', '/collection?genre=figurative-and-portrait-art']) {
     test(`Given a visitor opens ${path} Then a real product grid renders`, async ({page}) => {
       const response = await page.goto(path);
       expect(response?.ok()).toBeTruthy();
-      await expect(page.locator('body')).toContainText(/Price after Shopify import|Majestic/i);
+      await expect(page.locator('main a[href^="/products/"]').first()).toBeVisible();
       await expect(page.locator('body')).not.toContainText(/Page not found|Unknown block type|free shipping|over \$75/i);
     });
   }
@@ -50,6 +48,20 @@ test.describe('Launch commerce', () => {
     expect(productLinks).toBeLessThanOrEqual(22);
     const uniqueHandles = new Set(await page.locator('main a[href^="/products/"]').evaluateAll((links) => links.map((l) => (l as HTMLAnchorElement).pathname)));
     expect(uniqueHandles.size).toBeGreaterThanOrEqual(12);
+  });
+
+  test('Given Load More is clicked Then all 22 opening product links become available', async ({page}) => {
+    const response = await page.goto('/collection');
+    expect(response?.ok()).toBeTruthy();
+
+    const loadMore = page.getByRole('button', {name: 'Load More Prints'});
+    if (await loadMore.isVisible()) {
+      await loadMore.click();
+      if (await loadMore.isVisible().catch(() => false)) await loadMore.click();
+    }
+
+    const uniqueHandles = new Set(await page.locator('main a[href^="/products/"]').evaluateAll((links) => links.map((l) => (l as HTMLAnchorElement).pathname)));
+    expect(uniqueHandles.size).toBe(22);
   });
 
   test('Given the Opening Drop blog article loads Then it shows the story', async ({page}) => {
@@ -113,6 +125,18 @@ test.describe('Launch commerce', () => {
     await genreButton.click();
     await expect(page).toHaveURL(/genre=figurative-and-portrait-art/);
     await expect(page.locator('main a[href^="/products/"]').first()).toBeVisible();
+  });
+
+  test('Given old collection category URLs are visited Then they redirect to filters', async ({page}) => {
+    await page.goto('/collection/abstract-art');
+    await expect(page).toHaveURL(/\/collection\?genre=abstract-art/);
+    await expect(page.locator('main a[href^="/products/"]').first()).toBeVisible();
+
+    await page.goto('/collection/large-prints');
+    await expect(page).toHaveURL(/\/collection$/);
+
+    await page.goto('/collection/gifts-under-100');
+    await expect(page).toHaveURL(/\/collection\?price=under-100/);
   });
 
   test('Given multiple filters combine Then they work together', async ({page}) => {

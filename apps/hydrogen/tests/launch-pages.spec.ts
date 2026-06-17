@@ -31,7 +31,7 @@ test.describe('Launch pages', () => {
       };
 
       return {
-        ai: textNodeTop('Kumachi Prints AI studio'),
+        ai: textNodeTop('Kumachi Prints AI Studio'),
         featured: textNodeTop('Eight images that set the tone'),
         marquee: document.querySelector('section[aria-label="Featured product marquee"]')?.getBoundingClientRect().top ?? Number.MAX_SAFE_INTEGER,
         newsletter: document.querySelector('section[aria-label="Newsletter signup"]')?.getBoundingClientRect().top ?? Number.MAX_SAFE_INTEGER,

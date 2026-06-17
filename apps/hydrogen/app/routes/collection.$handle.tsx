@@ -1,11 +1,12 @@
 import {useState, useMemo, useCallback} from 'react';
 import {motion, AnimatePresence} from 'framer-motion';
 import {ChevronDown, SlidersHorizontal, X, Search} from 'lucide-react';
-import {useLoaderData, useSearchParams, useRouteError, isRouteErrorResponse} from 'react-router';
+import {redirect, useLoaderData, useSearchParams, useRouteError, isRouteErrorResponse} from 'react-router';
 import PathwaySwitch from '~/components/PathwaySwitch';
 import {ProductGrid} from '~/components/product/ProductGrid';
 import {FilterSidebar} from '~/components/collection/FilterSidebar';
 import {getFallbackCollection} from '~/lib/localFallback.server';
+import {enrichLaunchProduct} from '~/lib/launchProductMeta';
 import {PageShell} from '~/components/design/PageTemplates';
 import {slugToLabel, testPrice} from '~/lib/productFacets';
 import {COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
@@ -35,6 +36,12 @@ export const meta = ({data}: any) => [
 export async function loader({params, context}: {params: any; context: any}) {
   const {handle} = params;
   if (!handle) throw new Response('Not found', {status: 404});
+  if (handle === 'all') return redirect('/collection', 301);
+  if (handle === 'large-prints') return redirect('/collection', 301);
+  if (handle === 'gifts-under-100') return redirect('/collection?price=under-100', 301);
+  if (categoryMeta.some((item) => item.handle === handle)) {
+    return redirect(`/collection?genre=${handle}`, 301);
+  }
 
   const [shopifyData, fallbackCollection] = await Promise.all([
     context.storefront.query(COLLECTION_PRODUCTS_QUERY, {
@@ -51,7 +58,7 @@ export async function loader({params, context}: {params: any; context: any}) {
     handle,
     description: collection.description || 'Browse curated African art prints from Kumachi Prints.',
   };
-  const products = collection.products?.nodes?.filter(Boolean) || [];
+  const products = (collection.products?.nodes?.filter(Boolean) || []).map(enrichLaunchProduct);
 
   return {products, category};
 }
@@ -210,7 +217,7 @@ export default function CollectionCategoryPage() {
             {categoryMeta.map((item) => (
               <a
                 key={item.handle}
-                href={`/collection/${item.handle}`}
+                href={`/collection?genre=${item.handle}`}
                 className="min-h-11 px-4 inline-flex items-center text-caption uppercase"
                 style={{
                   border: '1px solid var(--color-border)',

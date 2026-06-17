@@ -1,13 +1,14 @@
 import {useLoaderData, useRouteError, isRouteErrorResponse} from 'react-router';
 import {type HeadersFunction} from 'react-router';
 import {generateCacheControlHeader, CacheLong} from '@shopify/hydrogen';
-import {HOMEPAGE_QUERY, COLLECTION_PRODUCTS_QUERY} from '~/lib/queries';
+import {HOMEPAGE_QUERY, ALL_PRODUCTS_QUERY} from '~/lib/queries';
 import {HeroSection} from '~/components/sections/HeroSection';
 import {TrustBar} from '~/components/sections/TrustBar';
 import {AIPrintStudioTeaser} from '~/components/sections/AIPrintStudioTeaser';
 import {FeaturedDropSection} from '~/components/sections/FeaturedDropSection';
 import {EditorialProductRail} from '~/components/sections/EditorialProductRail';
 import {getFallbackProducts, getFallbackSiteDoc} from '~/lib/localFallback.server';
+import {enrichLaunchProduct} from '~/lib/launchProductMeta';
 import {OPENING_DROP_HANDLES} from '~/lib/allowlist';
 
 const FEATURED_DROP_HANDLES = [
@@ -37,9 +38,7 @@ export const meta = () => [
 export async function loader({context}: {context: any}) {
   const [homepage, allPrints, fallbackHomepage, fallbackProducts] = await Promise.all([
     context.sanity.fetch(HOMEPAGE_QUERY).catch(() => null),
-    context.storefront.query(COLLECTION_PRODUCTS_QUERY, {
-      variables: {handle: 'all'},
-    }).catch(() => null),
+    context.storefront.query(ALL_PRODUCTS_QUERY).catch(() => null),
     getFallbackSiteDoc('homepage', context.env),
     getFallbackProducts(context.env),
   ]);
@@ -56,7 +55,7 @@ export default function Homepage() {
   const sections = homepage?.sections || [];
 
   const sourceProducts = [
-    ...(allPrints?.collection?.products?.nodes?.filter(Boolean) || []),
+    ...(allPrints?.products?.nodes?.filter(Boolean) || []),
     ...(fallbackProducts?.filter(Boolean) || []),
   ].filter((p: any) => OPENING_DROP_HANDLES.has(p.handle));
 
@@ -67,7 +66,8 @@ export default function Homepage() {
 
   const featuredDropProducts = FEATURED_DROP_HANDLES
     .map((handle) => productByHandle.get(handle))
-    .filter(Boolean);
+    .filter(Boolean)
+    .map(enrichLaunchProduct);
 
   const heroSection = firstSection(sections, 'hero');
 
