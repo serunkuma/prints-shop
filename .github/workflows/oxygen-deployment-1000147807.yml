@@ -10,6 +10,9 @@ jobs:
     name: Deploy to Oxygen
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/hydrogen
     steps:
       - uses: actions/checkout@v4
 
@@ -26,7 +29,7 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('apps/hydrogen/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -34,6 +37,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
 
       - name: Build and Publish to Oxygen
         run: npx shopify hydrogen deploy

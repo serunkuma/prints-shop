@@ -56,31 +56,37 @@ npm run preview
 
 ## CI/CD Pipeline (GitHub Actions)
 
-The workflow file is `.github/workflows/oxygen.yml`:
+The workflow file is `.github/workflows/oxygen-deployment-1000147807.yml`. This is the Shopify-generated Oxygen workflow and deploys the Hydrogen app from `apps/hydrogen`.
 
 ```yaml
-on:
-  push:
-    branches:
-      - main          # Triggers production deploy
-  pull_request:       # Triggers preview deploy (all PR branches)
+on: [push]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/hydrogen
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm ci
+      - run: npm run typecheck
       - run: npx shopify hydrogen deploy
         env:
-          SHOPIFY_CLI_TTY: 0
+          SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000147807 }}
 ```
 
 Secrets required in GitHub repo settings:
-- `SHOPIFY_CLI_PARTNERS_TOKEN` — Shopify Partners token for CLI authentication
+- `OXYGEN_DEPLOYMENT_TOKEN_1000147807` — Oxygen deployment token created by Shopify when the storefront was connected.
+
+If the deployed commit is behind GitHub `main`, check GitHub Actions first. The most common causes are:
+- The workflow is missing the `OXYGEN_DEPLOYMENT_TOKEN_1000147807` repository secret.
+- The workflow is running from the repo root instead of `apps/hydrogen`.
+- Multiple Oxygen workflows are racing or one deploys successfully while another fails.
+- Oxygen production has been manually rolled back to an older deployment in Shopify admin.
 
 ## Oxygen Environment Variables
 
