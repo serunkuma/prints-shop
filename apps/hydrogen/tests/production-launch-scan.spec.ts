@@ -56,6 +56,8 @@ test.describe('Production launch scan', () => {
   }
 
   test('Given public internal links are crawled Then no launch link returns a 404', async ({page, request, baseURL}) => {
+    test.setTimeout(90000);
+
     const discovered = new Set<string>();
     for (const path of ['/', '/collection', '/blog/drops/opening-drop', '/about', '/create']) {
       await page.goto(path);

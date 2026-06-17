@@ -11,6 +11,7 @@
     "codegen": "shopify hydrogen codegen && react-router typegen",
     "lint": "eslint . --ext .ts,.tsx",
     "populate:products": "node scripts/populate-products.mjs",
+    "qa:production": "node scripts/production-launch-scan.mjs",
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
     "test:e2e:headed": "npx playwright test --headed"
