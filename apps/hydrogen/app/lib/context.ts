@@ -15,8 +15,20 @@ export async function createHydrogenRouterContext(
   env: Env,
   executionContext: ExecutionContext,
 ) {
-  if (!env?.SESSION_SECRET) {
-    throw new Error('SESSION_SECRET environment variable is not set');
+  const requiredEnv = [
+    'SESSION_SECRET',
+    'PUBLIC_STORE_DOMAIN',
+    'PUBLIC_STOREFRONT_API_TOKEN',
+    'SANITY_PROJECT_ID',
+    'SANITY_DATASET',
+    'SANITY_API_VERSION',
+    'PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID',
+    'SHOP_ID',
+  ] as const;
+  const missingEnv = requiredEnv.filter((key) => !env?.[key]);
+
+  if (missingEnv.length > 0) {
+    throw new Error(`Missing required Oxygen environment variables: ${missingEnv.join(', ')}`);
   }
 
   const waitUntil = executionContext.waitUntil.bind(executionContext);
