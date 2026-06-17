@@ -44,6 +44,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | [07_customer_accounts_and_notifications.md](system/07_customer_accounts_and_notifications.md) | Customer accounts, Shopify OAuth, order routes, notification flow, launch QA | Current |
 | [08_listmonk_resend_campaigns.md](system/08_listmonk_resend_campaigns.md) | Listmonk on Fly.io, Resend SMTP, subscriber sync, campaign flows, CAN-SPAM | Planning |
 | [09_notification_qa_runbook.md](system/09_notification_qa_runbook.md) | Shopify + Printful transactional notification QA runbook | Current |
+| [10_prompt_6_readiness_evidence.md](system/10_prompt_6_readiness_evidence.md) | Prompt 6 readiness evidence and deferred order-proof status | Current |
 
 ## Planning (How We're Building It)
 
@@ -102,6 +103,7 @@ Quick reference for all documentation files. Organized by category with one-line
 | How do we capture and consent contacts? | [docs/data/07_customer_contact_and_consent.md](data/07_customer_contact_and_consent.md) |
 | How does the email campaign stack work? | [docs/system/08_listmonk_resend_campaigns.md](system/08_listmonk_resend_campaigns.md) |
 | How do we test Shopify and Printful transactional notifications? | [docs/system/09_notification_qa_runbook.md](system/09_notification_qa_runbook.md) |
+| What is the current Prompt 6 launch QA status? | [docs/system/10_prompt_6_readiness_evidence.md](system/10_prompt_6_readiness_evidence.md) |
 
 ---
 
