@@ -2,7 +2,7 @@
 
 **Premium headless art print storefront** — Hydrogen + Sanity + Printful on Shopify Oxygen.
 
-> **Phase 1 — First sale in progress** · [prints.kumachigallery.com](https://prints.kumachigallery.com)
+> **Phase 1 — First sale in progress** · [kumachiprints.art](https://kumachiprints.art)
 
 ## Architecture
 

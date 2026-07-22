@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test';
 
 test.describe('Sitemap', () => {
-  const PUBLIC_SITE_URL = 'https://prints.kumachigallery.com';
+  const PUBLIC_SITE_URL = 'https://kumachiprints.art';
 
   test('Given a visitor requests /sitemap Then it returns HTML', async ({request}) => {
     const response = await request.get('/sitemap');
@@ -71,16 +71,16 @@ test.describe('Sitemap', () => {
             '/collection/opening-drop',
       '/products/majestic-monarch',
     ]) {
-      expect(body).toContain(url === '/' ? 'https://prints.kumachigallery.com/</loc>' : `https://prints.kumachigallery.com${url}`);
+      expect(body).toContain(url === '/' ? 'https://kumachiprints.art/</loc>' : `https://kumachiprints.art${url}`);
     }
   });
 
   test('Given the XML sitemap is generated Then it uses /blog/drops paths', async ({request}) => {
     const response = await request.get('/sitemap.xml');
     const body = await response.text();
-    expect(body).toContain('prints.kumachigallery.com/blog/drops/opening-drop');
-    expect(body).toContain('prints.kumachigallery.com/blog/drops');
-    expect(body).not.toContain('prints.kumachigallery.com/drops/');
+    expect(body).toContain('kumachiprints.art/blog/drops/opening-drop');
+    expect(body).toContain('kumachiprints.art/blog/drops');
+    expect(body).not.toContain('kumachiprints.art/drops/');
   });
 
   test('Given the XML sitemap is generated Then it excludes /account routes', async ({request}) => {

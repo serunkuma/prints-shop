@@ -1,4 +1,4 @@
-const DEFAULT_BASE_URL = 'https://prints.kumachigallery.com';
+const DEFAULT_BASE_URL = 'https://kumachiprints.art';
 
 const baseUrl = normalizeBaseUrl(process.env.E2E_BASE_URL || DEFAULT_BASE_URL);
 

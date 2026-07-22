@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test';
 
 test.describe('Robots.txt', () => {
-  const PUBLIC_SITE_URL = 'https://prints.kumachigallery.com';
+  const PUBLIC_SITE_URL = 'https://kumachiprints.art';
 
   test('Given a visitor requests /robots.txt Then it references the canonical sitemap', async ({request}) => {
     const response = await request.get('/robots.txt');

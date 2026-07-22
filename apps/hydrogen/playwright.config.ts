@@ -1,6 +1,6 @@
 import {defineConfig} from '@playwright/test';
 
-const canonicalSiteUrl = process.env.PUBLIC_SITE_URL || 'https://prints.kumachigallery.com';
+const canonicalSiteUrl = process.env.PUBLIC_SITE_URL || 'https://kumachiprints.art';
 const baseURL = process.env.E2E_BASE_URL || 'http://localhost:3000';
 
 export default defineConfig({

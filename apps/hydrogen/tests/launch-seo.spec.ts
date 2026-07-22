@@ -39,7 +39,7 @@ test.describe('Launch SEO', () => {
             '/collection/opening-drop',
       '/products/majestic-monarch',
     ]) {
-      expect(body).toContain(url === '/' ? 'https://prints.kumachigallery.com/</loc>' : `https://prints.kumachigallery.com${url}`);
+      expect(body).toContain(url === '/' ? 'https://kumachiprints.art/</loc>' : `https://kumachiprints.art${url}`);
     }
   });
 
@@ -48,7 +48,7 @@ test.describe('Launch SEO', () => {
     expect(response.ok()).toBeTruthy();
     const body = await response.text();
 
-    expect(body).not.toContain('prints.kumachigallery.com/drops/');
+    expect(body).not.toContain('kumachiprints.art/drops/');
     expect(body).not.toContain('/artists');
   });
 
@@ -64,6 +64,6 @@ test.describe('Launch SEO', () => {
   test('Given robots.txt is requested Then it references the canonical sitemap', async ({request}) => {
     const response = await request.get('/robots.txt');
     expect(response.ok()).toBeTruthy();
-    await expect(response.text()).resolves.toContain('Sitemap: https://prints.kumachigallery.com/sitemap.xml');
+    await expect(response.text()).resolves.toContain('Sitemap: https://kumachiprints.art/sitemap.xml');
   });
 });

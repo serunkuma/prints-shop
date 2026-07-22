@@ -1,4 +1,4 @@
-const CANONICAL_SITE_URL = 'https://prints.kumachigallery.com';
+const CANONICAL_SITE_URL = 'https://kumachiprints.art';
 
 export function getCanonicalSiteUrl(env?: {PUBLIC_SITE_URL?: string} | null): string {
   const configured = env?.PUBLIC_SITE_URL?.trim();

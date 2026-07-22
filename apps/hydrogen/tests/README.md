@@ -25,7 +25,7 @@ Each file tests one concern and uses Given/When/Then naming for readability.
 
 ## Test Coverage
 
-- **Sitemap**: Valid XML, canonical domain (`https://prints.kumachigallery.com`), includes expected URL patterns, excludes private routes, deduplicates
+- **Sitemap**: Valid XML, canonical domain (`https://kumachiprints.art`), includes expected URL patterns, excludes private routes, deduplicates
 - **Robots.txt**: References canonical sitemap, allows all agents
 - **Pages**: Homepage renders, PDP for `majestic-monarch` loads
 
